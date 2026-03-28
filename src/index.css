@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-200 antialiased font-sans;
+    background: radial-gradient(circle at 20% 20%, #1e293b 0%, #0f172a 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+}

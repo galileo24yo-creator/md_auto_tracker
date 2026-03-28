@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>DIGIT_TEMPLATES キャリブレーション</title>
+  <style>
+    body { background: #1a1a2e; color: #e0e0e0; font-family: 'Consolas', monospace; padding: 20px; }
+    h1 { color: #22c55e; }
+    .section { background: #16213e; padding: 16px; border-radius: 8px; margin: 12px 0; }
+    canvas { border: 1px solid #444; image-rendering: pixelated; }
+    #drop-zone { border: 2px dashed #22c55e; padding: 40px; text-align: center; border-radius: 12px; cursor: pointer; }
+    #drop-zone:hover { background: rgba(34,197,94,0.1); }
+    textarea { width: 100%; height: 300px; background: #0a0a1a; color: #22c55e; border: 1px solid #333; border-radius: 4px; font-family: monospace; font-size: 13px; padding: 8px; }
+    table { border-collapse: collapse; }
+    th, td { border: 1px solid #444; padding: 4px 8px; text-align: center; }
+    th { background: #22c55e20; }
+    .accepted { color: #22c55e; }
+    .rejected { color: #ef4444; }
+    input[type=number] { width: 60px; background: #0a0a1a; color: #e0e0e0; border: 1px solid #444; border-radius: 4px; padding: 2px 4px; }
+    button { background: #22c55e; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; margin: 4px; }
+    button:hover { background: #16a34a; }
+    .label-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <h1>🔧 DIGIT_TEMPLATES キャリブレーション</h1>
+  <p>レート表示のスクリーンショット（数字部分）をドロップして、各数字の特徴量を抽出します。</p>
+
+  <div class="section">
+    <label>二値化しきい値: <input type="number" id="threshold" value="200" min="0" max="255"></label>
+    <label style="margin-left:16px;">最小ピクセル(行/列): <input type="number" id="minPx" value="2" min="0" max="10"></label>
+  </div>
+
+  <div id="drop-zone">
+    📁 ここにフォント画像をドロップ（または クリック して選択）
+    <input type="file" id="file-input" accept="image/*" style="display:none;">
+  </div>
+
+  <div class="section" id="results" style="display:none;">
+    <h2>🖼️ 処理結果</h2>
+    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+      <div>
+        <p>元画像:</p>
+        <canvas id="origCanvas"></canvas>
+      </div>
+      <div>
+        <p>二値化:</p>
+        <canvas id="binCanvas"></canvas>
+      </div>
+      <div>
+        <p>トリミング後:</p>
+        <canvas id="trimCanvas"></canvas>
+      </div>
+    </div>
+
+    <h3>📊 検出されたコンポーネント</h3>
+    <div class="label-group" id="label-inputs"></div>
+    <button onclick="generateOutput()">📋 テンプレート生成</button>
+    <table id="comp-table">
+      <thead><tr><th>#</th><th>位置</th><th>サイズ</th><th>ラベル</th><th>H プロファイル</th><th>V プロファイル</th><th>Q プロファイル</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <h3>📝 生成された DIGIT_TEMPLATES</h3>
+    <textarea id="output" readonly></textarea>
+    <button onclick="copyOutput()">📋 コピー</button>
+  </div>
+
+  <script>
+    // --- visionEngine.js と同じアルゴリズム ---
+    function binarizeROI(imageData, threshold) {
+      const data = imageData.data;
+      const bin = new Uint8Array(imageData.width * imageData.height);
+      for (let i = 0; i < bin.length; i++) {
+        const r = data[i * 4], g = data[i * 4 + 1], b = data[i * 4 + 2];
+        const lum = r * 0.299 + g * 0.587 + b * 0.114;
+        bin[i] = lum > threshold ? 1 : 0;
+      }
+      return bin;
+    }
+
+    function findComponents(bin, w, h) {
+      const visited = new Uint8Array(w * h);
+      const comps = [];
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const idx = y * w + x;
+          if (bin[idx] === 1 && !visited[idx]) {
+            let minX = x, maxX = x, minY = y, maxY = y;
+            const q = [[x, y]];
+            visited[idx] = 1;
+            while (q.length > 0) {
+              const [qx, qy] = q.shift();
+              minX = Math.min(minX, qx); maxX = Math.max(maxX, qx);
+              minY = Math.min(minY, qy); maxY = Math.max(maxY, qy);
+              for (const [nx, ny] of [[qx-1,qy],[qx+1,qy],[qx,qy-1],[qx,qy+1]]) {
+                const nidx = ny * w + nx;
+                if (nx >= 0 && nx < w && ny >= 0 && ny < h && bin[nidx] === 1 && !visited[nidx]) {
+                  visited[nidx] = 1;
+                  q.push([nx, ny]);
+                }
+              }
+            }
+            const cw = maxX - minX + 1, ch = maxY - minY + 1;
+            if (cw > 2 && ch > 4) comps.push({ x: minX, y: minY, w: cw, h: ch });
+          }
+        }
+      }
+      return comps.sort((a, b) => a.x - b.x);
+    }
+
+    function extractDigitFeatures(bin, w, h, comp) {
+      const { x, y, w: cw, h: ch } = comp;
+      const hFeat = new Array(8).fill(0);
+      const vFeat = new Array(8).fill(0);
+      const qFeat = new Array(4).fill(0); // [TL, TR, BL, BR]
+
+      for (let py = y; py < y + ch; py++) {
+        for (let px = x; px < x + cw; px++) {
+          if (bin[py * w + px]) {
+            if (py < y + ch / 2) {
+              if (px < x + cw / 2) qFeat[0]++;
+              else qFeat[1]++;
+            } else {
+              if (px < x + cw / 2) qFeat[2]++;
+              else qFeat[3]++;
+            }
+          }
+        }
+      }
+
+      const quadArea = (cw / 2) * (ch / 2) || 1;
+      for (let i = 0; i < 4; i++) {
+        qFeat[i] = Math.min(Math.round((qFeat[i] / quadArea) * 32), 32);
+      }
+
+      for (let i = 0; i < 8; i++) {
+        const yStart = y + Math.floor(ch * i / 8);
+        const yEnd = y + Math.floor(ch * (i + 1) / 8);
+        const xStart = x + Math.floor(cw * i / 8);
+        const xEnd = x + Math.floor(cw * (i + 1) / 8);
+        for (let py = yStart; py < yEnd; py++)
+          for (let px = x; px < x + cw; px++)
+            if (bin[py * w + px]) hFeat[i]++;
+        for (let px = xStart; px < xEnd; px++)
+          for (let py = y; py < y + ch; py++)
+            if (bin[py * w + px]) vFeat[i]++;
+        hFeat[i] = Math.min(Math.round(hFeat[i] / (ch / 8) * (32 / cw)) || 0, 32);
+        vFeat[i] = Math.min(Math.round(vFeat[i] / (cw / 8) * (32 / ch)) || 0, 32);
+      }
+      return { h: hFeat, v: vFeat, q: qFeat };
+    }
+
+    function trimBin(bin, w, h, minPxThreshold) {
+      const rowSums = new Int32Array(h);
+      const colSums = new Int32Array(w);
+      for (let y = 0; y < h; y++)
+        for (let x = 0; x < w; x++)
+          if (bin[y * w + x]) { rowSums[y]++; colSums[x]++; }
+
+      let minY = 0; while (minY < h && rowSums[minY] < minPxThreshold) minY++;
+      let maxY = h - 1; while (maxY > minY && rowSums[maxY] < minPxThreshold) maxY--;
+      let minX = 0; while (minX < w && colSums[minX] < minPxThreshold) minX++;
+      let maxX = w - 1; while (maxX > minX && colSums[maxX] < minPxThreshold) maxX--;
+
+      if (minX >= maxX || minY >= maxY) return null;
+
+      const pad = 2;
+      minX = Math.max(0, minX - pad); maxX = Math.min(w - 1, maxX + pad);
+      minY = Math.max(0, minY - pad); maxY = Math.min(h - 1, maxY + pad);
+
+      const tw = maxX - minX + 1, th = maxY - minY + 1;
+      const trimmed = new Uint8Array(tw * th);
+      for (let y = 0; y < th; y++)
+        for (let x = 0; x < tw; x++)
+          trimmed[y * tw + x] = bin[(y + minY) * w + (x + minX)];
+      return { bin: trimmed, w: tw, h: th };
+    }
+
+    function drawBin(canvas, bin, w, h) {
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      const id = ctx.createImageData(w, h);
+      for (let i = 0; i < bin.length; i++) {
+        const v = bin[i] ? 255 : 0;
+        id.data[i*4] = v; id.data[i*4+1] = v; id.data[i*4+2] = v; id.data[i*4+3] = 255;
+      }
+      ctx.putImageData(id, 0, 0);
+    }
+
+    // --- UI ---
+    let currentComps = [];
+    let currentFeatures = [];
+    let currentBin = null;
+    let currentW = 0, currentH = 0;
+
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor = '#16a34a'; });
+    dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = '#22c55e'; });
+    dropZone.addEventListener('drop', e => { e.preventDefault(); processFile(e.dataTransfer.files[0]); });
+    fileInput.addEventListener('change', e => { if (e.target.files[0]) processFile(e.target.files[0]); });
+
+    function processFile(file) {
+      const img = new Image();
+      img.onload = () => {
+        const threshold = parseInt(document.getElementById('threshold').value) || 200;
+        const minPx = parseInt(document.getElementById('minPx').value) || 2;
+
+        // 元画像をキャンバスに描画
+        const origCanvas = document.getElementById('origCanvas');
+        origCanvas.width = img.width; origCanvas.height = img.height;
+        const octx = origCanvas.getContext('2d');
+        octx.drawImage(img, 0, 0);
+        const imageData = octx.getImageData(0, 0, img.width, img.height);
+
+        // 二値化
+        const bin = binarizeROI(imageData, threshold);
+        drawBin(document.getElementById('binCanvas'), bin, img.width, img.height);
+
+        // トリミング
+        const trimResult = trimBin(bin, img.width, img.height, minPx);
+        if (!trimResult) { alert('文字が検出されませんでした。しきい値を調整してください。'); return; }
+
+        drawBin(document.getElementById('trimCanvas'), trimResult.bin, trimResult.w, trimResult.h);
+
+        // コンポーネント検出
+        const comps = findComponents(trimResult.bin, trimResult.w, trimResult.h);
+        currentComps = comps;
+        currentBin = trimResult.bin;
+        currentW = trimResult.w;
+        currentH = trimResult.h;
+
+        // トリミング後のキャンバスに枠を描画
+        const trimCtx = document.getElementById('trimCanvas').getContext('2d');
+        comps.forEach((c, i) => {
+          trimCtx.strokeStyle = '#22c55e';
+          trimCtx.lineWidth = 1;
+          trimCtx.strokeRect(c.x, c.y, c.w, c.h);
+          trimCtx.fillStyle = '#22c55e';
+          trimCtx.font = '10px monospace';
+          trimCtx.fillText(`#${i}`, c.x, c.y - 2);
+        });
+
+        // 特徴量抽出
+        currentFeatures = comps.map(c => extractDigitFeatures(trimResult.bin, trimResult.w, trimResult.h, c));
+
+        // テーブル & ラベル入力を生成
+        const tbody = document.querySelector('#comp-table tbody');
+        tbody.innerHTML = '';
+        const labelDiv = document.getElementById('label-inputs');
+        labelDiv.innerHTML = '<b>各コンポーネントのラベル（実際の文字）を入力:</b><br>';
+
+        comps.forEach((c, i) => {
+          const f = currentFeatures[i];
+          const row = tbody.insertRow();
+          row.innerHTML = `<td>${i}</td><td>(${c.x},${c.y})</td><td>${c.w}x${c.h}</td>
+            <td><input type="text" id="label-${i}" value="" maxlength="1" style="width:30px;background:#0a0a1a;color:#22c55e;border:1px solid #444;text-align:center;font-size:16px;"></td>
+            <td style="font-size:11px">[${f.h.join(', ')}]</td>
+            <td style="font-size:11px">[${f.v.join(', ')}]</td>
+            <td style="font-size:11px">[${f.q.join(', ')}]</td>`;
+
+          const labelInput = document.createElement('span');
+          labelInput.innerHTML = `#${i}: <input type="text" id="label-top-${i}" value="" maxlength="1" 
+            style="width:24px;background:#0a0a1a;color:#22c55e;border:1px solid #444;text-align:center;font-size:14px;"
+            oninput="document.getElementById('label-${i}').value=this.value"> `;
+          labelDiv.appendChild(labelInput);
+        });
+
+        document.getElementById('results').style.display = 'block';
+      };
+      img.src = URL.createObjectURL(file);
+    }
+
+    function generateOutput() {
+      const templates = {};
+      currentComps.forEach((c, i) => {
+        const label = document.getElementById(`label-${i}`)?.value || document.getElementById(`label-top-${i}`)?.value;
+        if (!label) return;
+        const f = currentFeatures[i];
+        if (templates[label]) {
+          const existing = templates[label];
+          existing.count++;
+          for (let j = 0; j < 8; j++) {
+            existing.h[j] += f.h[j];
+            existing.v[j] += f.v[j];
+          }
+          for (let j = 0; j < 4; j++) {
+            existing.q[j] += f.q[j];
+          }
+        } else {
+          templates[label] = { h: [...f.h], v: [...f.v], q: [...f.q], count: 1 };
+        }
+      });
+
+      // 平均化して出力
+      const lines = ['export const DIGIT_TEMPLATES = {'];
+      for (const [char, t] of Object.entries(templates).sort((a,b) => a[0].localeCompare(b[0]))) {
+        const h = t.h.map(v => Math.round(v / t.count));
+        const v = t.v.map(v => Math.round(v / t.count));
+        const q = t.q.map(v => Math.round(v / t.count));
+        lines.push(`  "${char}": { h: [${h.join(', ')}], v: [${v.join(', ')}], q: [${q.join(', ')}] },`);
+      }
+      lines.push('  ".": { h: [0, 0, 0, 0, 0, 0, 8, 8], v: [0, 0, 0, 0, 0, 0, 0, 0], q: [0, 0, 20, 20] } // Dot for decimals');
+      lines.push('};');
+      document.getElementById('output').value = lines.join('\n');
+    }
+
+    function copyOutput() {
+      const ta = document.getElementById('output');
+      ta.select();
+      document.execCommand('copy');
+      alert('コピーしました！');
+    }
+  </script>
+</body>
+</html>
