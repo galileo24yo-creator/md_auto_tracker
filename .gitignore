@@ -11,6 +11,13 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
+/public/templates/
+*.png
+*.jpg
+*.jpeg
+*.webp
+
 
 # Editor directories and files
 .vscode/*

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { MonitorUp, Square, Save, Loader2, Sparkles, ScanText, RotateCcw, ShieldCheck, AlertCircle, PlayCircle, Trophy, Activity, Lock, Eye, EyeOff } from 'lucide-react';
+import { MonitorUp, Square, Save, Loader2, Sparkles, ScanText, RotateCcw, ShieldCheck, AlertCircle, PlayCircle, Trophy, Activity, Lock, LockOpen, Eye, EyeOff } from 'lucide-react';
 import DeckSelect from './DeckSelect';
 import { postData } from '../lib/api';
 import { fuzzyIncludes } from '../lib/utils';
@@ -19,13 +19,19 @@ const TEMPLATES = {
   "9": { h: [32, 17, 15, 32, 29, 18, 20, 32], v: [27, 32, 20, 17, 17, 21, 32, 22] },
 };
 
-export default function Recorder({ availableDecks, onRecorded }) {
+export default function Recorder({ availableDecks, availableTags, onRecorded }) {
   const [stream, setStream] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [mode, setMode] = useState('ランク');
   const [myDecks, setMyDecks] = useState([]);
   const [oppDecks, setOppDecks] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  
+  // Slot Persistence (Lock)
+  const [isMyDeckLocked, setIsMyDeckLocked] = useState(true);
+  const [isOpponentDeckLocked, setIsOpponentDeckLocked] = useState(false);
+  const [isTagsLocked, setIsTagsLocked] = useState(false);
 
   // Data Slots
   const [turn, setTurn] = useState('');
@@ -103,9 +109,15 @@ export default function Recorder({ availableDecks, onRecorded }) {
     setResult(''); setIsResultLocked(false);
     setDiff(''); setRatingChange(''); setIsDiffLocked(false);
     setTurnScore(null); setResultScore(null);
+    
+    // Lockの状態に応じてリセット
+    if (!isMyDeckLocked) setMyDecks([]);
+    if (!isOpponentDeckLocked) setOppDecks([]);
+    if (!isTagsLocked) setSelectedTags([]);
+    
     setCurrentState(STATES.DETECTING_TURN); // 次の試合の検知を自動開始
     setOcrLog("スロットリセット → 次の試合待機中");
-  }, []);
+  }, [isMyDeckLocked, isOpponentDeckLocked, isTagsLocked]);
 
   const saveMatch = useCallback(async (dataOverride = null) => {
     if (isProcessing) return;
@@ -113,7 +125,8 @@ export default function Recorder({ availableDecks, onRecorded }) {
       mode, turn, result,
       myDeck: myDecks.join(', '),
       opponentDeck: oppDecks.join(', '),
-      diff
+      diff,
+      memo: selectedTags.join(', ')
     };
 
     // Minimum requirement: Turn or Result must exist
@@ -130,7 +143,7 @@ export default function Recorder({ availableDecks, onRecorded }) {
       onRecorded();
     }
     setIsProcessing(false);
-  }, [mode, turn, result, diff, myDecks, oppDecks, lastRating, onRecorded, resetSlots, isProcessing]);
+  }, [mode, turn, result, diff, myDecks, oppDecks, selectedTags, lastRating, onRecorded, resetSlots, isProcessing]);
 
   // --- 認識ロジック本体（キャプチャ＋OCRを逐次実行） ---
   const captureAndAnalyze = useCallback(async () => {
@@ -140,16 +153,20 @@ export default function Recorder({ availableDecks, onRecorded }) {
     const vw = v.videoWidth, vh = v.videoHeight;
     const { isTurnLocked: tLock, isResultLocked: rLock, mode: curMode } = slotsRef.current;
 
-    const scheduleSaveMatch = (overrides) => {
-      setTimeout(() => {
-        const cur = slotsRef.current;
-        saveMatch({
-          mode: cur.mode, turn: cur.turn, result: cur.result, diff: cur.diff,
-          myDeck: cur.myDecks.join(', '),
-          opponentDeck: cur.oppDecks.join(', '),
-          ...overrides
-        });
-      }, 2000);
+    const triggerAutoSaveForNextMatch = async (curSlots) => {
+      if (!curSlots.turn && !curSlots.result) return;
+      const finalData = {
+        mode: curSlots.mode, turn: curSlots.turn, result: curSlots.result, diff: curSlots.diff,
+        myDeck: curSlots.myDecks.join(', '),
+        opponentDeck: curSlots.oppDecks.join(', '),
+        memo: selectedTags.join(', ')
+      };
+      const res = await postData(finalData);
+      if (res?.success) {
+        if (finalData.result === 'VICTORY') { setShowCelebration(true); setTimeout(() => setShowCelebration(false), 3000); }
+        setLastRating(parseFloat(finalData.diff) || lastRating);
+        onRecorded();
+      }
     };
 
     const PREV_W = 320, PREV_H = 180;
@@ -159,8 +176,8 @@ export default function Recorder({ availableDecks, onRecorded }) {
     const { jpn, eng } = workersRef.current;
 
     try {
-      if (currentState === STATES.DETECTING_TURN && !tLock) {
-        setOcrLog("ターン検知中...");
+      if ((currentState === STATES.DETECTING_TURN && !tLock) || currentState === STATES.NEXT_MATCH_STANDBY) {
+        setOcrLog(currentState === STATES.NEXT_MATCH_STANDBY ? "終了待機・次試合検知中..." : "ターン検知中...");
         const roi = ROIS.TURN;
         const { bin, width, height, bbox } = normalizeContent(v, vw * roi.x, vh * roi.y, vw * roi.w, vh * roi.h, 200, 60, 160);
         detectedBboxRef.current = { ...bbox, roiName: 'TURN' };
@@ -183,13 +200,24 @@ export default function Recorder({ availableDecks, onRecorded }) {
 
             const matchesTurnPhrase = fuzzyIncludes(cleanText, 'あなたが先攻です', 2) || fuzzyIncludes(cleanText, 'あなたが後攻です', 2);
             if (matchesTurnPhrase && confidence > 40) {
-              if (cleanText.includes('先') && !cleanText.includes('後')) {
-                setTurn('先'); setIsTurnLocked(true);
-                setOcrLog(`ターン確定: 先攻`);
-                setCurrentState(STATES.IN_MATCH);
-              } else if (cleanText.includes('後') && !cleanText.includes('先')) {
-                setTurn('後'); setIsTurnLocked(true);
-                setOcrLog(`ターン確定: 後攻`);
+              let detectedTurn = null;
+              if (cleanText.includes('先') && !cleanText.includes('後')) detectedTurn = '先';
+              else if (cleanText.includes('後') && !cleanText.includes('先')) detectedTurn = '後';
+
+              if (detectedTurn) {
+                if (currentState === STATES.NEXT_MATCH_STANDBY) {
+                  const cur = slotsRef.current;
+                  if (cur.turn || cur.result) triggerAutoSaveForNextMatch(cur);
+                  
+                  setResult(''); setIsResultLocked(false);
+                  setDiff(''); setRatingChange(''); setIsDiffLocked(false);
+                  setResultScore(null); setTurnScore(null);
+                  setOcrLog(`自動保存＆ターン確定: ${detectedTurn}攻`);
+                } else {
+                  setOcrLog(`ターン確定: ${detectedTurn}攻`);
+                }
+                
+                setTurn(detectedTurn); setIsTurnLocked(true);
                 setCurrentState(STATES.IN_MATCH);
               }
             }
@@ -225,11 +253,11 @@ export default function Recorder({ availableDecks, onRecorded }) {
             if (isVictory && confidence > 50) {
               setResult('VICTORY'); setIsResultLocked(true);
               setOcrLog(`勝敗確定: VICTORY`);
-              if (curMode === 'ランク') { setCurrentState(STATES.RECORDING); scheduleSaveMatch({ result: 'VICTORY' }); } else { setCurrentState(STATES.DETECTING_RATING); }
+              if (curMode === 'ランク') { setCurrentState(STATES.NEXT_MATCH_STANDBY); } else { setCurrentState(STATES.DETECTING_RATING); }
             } else if (isDefeat && confidence > 50) {
               setResult('DEFEAT'); setIsResultLocked(true);
               setOcrLog(`勝敗確定: DEFEAT`);
-              if (curMode === 'ランク') { setCurrentState(STATES.RECORDING); scheduleSaveMatch({ result: 'DEFEAT' }); } else { setCurrentState(STATES.DETECTING_RATING); }
+              if (curMode === 'ランク') { setCurrentState(STATES.NEXT_MATCH_STANDBY); } else { setCurrentState(STATES.DETECTING_RATING); }
             }
           }
         } else {
@@ -237,11 +265,11 @@ export default function Recorder({ availableDecks, onRecorded }) {
         }
       }
 
-      // --- RATING デバッグ: 常時スキャン ---
-      {
-        const ratingRoi = ROIS.RATING;
+      // --- RATING / DC デバッグ: 常時スキャン (オフ) ---
+      if (currentState === STATES.DETECTING_RATING) {
+        const ratingRoi = curMode === 'DC' ? ROIS.DC_POINTS : ROIS.RATING;
         const targetW = 300, targetH = 100;
-        const id = getROIData(ctx, v, ROIS.RATING, targetW, targetH);
+        const id = getROIData(ctx, v, ratingRoi, targetW, targetH);
 
         if (debugRoiCanvasRef.current && debugTemplateCanvasRef.current) {
           debugRoiCanvasRef.current.width = targetW;
@@ -296,11 +324,11 @@ export default function Recorder({ availableDecks, onRecorded }) {
         if (currentState === STATES.DETECTING_RATING && !isDiffLocked) {
           const detected = debugResult.result;
           if (detected && detected.length >= 4) {
-            const formatted = (parseFloat(detected) / 100).toFixed(2);
+            const isDC = curMode === 'DC';
+            const formatted = isDC ? detected.replace(/\./g, '') : (parseFloat(detected) / 100).toFixed(2);
             setDiff(formatted); setRatingChange(formatted); setIsDiffLocked(true);
-            setOcrLog(`レート取得: ${formatted}`);
-            setCurrentState(STATES.RECORDING);
-            scheduleSaveMatch({ diff: formatted });
+            setOcrLog(`ポイント取得 (${isDC ? 'DC' : 'Rate'}): ${formatted}`);
+            setCurrentState(STATES.NEXT_MATCH_STANDBY);
           }
         }
       }
@@ -365,6 +393,24 @@ export default function Recorder({ availableDecks, onRecorded }) {
     isBusyRef.current = false;
   };
 
+  // キーボードショートカットの実装 (関数の初期化後に配置)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+      const key = e.key.toUpperCase();
+      if (key === 'S') { e.preventDefault(); saveMatch(); }
+      else if (key === 'R') { e.preventDefault(); resetSlots(); }
+      else if (key === 'V') { e.preventDefault(); if (stream) stopCapture(); else startCapture(); }
+      else if (key === 'M') { e.preventDefault(); setIsMyDeckLocked(prev => !prev); }
+      else if (key === 'K') { e.preventDefault(); setIsOpponentDeckLocked(prev => !prev); }
+      else if (key === 'T') { e.preventDefault(); setIsTagsLocked(prev => !prev); }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [stream, saveMatch, resetSlots, startCapture, stopCapture]);
+
   return (
     <div className="space-y-6">
       {showCelebration && (
@@ -402,7 +448,11 @@ export default function Recorder({ availableDecks, onRecorded }) {
               <Activity className="w-5 h-5 text-indigo-400" /> Slot-Filling Engine
             </h3>
             <div className="flex gap-2">
-              <button onClick={resetSlots} className="text-[10px] px-2 py-1 bg-zinc-900 border border-zinc-700 rounded text-zinc-400 hover:text-white flex items-center gap-1">
+              <button 
+                onClick={resetSlots} 
+                className="text-[10px] px-2 py-1 bg-zinc-900 border border-zinc-700 rounded text-zinc-400 hover:text-white flex items-center gap-1 transition-colors"
+                title="スロットをリセット [R]"
+              >
                 <RotateCcw className="w-3 h-3" /> Reset
               </button>
               <span className="text-xs px-3 py-1 bg-zinc-900 border border-zinc-700 rounded-full text-emerald-400 font-mono font-bold">{ocrLog}</span>
@@ -467,7 +517,8 @@ export default function Recorder({ availableDecks, onRecorded }) {
               <button
                 onClick={() => saveMatch()}
                 disabled={isProcessing || !turn || !result}
-                className="col-span-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3 shadow-lg text-lg"
+                className="col-span-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3 shadow-lg text-lg active:scale-[0.98]"
+                title="記録を保存してリセット [S]"
               >
                 {isProcessing ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />} Submit Record
               </button>
@@ -478,11 +529,11 @@ export default function Recorder({ availableDecks, onRecorded }) {
 
       <div className="flex gap-4">
         {!isRecording ? (
-          <button onClick={startCapture} className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-5 rounded-xl font-bold transition-all shadow-lg text-xl flex items-center justify-center gap-3">
+          <button onClick={startCapture} className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-5 rounded-xl font-bold transition-all shadow-lg text-xl flex items-center justify-center gap-3 active:scale-[0.98]" title="キャプチャを開始 [V]">
             <PlayCircle className="w-7 h-7" /> Launch Vision Flow
           </button>
         ) : (
-          <button onClick={stopCapture} className="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-5 rounded-xl font-bold transition-all shadow-lg text-xl flex items-center justify-center gap-3">
+          <button onClick={stopCapture} className="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-5 rounded-xl font-bold transition-all shadow-lg text-xl flex items-center justify-center gap-3 active:scale-[0.98]" title="キャプチャを停止 [V]">
             <Square className="w-7 h-7" /> Stop Flow
           </button>
         )}
@@ -496,8 +547,44 @@ export default function Recorder({ availableDecks, onRecorded }) {
               <option value="レート戦">Rating Match (Points Scan)</option>
               <option value="DC">DC / Event (Points Scan)</option>
             </select>
-            <DeckSelect availableDecks={availableDecks} onChange={setMyDecks} selectedDecks={myDecks} placeholder="Select My Deck" />
-            <DeckSelect availableDecks={availableDecks} onChange={setOppDecks} selectedDecks={oppDecks} placeholder="Select Opponent Deck" />
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <DeckSelect availableDecks={availableDecks} onChange={setMyDecks} selectedDecks={myDecks} placeholder="Select My Deck" />
+              </div>
+              <button 
+                onClick={() => setIsMyDeckLocked(!isMyDeckLocked)}
+                className={`p-2 rounded-lg border transition ${isMyDeckLocked ? "bg-indigo-500/20 border-indigo-500 text-indigo-400" : "bg-zinc-800 text-zinc-600 border-zinc-700 hover:text-zinc-400"}`}
+                title="自分のデッキを保持する [M]"
+              >
+                {isMyDeckLocked ? <Lock className="w-4 h-4" /> : <LockOpen className="w-4 h-4" />}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <DeckSelect availableDecks={availableDecks} onChange={setOppDecks} selectedDecks={oppDecks} placeholder="Select Opponent Deck" />
+              </div>
+              <button 
+                onClick={() => setIsOpponentDeckLocked(!isOpponentDeckLocked)}
+                className={`p-2 rounded-lg border transition ${isOpponentDeckLocked ? "bg-indigo-500/20 border-indigo-500 text-indigo-400" : "bg-zinc-800 text-zinc-600 border-zinc-700 hover:text-zinc-400"}`}
+                title="対戦相手のデッキを保持する [K]"
+              >
+                {isOpponentDeckLocked ? <Lock className="w-4 h-4" /> : <LockOpen className="w-4 h-4" />}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <DeckSelect availableDecks={availableTags} onChange={setSelectedTags} selectedDecks={selectedTags} placeholder="記録する要因 (プレミ, 事故等)" />
+              </div>
+              <button 
+                onClick={() => setIsTagsLocked(!isTagsLocked)}
+                className={`p-2 rounded-lg border transition ${isTagsLocked ? "bg-indigo-500/20 border-indigo-500 text-indigo-400" : "bg-zinc-800 text-zinc-600 border-zinc-700 hover:text-zinc-400"}`}
+                title="記載した要因を保持する [T]"
+              >
+                {isTagsLocked ? <Lock className="w-4 h-4" /> : <LockOpen className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
           <div className="space-y-4">
             <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 shadow-inner text-center">

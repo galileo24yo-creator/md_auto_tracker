@@ -7,7 +7,8 @@
 export const ROIS = {
   TURN: { x: 0.35, y: 0.63, w: 0.30, h: 0.08 },    // あなたが先攻/後攻です (縦横にタイト)
   RESULT: { x: 0.10, y: 0.35, w: 0.80, h: 0.30 },  // VICTORY/DEFEAT (画面中央大きく)
-  RATING: { x: 0.57, y: 0.52, w: 0.14, h: 0.08 }   // Rating Result Value (画面中央右側)
+  RATING: { x: 0.57, y: 0.52, w: 0.14, h: 0.08 },   // Rating Result Value (画面中央右側)
+  DC_POINTS: { x: 0.57, y: 0.52, w: 0.16, h: 0.08 } // DC Points (桁数増加に備えて少し広く設定)
 };
 
 export const DIGIT_TEMPLATES = {
@@ -445,5 +446,6 @@ export const STATES = {
   IN_MATCH: 'IN_MATCH',
   DETECTING_RESULT: 'DETECTING_RESULT',
   DETECTING_RATING: 'DETECTING_RATING',
+  NEXT_MATCH_STANDBY: 'NEXT_MATCH_STANDBY',
   RECORDING: 'RECORDING'
 };
