@@ -64,6 +64,7 @@ function doGet(e) {
     const lastRow = dataSheet.getLastRow();
     if (lastRow > 1) {
       const getRows = Math.min(lastRow - 1, 1000);
+      // getDisplayValues を使用して表示文字列のまま取得
       const values = dataSheet.getRange(lastRow - getRows + 1, 1, getRows, 8).getDisplayValues();
       records = values.map(row => ({
         date: row[0],
@@ -91,24 +92,84 @@ function doPost(e) {
   try {
     const payload = JSON.parse(e.postData.contents);
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let dataSheet = ss.getSheetByName(SHEET_DATA_NAME);
+    // --- アクションの分岐 ---
     
-    if (payload.id) {
+    // 1. 設定（マスタデータ）の更新
+    if (payload.action === 'UPDATE_SETTINGS') {
+      const settingsSheet = ss.getSheetByName(SHEET_SETTINGS_NAME);
+      if (!settingsSheet) return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Settings sheet not found" })).setMimeType(ContentService.MimeType.JSON);
+      
+      settingsSheet.clear();
+      settingsSheet.appendRow(["デッキリスト (A列)", "要因リスト (B列)"]);
+      settingsSheet.getRange("A1:B1").setFontWeight("bold").setBackground("#fff2cc");
+      
+      const newDecks = payload.decks || [];
+      const newReasons = payload.reasons || [];
+      const maxLen = Math.max(newDecks.length, newReasons.length);
+      
+      if (maxLen > 0) {
+        const rows = [];
+        for (let i = 0; i < maxLen; i++) {
+          rows.push([newDecks[i] || "", newReasons[i] || ""]);
+        }
+        settingsSheet.getRange(2, 1, rows.length, 2).setValues(rows);
+      }
+      
+      return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Settings updated" })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 2. 記録の削除
+    if (payload.action === 'DELETE_RECORD') {
+      const dataSheet = ss.getSheetByName(SHEET_DATA_NAME);
+      if (!dataSheet) return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Data sheet not found" })).setMimeType(ContentService.MimeType.JSON);
+      
       const data = dataSheet.getDataRange().getDisplayValues();
+      const searchId = String(payload.id || "").trim();
       let rowIndex = -1;
-      const searchId = String(payload.id).trim();
       
       for (let i = 1; i < data.length; i++) {
-        const sheetTime = String(data[i][0]).trim();
-        if (sheetTime === searchId) {
+        const sheetId = String(data[i][0] || "").trim();
+        if (sheetId === searchId) {
           rowIndex = i + 1;
           break;
         }
       }
       
       if (rowIndex !== -1) {
+        dataSheet.deleteRow(rowIndex);
+        return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Record deleted" })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      // デバッグ用: シートの最初の数行のIDをエラーに含める
+      const sampleIds = data.slice(1, 4).map(r => r[0]).join(", ");
+      return ContentService.createTextOutput(JSON.stringify({ 
+        success: false, 
+        error: "Record not found. Searched ID: [" + searchId + "]. Sample IDs in sheet: [" + sampleIds + "]"
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 既存の「更新」または「新規追記」ロジック (後続の処理)
+    let dataSheet = ss.getSheetByName(SHEET_DATA_NAME);
+    
+    // 更新モード（payload.id があり、action指定がない場合）
+    if (payload.id) {
+      const data = dataSheet.getDataRange().getDisplayValues();
+      let rowIndex = -1;
+      const searchId = String(payload.id).trim();
+      
+      // A列を上から検索して日時が一致するものを探す
+      for (let i = 1; i < data.length; i++) {
+        const sheetTime = String(data[i][0]).trim();
+        if (sheetTime === searchId) {
+          rowIndex = i + 1; // 1-indexed
+          break;
+        }
+      }
+      
+      if (rowIndex !== -1) {
+        // 行の更新 (指定されたセル範囲を書き換え)
         const rowData = [
-          payload.id,
+          payload.id, // 日時は絶対に変えない
           payload.mode || "未分類",
           payload.turn || "不明",
           payload.result || "不明",
@@ -124,13 +185,15 @@ function doPost(e) {
           message: "Data updated successfully"
         })).setMimeType(ContentService.MimeType.JSON);
       } else {
+        // IDが指定されているのに見つからなかった場合（重複防止のため新規追記せずエラーにする）
         return ContentService.createTextOutput(JSON.stringify({
           success: false,
-          error: "Original record was not found."
+          error: "Original record was not found. Please refresh the dashboard and try again. (ID: " + searchId + ")"
         })).setMimeType(ContentService.MimeType.JSON);
       }
     }
 
+    // 新規追記モード (payload.id がない場合のみ実行)
     const timestamp = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss");
     dataSheet.appendRow([
       timestamp,
@@ -146,7 +209,7 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
       message: "Data recorded successfully",
-      id: timestamp
+      id: timestamp // 追加された日時を返す
     })).setMimeType(ContentService.MimeType.JSON);
     
   } catch (err) {
@@ -157,6 +220,7 @@ function doPost(e) {
   }
 }
 
+// CORSエラー回避用 (Preflight OPTIONSリクエストへの対応)
 function doOptions(e) {
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -166,7 +230,8 @@ function doOptions(e) {
   return ContentService.createTextOutput("OK")
     .setMimeType(ContentService.MimeType.TEXT)
     .setHeaders(headers);
-}`;
+}
+`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(gasCode);
@@ -175,7 +240,7 @@ function doOptions(e) {
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-zinc-950/90 backdrop-blur-xl animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-zinc-950/95 animate-in fade-in duration-300">
       <div 
         className="w-full max-w-4xl max-h-[90vh] bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col animate-in zoom-in-95 duration-300"
         onClick={(e) => e.stopPropagation()}

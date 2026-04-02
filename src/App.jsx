@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Loader2, RefreshCw, Settings, X, Save, HelpCircle, Database } from 'lucide-react';
-import { fetchData, getGasUrl } from './lib/api';
+import { Loader2, RefreshCw, Settings, X, Save, HelpCircle, Database, Pencil, Trash2, Plus, Check } from 'lucide-react';
+import { fetchData, getGasUrl, getProfiles, getActiveProfile, saveProfiles } from './lib/api';
 import Dashboard from './components/Dashboard';
 import Recorder from './components/Recorder';
 import SetupGuide from './components/SetupGuide';
@@ -13,7 +13,14 @@ function App() {
   const [error, setError] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showSetupGuide, setShowSetupGuide] = useState(false);
-  const [tempUrl, setTempUrl] = useState(getGasUrl());
+  
+  // Profiles State
+  const [profiles, setProfiles] = useState(getProfiles());
+  const [activeProfile, setActiveProfile] = useState(getActiveProfile());
+  const [editingProfileId, setEditingProfileId] = useState(null);
+  const [editName, setEditName] = useState('');
+  const [editUrl, setEditUrl] = useState('');
+  const [editSheetUrl, setEditSheetUrl] = useState('');
 
   const loadData = async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -36,13 +43,67 @@ function App() {
     setRefreshing(false);
   };
 
-  const saveUrl = () => {
-    localStorage.setItem('md_gas_url', tempUrl);
+  const handleAddProfile = () => {
+    const newProfile = { id: Date.now().toString(), name: 'New Profile', url: '' };
+    const updated = [...profiles, newProfile];
+    setProfiles(updated);
+    saveProfiles(updated, activeProfile?.id);
+    startEditing(newProfile);
+  };
+
+  const startEditing = (p) => {
+    setEditingProfileId(p.id);
+    setEditName(p.name);
+    setEditUrl(p.url);
+    setEditSheetUrl(p.sheetUrl || '');
+  };
+
+  const handleSaveProfile = () => {
+    const updated = profiles.map(p => 
+      p.id === editingProfileId ? { ...p, name: editName, url: editUrl, sheetUrl: editSheetUrl } : p
+    );
+    setProfiles(updated);
+    saveProfiles(updated, activeProfile?.id);
+    
+    // If the saved profile is the active one, update activeProfile state too
+    if (activeProfile?.id === editingProfileId) {
+      setActiveProfile(updated.find(p => p.id === editingProfileId));
+    }
+    
+    setEditingProfileId(null);
+  };
+
+  const handleDeleteProfile = (id) => {
+    if (!window.confirm("この設定を削除しますか？")) return;
+    const updated = profiles.filter(p => p.id !== id);
+    setProfiles(updated);
+    
+    let nextActiveId = activeProfile?.id;
+    if (activeProfile?.id === id) {
+      nextActiveId = updated.length > 0 ? updated[0].id : null;
+      setActiveProfile(updated.length > 0 ? updated[0] : null);
+    }
+    saveProfiles(updated, nextActiveId);
+  };
+
+  const handleSwitchProfile = (p) => {
+    setActiveProfile(p);
+    saveProfiles(profiles, p.id);
     setShowSettings(false);
     loadData(true);
   };
 
   useEffect(() => {
+    // Initial profile migration if necessary
+    const legacyUrl = localStorage.getItem('md_gas_url');
+    if (legacyUrl && profiles.length === 0) {
+      const initialProfile = { id: 'default', name: 'Default Profile', url: legacyUrl };
+      const initialList = [initialProfile];
+      setProfiles(initialList);
+      setActiveProfile(initialProfile);
+      saveProfiles(initialList, 'default');
+      localStorage.removeItem('md_gas_url');
+    }
     loadData();
   }, []);
 
@@ -53,7 +114,14 @@ function App() {
           <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
             MD Tracker
           </h1>
-          <p className="text-zinc-500 text-sm mt-1">Automated Match Analytics for Master Duel</p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-zinc-500 text-sm">Automated Match Analytics for Master Duel</p>
+            {activeProfile && (
+              <span className="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 text-[10px] text-indigo-400 font-bold rounded-full uppercase">
+                Profile: {activeProfile.name}
+              </span>
+            )}
+          </div>
         </div>
         
         <div className="flex items-center gap-3">
@@ -78,17 +146,17 @@ function App() {
       
       {showSettings && (
         <div className="max-w-[1600px] mx-auto mb-8 animate-in slide-in-from-top-4 duration-300">
-          <div className="bg-zinc-800/40 backdrop-blur-md border border-indigo-500/30 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+          <div className="bg-zinc-800/80 border border-indigo-500/30 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500/50" />
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <Settings className="w-5 h-5 text-indigo-400" />
-                Backend Connection Settings
+                <Database className="w-5 h-5 text-indigo-400" />
+                Connection Profiles
               </h3>
               <div className="flex items-center gap-3">
                 <button 
                   onClick={() => setShowSetupGuide(true)}
-                  className="px-3 py-1.5 bg-indigo-500 hover:bg-indigo-400 text-white rounded-lg text-xs font-bold flex items-center gap-2 transition"
+                  className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-xs font-bold flex items-center gap-2 transition"
                 >
                   <HelpCircle className="w-3.5 h-3.5" /> Setup Guide
                 </button>
@@ -99,26 +167,74 @@ function App() {
             </div>
             
             <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Google Apps Script WebApp URL</label>
-                <div className="flex gap-2">
-                  <input 
-                    type="text" 
-                    value={tempUrl}
-                    onChange={(e) => setTempUrl(e.target.value)}
-                    placeholder="https://script.google.com/macros/s/.../exec"
-                    className="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-sm font-mono text-zinc-300 outline-none focus:ring-1 focus:ring-indigo-500 transition"
-                  />
-                  <button 
-                    onClick={saveUrl}
-                    className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {profiles.map(p => (
+                  <div 
+                    key={p.id} 
+                    className={`p-4 rounded-xl border transition-all cursor-pointer relative group ${activeProfile?.id === p.id ? 'bg-indigo-500/10 border-indigo-500' : 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700'}`}
+                    onClick={() => editingProfileId !== p.id && handleSwitchProfile(p)}
                   >
-                    <Save className="w-4 h-4" /> Save
-                  </button>
-                </div>
-                <p className="mt-3 text-[11px] text-zinc-500 leading-relaxed italic">
-                  ※GASで「新しいデプロイ」を行った際は、発行された新しいURLに書き換えてください。
-                </p>
+                    {editingProfileId === p.id ? (
+                      <div className="space-y-3" onClick={e => e.stopPropagation()}>
+                        <input 
+                          value={editName}
+                          onChange={e => setEditName(e.target.value)}
+                          className="w-full bg-zinc-950 border border-zinc-800 rounded px-2 py-1 text-xs text-white outline-none focus:ring-1 focus:ring-indigo-500"
+                          placeholder="Profile Name"
+                        />
+                        <input 
+                          value={editUrl}
+                          onChange={e => setEditUrl(e.target.value)}
+                          className="w-full bg-zinc-950 border border-zinc-800 rounded px-2 py-1 text-[10px] font-mono text-zinc-400 outline-none focus:ring-1 focus:ring-indigo-500"
+                          placeholder="GAS WebApp URL"
+                        />
+                        <input 
+                          value={editSheetUrl || ''}
+                          onChange={e => setEditSheetUrl(e.target.value)}
+                          className="w-full bg-zinc-950 border border-zinc-800 rounded px-2 py-1 text-[10px] font-mono text-zinc-400 outline-none focus:ring-1 focus:ring-indigo-500"
+                          placeholder="Spreadsheet URL (Optional)"
+                        />
+                        <div className="flex gap-2">
+                          <button onClick={handleSaveProfile} className="flex-1 bg-indigo-600 text-white py-1 rounded text-[10px] font-bold flex items-center justify-center gap-1">
+                            <Check className="w-3 h-3" /> Save
+                          </button>
+                          <button onClick={() => setEditingProfileId(null)} className="flex-1 bg-zinc-800 text-zinc-400 py-1 rounded text-[10px] font-bold">Cancel</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-bold text-sm text-zinc-200">{p.name}</span>
+                          {activeProfile?.id === p.id && (
+                            <span className="bg-indigo-500 text-white text-[8px] px-1.5 py-0.5 rounded font-black">ACTIVE</span>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-zinc-500 font-mono truncate mb-3">{p.url || 'URL not set'}</div>
+                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); startEditing(p); }}
+                            className="bg-zinc-800 hover:bg-zinc-700 text-zinc-400 p-1.5 rounded transition"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleDeleteProfile(p.id); }}
+                            className="bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white p-1.5 rounded transition"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+                <button 
+                  onClick={handleAddProfile}
+                  className="p-4 rounded-xl border border-dashed border-zinc-800 hover:border-indigo-500/50 hover:bg-indigo-500/5 text-zinc-500 hover:text-indigo-400 transition-all flex flex-col items-center justify-center gap-2 group"
+                >
+                  <Plus className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-bold">Add New Profile</span>
+                </button>
               </div>
             </div>
           </div>
@@ -127,7 +243,7 @@ function App() {
       
       <main className="max-w-[1600px] mx-auto grid grid-cols-1 xl:grid-cols-5 gap-8">
         {/* Left Column: Recording and Configuration (Increased width to 40%) */}
-        <div className="xl:col-span-2 border border-white/5 bg-slate-900/40 backdrop-blur-xl rounded-2xl p-6 shadow-2xl ring-1 ring-white/10">
+        <div className="xl:col-span-2 border border-white/5 bg-slate-900/80 rounded-2xl p-6 shadow-2xl ring-1 ring-white/10">
           <Recorder 
             availableDecks={data.decks} 
             availableTags={data.reasons} 
@@ -136,7 +252,7 @@ function App() {
         </div>
 
         {/* Right Column: Dashboard (60% width) */}
-        <div className="xl:col-span-3 border border-white/5 bg-slate-900/40 backdrop-blur-xl rounded-2xl p-6 shadow-2xl ring-1 ring-white/10">
+        <div className="xl:col-span-3 border border-white/5 bg-slate-900/80 rounded-2xl p-6 shadow-2xl ring-1 ring-white/10">
           {loading ? (
             <div className="h-64 flex flex-col items-center justify-center text-zinc-500">
               <Loader2 className="w-8 h-8 animate-spin mb-4 text-indigo-500" />
@@ -168,6 +284,7 @@ function App() {
               onRefresh={() => loadData(true)} 
               decks={data.decks}
               reasons={data.reasons}
+              activeProfile={activeProfile}
             />
           )}
         </div>

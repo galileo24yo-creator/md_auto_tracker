@@ -19,6 +19,32 @@ const TEMPLATES = {
   "9": { h: [32, 17, 15, 32, 29, 18, 20, 32], v: [27, 32, 20, 17, 17, 21, 32, 22] },
 };
 
+// ==========================================
+// Sound Effects (Web Audio API)
+// ==========================================
+let audioCtx = null;
+const playNotificationSound = (type = 'single') => {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    const now = audioCtx.currentTime;
+    if (type === 'double') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(880, now);
+      gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      osc.frequency.setValueAtTime(1200, now + 0.12);
+      gain.gain.setValueAtTime(0.1, now + 0.12); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.start(now); osc.stop(now + 0.3);
+    } else {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(660, now);
+      gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.start(now); osc.stop(now + 0.2);
+    }
+  } catch (e) { console.warn("Sound play failed:", e); }
+};
+
 export default function Recorder({ availableDecks, availableTags, onRecorded }) {
   const [stream, setStream] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -55,11 +81,19 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const isBusyRef = useRef(false);
 
   const [lastRating, setLastRating] = useState(null);
+  const lastSaveTimeRef = useRef(0);
   const [ocrLog, setOcrLog] = useState('待機中');
   const [debugInfo, setDebugInfo] = useState('');
   const [showCelebration, setShowCelebration] = useState(false);
   const [showRoiOverlay, setShowRoiOverlay] = useState(true);
   const [currentState, setCurrentState] = useState(STATES.IDLE);
+  
+  // 最新のステートをループ内で参照するための Ref
+  const stateRef = useRef(currentState);
+  useEffect(() => { stateRef.current = currentState; }, [currentState]);
+
+  const recordingRef = useRef(isRecording);
+  useEffect(() => { recordingRef.current = isRecording; }, [isRecording]);
 
   // Refs for loop
   const slotsRef = useRef({ turn, result, diff, mode, isTurnLocked, isResultLocked, myDecks, oppDecks });
@@ -68,32 +102,28 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   // OCRワーカーは廃止
 
   // テンプレート画像をロード＆グレースケールバッファに変換
+  // OCRワーカーの参照
   const workersRef = useRef({ jpn: null, eng: null });
+
+  // 初期化を startCapture 時に行うよう変更
+  const initTesseract = async () => {
+    if (workersRef.current.jpn) return; // 既に起動済みなら何もしない
+    try {
+      setOcrLog('OCRワーカー起動中...');
+      const jpnWorker = await createWorker('jpn');
+      const engWorker = await createWorker('eng');
+      await jpnWorker.setParameters({ tessedit_pageseg_mode: '7' });
+      await engWorker.setParameters({ tessedit_pageseg_mode: '7' });
+      workersRef.current = { jpn: jpnWorker, eng: engWorker };
+      setOcrLog('Vision Engine (OCR) 準備完了');
+    } catch (e) {
+      console.error(e);
+      setOcrLog('OCRエラー');
+    }
+  };
+
   useEffect(() => {
-    let active = true;
-    const initTesseract = async () => {
-      try {
-        setOcrLog('OCRワーカー起動中...');
-        const jpnWorker = await createWorker('jpn');
-        const engWorker = await createWorker('eng');
-        // PSM 7 = 単一行テキストとして扱う（余計な文章認識を防ぎ、負荷を削減）
-        await jpnWorker.setParameters({ tessedit_pageseg_mode: '7' });
-        await engWorker.setParameters({ tessedit_pageseg_mode: '7' });
-        if (active) {
-          workersRef.current = { jpn: jpnWorker, eng: engWorker };
-          setOcrLog('Vision Engine (OCR) 準備完了');
-        } else {
-          await jpnWorker.terminate();
-          await engWorker.terminate();
-        }
-      } catch (e) {
-        console.error(e);
-        if (active) setOcrLog('OCRエラー');
-      }
-    };
-    initTesseract();
     return () => {
-      active = false;
       if (intervalRef.current) clearTimeout(intervalRef.current);
       if (workersRef.current.jpn) workersRef.current.jpn.terminate();
       if (workersRef.current.eng) workersRef.current.eng.terminate();
@@ -121,6 +151,14 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
 
   const saveMatch = useCallback(async (dataOverride = null) => {
     if (isProcessing) return;
+    
+    // クールタイム（二重送信防止: 2秒）
+    const now = Date.now();
+    if (now - lastSaveTimeRef.current < 2000) {
+      console.warn("Save blocked by cool-down.");
+      return;
+    }
+
     const finalData = dataOverride || {
       mode, turn, result,
       myDeck: myDecks.join(', '),
@@ -133,16 +171,25 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
     if (!finalData.turn && !finalData.result) return;
 
     setIsProcessing(true);
-    const res = await postData(finalData);
-    setIsProcessing(true); // keeps true until onRecorded finished
+    lastSaveTimeRef.current = now;
 
-    if (res?.success) {
-      if (finalData.result === 'VICTORY') { setShowCelebration(true); setTimeout(() => setShowCelebration(false), 3000); }
-      setLastRating(parseFloat(finalData.diff) || lastRating);
-      resetSlots();
-      onRecorded();
+    try {
+      const res = await postData(finalData);
+      if (res?.success) {
+        if (finalData.result === 'VICTORY') { 
+          setShowCelebration(true); 
+          setTimeout(() => setShowCelebration(false), 3000); 
+        }
+        playNotificationSound('double');
+        setLastRating(parseFloat(finalData.diff) || lastRating);
+        resetSlots();
+        onRecorded();
+      }
+    } catch (err) {
+      console.error("Save failed:", err);
+    } finally {
+      setIsProcessing(false);
     }
-    setIsProcessing(false);
   }, [mode, turn, result, diff, myDecks, oppDecks, selectedTags, lastRating, onRecorded, resetSlots, isProcessing]);
 
   // --- 認識ロジック本体（キャプチャ＋OCRを逐次実行） ---
@@ -154,18 +201,34 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
     const { isTurnLocked: tLock, isResultLocked: rLock, mode: curMode } = slotsRef.current;
 
     const triggerAutoSaveForNextMatch = async (curSlots) => {
-      if (!curSlots.turn && !curSlots.result) return;
+      if (isProcessing || (!curSlots.turn && !curSlots.result)) return;
+      
+      const now = Date.now();
+      if (now - lastSaveTimeRef.current < 2000) return;
+
       const finalData = {
         mode: curSlots.mode, turn: curSlots.turn, result: curSlots.result, diff: curSlots.diff,
         myDeck: curSlots.myDecks.join(', '),
         opponentDeck: curSlots.oppDecks.join(', '),
         memo: selectedTags.join(', ')
       };
-      const res = await postData(finalData);
-      if (res?.success) {
-        if (finalData.result === 'VICTORY') { setShowCelebration(true); setTimeout(() => setShowCelebration(false), 3000); }
-        setLastRating(parseFloat(finalData.diff) || lastRating);
-        onRecorded();
+
+      setIsProcessing(true);
+      lastSaveTimeRef.current = now;
+      
+      try {
+        const res = await postData(finalData);
+        if (res?.success) {
+          if (finalData.result === 'VICTORY') { setShowCelebration(true); setTimeout(() => setShowCelebration(false), 3000); }
+          playNotificationSound('double');
+          setLastRating(parseFloat(finalData.diff) || lastRating);
+          resetSlots(); // 確実にリセットを呼ぶ
+          onRecorded();
+        }
+      } catch (e) {
+        console.error("Auto-save failed:", e);
+      } finally {
+        setIsProcessing(false);
       }
     };
 
@@ -218,7 +281,10 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
                 }
                 
                 setTurn(detectedTurn); setIsTurnLocked(true);
-                setCurrentState(STATES.IN_MATCH);
+                const nextState = STATES.IN_MATCH;
+                setCurrentState(nextState);
+                stateRef.current = nextState;
+                playNotificationSound('single');
               }
             }
           }
@@ -253,11 +319,17 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
             if (isVictory && confidence > 50) {
               setResult('VICTORY'); setIsResultLocked(true);
               setOcrLog(`勝敗確定: VICTORY`);
-              if (curMode === 'ランク') { setCurrentState(STATES.NEXT_MATCH_STANDBY); } else { setCurrentState(STATES.DETECTING_RATING); }
+              const nextState = curMode === 'ランク' ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
+              setCurrentState(nextState);
+              stateRef.current = nextState;
+              playNotificationSound('single');
             } else if (isDefeat && confidence > 50) {
               setResult('DEFEAT'); setIsResultLocked(true);
               setOcrLog(`勝敗確定: DEFEAT`);
-              if (curMode === 'ランク') { setCurrentState(STATES.NEXT_MATCH_STANDBY); } else { setCurrentState(STATES.DETECTING_RATING); }
+              const nextState = curMode === 'ランク' ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
+              setCurrentState(nextState);
+              stateRef.current = nextState;
+              playNotificationSound('single');
             }
           }
         } else {
@@ -328,7 +400,10 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
             const formatted = isDC ? detected.replace(/\./g, '') : (parseFloat(detected) / 100).toFixed(2);
             setDiff(formatted); setRatingChange(formatted); setIsDiffLocked(true);
             setOcrLog(`ポイント取得 (${isDC ? 'DC' : 'Rate'}): ${formatted}`);
-            setCurrentState(STATES.NEXT_MATCH_STANDBY);
+            const nextState = STATES.NEXT_MATCH_STANDBY;
+            setCurrentState(nextState);
+            stateRef.current = nextState;
+            playNotificationSound('single');
           }
         }
       }
@@ -364,24 +439,65 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   currentAnalyzeRef.current = captureAndAnalyze;
 
   useEffect(() => {
-    if (!isRecording) return;
+    if (!isRecording) {
+      isBusyRef.current = false;
+      return;
+    }
+    
     let active = true;
     const loop = async () => {
-      while (active) {
-        if (currentAnalyzeRef.current) await currentAnalyzeRef.current();
-        await new Promise(r => setTimeout(r, 50));
+      while (active && recordingRef.current) {
+        // 前の処理が終わるまで待機
+        if (isBusyRef.current) {
+          await new Promise(r => setTimeout(r, 100));
+          continue;
+        }
+
+        try {
+          isBusyRef.current = true;
+          if (currentAnalyzeRef.current) {
+            await currentAnalyzeRef.current();
+          }
+        } catch (e) {
+          console.error("Loop error:", e);
+        } finally {
+          isBusyRef.current = false;
+        }
+        
+        // ステートに応じて待機時間を調整（CPU負荷軽減と応答速度のバランス）
+        const curState = stateRef.current;
+        let wait = 500; // 基本間隔を高速化
+        if (curState === STATES.IN_MATCH) wait = 800; // 試合中も1秒以下に短縮
+        if (curState === STATES.NEXT_MATCH_STANDBY) wait = 500;
+        
+        await new Promise(r => setTimeout(r, wait));
       }
     };
+
     loop();
-    return () => { active = false; };
+    return () => { 
+      active = false; 
+    };
   }, [isRecording]);
 
   const startCapture = async () => {
     try {
-      const mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "never" }, audio: false });
+      playNotificationSound(); // 音声ロック解除用
+      await initTesseract(); // 開始時に初期化
+      const mediaStream = await navigator.mediaDevices.getDisplayMedia({ 
+        video: { 
+          cursor: "never",
+          frameRate: { ideal: 10, max: 15 },
+          width: { ideal: 1280, max: 1920 },
+          height: { ideal: 720, max: 1080 }
+        }, 
+        audio: false 
+      });
       setStream(mediaStream);
       setIsRecording(true);
-      setCurrentState(STATES.DETECTING_TURN); // まずはターン検知から開始
+      const nextState = STATES.DETECTING_TURN;
+      setCurrentState(nextState);
+      stateRef.current = nextState;
       mediaStream.getVideoTracks()[0].onended = () => stopCapture();
     } catch (err) { setOcrLog("キャプチャ失敗"); }
   };
@@ -414,7 +530,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   return (
     <div className="space-y-6">
       {showCelebration && (
-        <div className="fixed inset-0 flex items-center justify-center bg-emerald-500/10 backdrop-blur-sm z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-emerald-500/10 z-50">
           <div className="bg-zinc-900 border-2 border-emerald-500 p-10 rounded-3xl shadow-2xl animate-bounce text-center">
             <Trophy className="w-16 h-16 text-yellow-500 mb-4 mx-auto" />
             <h2 className="text-3xl font-black text-emerald-400">Match Saved!</h2>

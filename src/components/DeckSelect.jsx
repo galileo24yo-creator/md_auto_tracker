@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useDeferredValue, memo } from 'react';
 import { X, Search } from 'lucide-react';
 
 const STORAGE_KEY = 'md_tracker_deck_freq';
@@ -8,6 +8,7 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
   const [isFocused, setIsFocused] = useState(false);
   const [frequencies, setFrequencies] = useState({});
   const wrapperRef = useRef(null);
+  const deferredInput = useDeferredValue(inputValue);
 
   // Load frequencies from local storage
   useEffect(() => {
@@ -40,8 +41,8 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
     let list = availableDecks.filter(d => !selectedDecks.includes(d));
     
     // 2. Filter by search input
-    if (inputValue) {
-      const lowerInput = inputValue.toLowerCase();
+    if (deferredInput) {
+      const lowerInput = deferredInput.toLowerCase();
       // ひらがな・カタカナの揺れ等も本来は対応すべきですが今回は単純な部分一致
       list = list.filter(d => d.toLowerCase().includes(lowerInput));
     }
@@ -55,12 +56,12 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
     });
 
     // 4. Add the input itself as a suggestion if it doesn't exactly match any existing
-    if (inputValue && !list.includes(inputValue) && !selectedDecks.includes(inputValue)) {
-      list.unshift(inputValue);
+    if (deferredInput && !list.includes(deferredInput) && !selectedDecks.includes(deferredInput)) {
+      list.unshift(deferredInput);
     }
     
     return list;
-  }, [availableDecks, selectedDecks, inputValue, frequencies]);
+  }, [availableDecks, selectedDecks, deferredInput, frequencies]);
 
   const handleSelect = (deck) => {
     if (!deck.trim()) return;
@@ -123,24 +124,29 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
       </div>
 
       {isFocused && (sortedSuggestions.length > 0) && (
-        <div className="absolute z-50 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl max-h-60 overflow-y-auto">
-          {sortedSuggestions.map((deck, idx) => {
-            const isNew = inputValue && deck === inputValue && !availableDecks.includes(inputValue);
+        <div className="absolute z-50 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl max-h-60 overflow-y-auto custom-scrollbar">
+          {sortedSuggestions.slice(0, 50).map((deck, idx) => {
+            const isNew = deferredInput && deck === deferredInput && !availableDecks.includes(deferredInput);
             return (
               <div
                 key={deck}
-                className="px-4 py-2 hover:bg-zinc-700 cursor-pointer text-sm text-zinc-200 flex items-center justify-between"
+                className="px-4 py-2 hover:bg-zinc-700 cursor-pointer text-sm text-zinc-200 flex items-center justify-between border-b border-zinc-700/30 last:border-0"
                 onClick={() => handleSelect(deck)}
               >
                 <span>{deck}</span>
                 {isNew ? (
                   <span className="text-xs text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded">New</span>
                 ) : (
-                  frequencies[deck] > 0 && <span className="text-xs text-zinc-500">{(frequencies[deck])} 回</span>
+                  frequencies[deck] > 0 && <span className="text-xs text-zinc-500 font-bold uppercase tracking-widest">{frequencies[deck]}回</span>
                 )}
               </div>
             );
           })}
+          {sortedSuggestions.length > 50 && (
+            <div className="p-3 text-center text-[10px] text-zinc-500 font-black uppercase tracking-widest">
+              Showing top 50 / {sortedSuggestions.length} items. Keep typing to filter.
+            </div>
+          )}
         </div>
       )}
     </div>

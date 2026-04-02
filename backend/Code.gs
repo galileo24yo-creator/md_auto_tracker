@@ -86,9 +86,66 @@ function doPost(e) {
   try {
     const payload = JSON.parse(e.postData.contents);
     const ss = SpreadsheetApp.getActiveSpreadsheet();
+    // --- アクションの分岐 ---
+    
+    // 1. 設定（マスタデータ）の更新
+    if (payload.action === 'UPDATE_SETTINGS') {
+      const settingsSheet = ss.getSheetByName(SHEET_SETTINGS_NAME);
+      if (!settingsSheet) return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Settings sheet not found" })).setMimeType(ContentService.MimeType.JSON);
+      
+      settingsSheet.clear();
+      settingsSheet.appendRow(["デッキリスト (A列)", "要因リスト (B列)"]);
+      settingsSheet.getRange("A1:B1").setFontWeight("bold").setBackground("#fff2cc");
+      
+      const newDecks = payload.decks || [];
+      const newReasons = payload.reasons || [];
+      const maxLen = Math.max(newDecks.length, newReasons.length);
+      
+      if (maxLen > 0) {
+        const rows = [];
+        for (let i = 0; i < maxLen; i++) {
+          rows.push([newDecks[i] || "", newReasons[i] || ""]);
+        }
+        settingsSheet.getRange(2, 1, rows.length, 2).setValues(rows);
+      }
+      
+      return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Settings updated" })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 2. 記録の削除
+    if (payload.action === 'DELETE_RECORD') {
+      const dataSheet = ss.getSheetByName(SHEET_DATA_NAME);
+      if (!dataSheet) return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Data sheet not found" })).setMimeType(ContentService.MimeType.JSON);
+      
+      const data = dataSheet.getDataRange().getDisplayValues();
+      const searchId = String(payload.id || "").trim();
+      let rowIndex = -1;
+      
+      for (let i = 1; i < data.length; i++) {
+        const sheetId = String(data[i][0] || "").trim();
+        if (sheetId === searchId) {
+          rowIndex = i + 1;
+          break;
+        }
+      }
+      
+      if (rowIndex !== -1) {
+        dataSheet.deleteRow(rowIndex);
+        return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Record deleted" })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      // デバッグ用: シートの最初の数行のIDをエラーに含める
+      const sampleIds = data.slice(1, 4).map(r => r[0]).join(", ");
+      return ContentService.createTextOutput(JSON.stringify({ 
+        success: false, 
+        error: "Record not found. Searched ID: [" + searchId + "]. Sample IDs in sheet: [" + sampleIds + "]"
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 既存の「更新」または「新規追記」ロジック (後続の処理)
     let dataSheet = ss.getSheetByName(SHEET_DATA_NAME);
     
-    // 更新モード（payload.id がある場合）
+    // 更新モード（payload.id があり、action指定がない場合）
     if (payload.id) {
       const data = dataSheet.getDataRange().getDisplayValues();
       let rowIndex = -1;
