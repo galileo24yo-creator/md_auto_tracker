@@ -321,7 +321,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
     }
 
     // 2. Mode and MyDeck Filtering
-    if (filterMode !== 'ALL') r = r.filter(v => v.mode === filterMode);
+    if (filterMode !== 'ALL') r = r.filter(v => String(v.mode || "").includes(String(filterMode).replace('戦','')));
     if (filterMyDeck !== 'ALL') r = r.filter(v => v.myDeck?.split(',').map(x => x.trim()).sort().join(' + ') === filterMyDeck);
     
     return r.slice().reverse();
@@ -407,33 +407,35 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
               </a>
             )}
           </div>
-          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-            <select value={filterDateType} onChange={(e) => { setFilterDateType(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-500">
-              <option value="ALL">全ての期間</option>
-              <option value="TODAY">今日のみ</option>
-              <option value="7D">過去7日間</option>
-              <option value="30D">過去30日間</option>
-              <option value="CUSTOM">カスタム指定</option>
+          <div className="flex items-center gap-2 flex-wrap md:flex-nowrap justify-end">
+            <select value={filterDateType} onChange={(e) => { setFilterDateType(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 shrink-0">
+              <option value="ALL">期間: すべて</option>
+              <option value="TODAY">期間: 今日</option>
+              <option value="7D">期間: 過去7日</option>
+              <option value="30D">期間: 過去30日</option>
+              <option value="CUSTOM">期間: カスタム</option>
             </select>
             
             {filterDateType === 'CUSTOM' && (
-              <div className="flex items-center gap-1 animate-in slide-in-from-left-2 duration-300">
-                <input type="date" value={startDate} onChange={e => { setStartDate(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500" />
+              <div className="flex items-center gap-1 animate-in slide-in-from-right-2 duration-300 shrink-0">
+                <input type="date" value={startDate} onChange={e => { setStartDate(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-1.5 py-1 text-[8px] outline-none focus:ring-1 focus:ring-indigo-500 w-[85px]" />
                 <span className="text-zinc-600 text-xs">-</span>
-                <input type="date" value={endDate} onChange={e => { setEndDate(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500" />
+                <input type="date" value={endDate} onChange={e => { setEndDate(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-1.5 py-1 text-[8px] outline-none focus:ring-1 focus:ring-indigo-500 w-[85px]" />
               </div>
             )}
 
-            <select value={filterMode} onChange={(e) => { setFilterMode(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-500">
-              <option value="ALL">全てのモード</option>
-              <option value="ランク戦">ランク戦</option>
-              <option value="レート戦">レート戦</option>
-              <option value="DC">DC</option>
+            <select value={filterMode} onChange={(e) => { setFilterMode(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 shrink-0">
+              <option value="ALL">モード: 全て</option>
+              <option value="ランク戦">モード: ランク</option>
+              <option value="レート戦">モード: レート</option>
+              <option value="DC">モード: DC</option>
             </select>
-            <select value={filterMyDeck} onChange={(e) => { setFilterMyDeck(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-500 max-w-[120px]">
+            
+            <select value={filterMyDeck} onChange={(e) => { setFilterMyDeck(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 max-w-[100px] shrink-0">
               <option value="ALL">マイデッキ</option>{availableMyDecks.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
-            <select value={chunkSize} onChange={(e) => { setChunkSize(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-500">
+
+            <select value={chunkSize} onChange={(e) => { setChunkSize(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 shrink-0">
               <option value="ALL">全ての試合</option>
               <option value="5">5戦単位</option>
               <option value="10">10戦単位</option>
