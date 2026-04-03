@@ -1,7 +1,13 @@
-import React, { useState, useEffect, useRef, useDeferredValue, memo } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import { X, Search } from 'lucide-react';
 
 const STORAGE_KEY = 'md_tracker_deck_freq';
+
+const toKatakana = (str) => {
+  return str.replace(/[\u3041-\u3096]/g, (match) => {
+    return String.fromCharCode(match.charCodeAt(0) + 0x60);
+  });
+};
 
 export default function DeckSelect({ availableDecks, selectedDecks, onChange, placeholder }) {
   const [inputValue, setInputValue] = useState('');
@@ -9,7 +15,6 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
   const [frequencies, setFrequencies] = useState({});
   const [selectedIndex, setSelectedIndex] = useState(0);
   const wrapperRef = useRef(null);
-  const deferredInput = useDeferredValue(inputValue);
   const inputRef = useRef(null);
 
   // Load frequencies from local storage
@@ -39,26 +44,29 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
   }, []);
 
   // 常にリセットするためにselectedIndexを監視
-  useEffect(() => { setSelectedIndex(0); }, [deferredInput]);
+  useEffect(() => { setSelectedIndex(0); }, [inputValue]);
 
   const sortedSuggestions = React.useMemo(() => {
     let list = availableDecks.filter(d => !selectedDecks.includes(d));
     
-    if (deferredInput) {
-      const lowerInput = deferredInput.toLowerCase();
-      list = list.filter(d => d.toLowerCase().includes(lowerInput));
+    if (inputValue) {
+      const normalizedInput = toKatakana(inputValue.toLowerCase());
+      list = list.filter(d => {
+        const normalizedDeck = toKatakana(d.toLowerCase());
+        return normalizedDeck.includes(normalizedInput);
+      });
     }
     
     // 基本のソート（表示順は50音順など）
     list.sort((a, b) => a.localeCompare(b, 'ja'));
 
     // 入力値自体を候補に追加（既存にない場合）
-    if (deferredInput && !list.some(d => d.toLowerCase() === deferredInput.toLowerCase()) && !selectedDecks.includes(deferredInput)) {
-      list.unshift(deferredInput);
+    if (inputValue && !list.some(d => d.toLowerCase() === inputValue.toLowerCase()) && !selectedDecks.includes(inputValue)) {
+      list.unshift(inputValue);
     }
     
     return list;
-  }, [availableDecks, selectedDecks, deferredInput]);
+  }, [availableDecks, selectedDecks, inputValue]);
 
   const popularDecks = React.useMemo(() => {
     return Object.entries(frequencies)
@@ -81,12 +89,15 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
   };
 
   const handleKeyDown = (e) => {
+    // 日本語入力中（変換完了前）は独自のキー動作を停止する
+    if (e.nativeEvent.isComposing) return;
+
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIndex(prev => (prev + 1) % sortedSuggestions.length);
+      setSelectedIndex(prev => (prev + 1) % Math.max(1, sortedSuggestions.length));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setSelectedIndex(prev => (prev - 1 + sortedSuggestions.length) % sortedSuggestions.length);
+      setSelectedIndex(prev => (prev - 1 + sortedSuggestions.length) % Math.max(1, sortedSuggestions.length));
     } else if (e.key === 'Enter') {
       e.preventDefault();
       if (sortedSuggestions.length > 0) {
@@ -166,12 +177,12 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
             {sortedSuggestions.length > 0 ? (
               sortedSuggestions.slice(0, 50).map((deck, idx) => {
                 const isActive = idx === selectedIndex;
-                const isNew = deferredInput && deck.toLowerCase() === deferredInput.toLowerCase() && !availableDecks.includes(deck);
+                const isNew = inputValue && deck.toLowerCase() === inputValue.toLowerCase() && !availableDecks.includes(deck);
                 return (
                   <div
                     key={deck}
                     className={`px-4 py-3 cursor-pointer text-sm flex items-center justify-between border-b border-zinc-800/30 last:border-0 transition-all
-                      ${isActive ? 'bg-indigo-600 text-white' : 'text-zinc-300 hover:bg-zinc-800/80 hover:text-indigo-400'}`}
+                      ${isActive ? 'bg-indigo-600 text-white shadow-inner' : 'text-zinc-300 hover:bg-zinc-800/80 hover:text-indigo-400'}`}
                     onClick={() => handleSelect(deck)}
                     onMouseEnter={() => setSelectedIndex(idx)}
                   >
