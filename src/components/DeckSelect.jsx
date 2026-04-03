@@ -7,8 +7,10 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
   const [inputValue, setInputValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [frequencies, setFrequencies] = useState({});
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const wrapperRef = useRef(null);
   const deferredInput = useDeferredValue(inputValue);
+  const inputRef = useRef(null);
 
   // Load frequencies from local storage
   useEffect(() => {
@@ -36,32 +38,35 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // 常にリセットするためにselectedIndexを監視
+  useEffect(() => { setSelectedIndex(0); }, [deferredInput]);
+
   const sortedSuggestions = React.useMemo(() => {
-    // 1. Filter out already selected
     let list = availableDecks.filter(d => !selectedDecks.includes(d));
     
-    // 2. Filter by search input
     if (deferredInput) {
       const lowerInput = deferredInput.toLowerCase();
-      // ひらがな・カタカナの揺れ等も本来は対応すべきですが今回は単純な部分一致
       list = list.filter(d => d.toLowerCase().includes(lowerInput));
     }
     
-    // 3. Sort by usage frequency (descending)
-    list.sort((a, b) => {
-      const freqA = frequencies[a] || 0;
-      const freqB = frequencies[b] || 0;
-      if (freqB !== freqA) return freqB - freqA;
-      return a.localeCompare(b, 'ja');
-    });
+    // 基本のソート（表示順は50音順など）
+    list.sort((a, b) => a.localeCompare(b, 'ja'));
 
-    // 4. Add the input itself as a suggestion if it doesn't exactly match any existing
-    if (deferredInput && !list.includes(deferredInput) && !selectedDecks.includes(deferredInput)) {
+    // 入力値自体を候補に追加（既存にない場合）
+    if (deferredInput && !list.some(d => d.toLowerCase() === deferredInput.toLowerCase()) && !selectedDecks.includes(deferredInput)) {
       list.unshift(deferredInput);
     }
     
     return list;
-  }, [availableDecks, selectedDecks, deferredInput, frequencies]);
+  }, [availableDecks, selectedDecks, deferredInput]);
+
+  const popularDecks = React.useMemo(() => {
+    return Object.entries(frequencies)
+      .filter(([name]) => availableDecks.includes(name) && !selectedDecks.includes(name))
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([name]) => name);
+  }, [frequencies, availableDecks, selectedDecks]);
 
   const handleSelect = (deck) => {
     if (!deck.trim()) return;
@@ -76,11 +81,21 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && inputValue) {
+    if (e.key === 'ArrowDown') {
       e.preventDefault();
-      // 候補があれば一番上を選択、なければ入力をそのまま選択
-      const target = sortedSuggestions.length > 0 ? sortedSuggestions[0] : inputValue;
-      handleSelect(target);
+      setSelectedIndex(prev => (prev + 1) % sortedSuggestions.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex(prev => (prev - 1 + sortedSuggestions.length) % sortedSuggestions.length);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (sortedSuggestions.length > 0) {
+        handleSelect(sortedSuggestions[selectedIndex]);
+      } else if (inputValue) {
+        handleSelect(inputValue);
+      }
+    } else if (e.key === 'Escape') {
+      setIsFocused(false);
     } else if (e.key === 'Backspace' && !inputValue && selectedDecks.length > 0) {
       handleRemove(selectedDecks[selectedDecks.length - 1]);
     }
@@ -89,20 +104,20 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
   return (
     <div className="relative w-full" ref={wrapperRef}>
       <div 
-        className={`flex flex-wrap gap-2 items-center min-h-[42px] p-2 bg-zinc-900 border rounded-lg transition-colors cursor-text
-          ${isFocused ? 'border-indigo-500 ring-1 ring-indigo-500/50' : 'border-zinc-700 hover:border-zinc-600'}`}
-        onClick={() => setIsFocused(true)}
+        className={`flex flex-wrap gap-2 items-center min-h-[48px] p-2 bg-zinc-900 border rounded-xl transition-all cursor-text
+          ${isFocused ? 'border-indigo-500 ring-2 ring-indigo-500/20 bg-zinc-900/50 shadow-lg shadow-indigo-500/5' : 'border-zinc-800 hover:border-zinc-700'}`}
+        onClick={() => inputRef.current?.focus()}
       >
         {selectedDecks.map(deck => (
           <span 
             key={deck} 
-            className="flex items-center gap-1 bg-indigo-500/20 text-indigo-300 text-sm px-2 py-1 rounded-md border border-indigo-500/30"
+            className="flex items-center gap-1.5 bg-indigo-500/10 text-indigo-300 text-xs font-black px-2.5 py-1 rounded-lg border border-indigo-500/20 animate-in zoom-in-95 duration-200"
           >
             {deck}
             <button 
               type="button" 
               onClick={(e) => { e.stopPropagation(); handleRemove(deck); }}
-              className="hover:text-white focus:outline-none"
+              className="hover:text-white transition-colors p-0.5"
             >
               <X className="w-3 h-3" />
             </button>
@@ -110,41 +125,81 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
         ))}
         
         <div className="flex-1 flex items-center min-w-[120px]">
-          <Search className="w-4 h-4 text-zinc-500 mr-2" />
+          <Search className={`w-4 h-4 mr-2 transition-colors ${isFocused ? 'text-indigo-500' : 'text-zinc-600'}`} />
           <input
+            ref={inputRef}
             type="text"
-            className="w-full bg-transparent text-zinc-200 focus:outline-none text-sm placeholder-zinc-500"
+            className="w-full bg-transparent text-zinc-100 focus:outline-none text-sm placeholder-zinc-600 font-medium"
             placeholder={selectedDecks.length === 0 ? placeholder : ""}
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => { setInputValue(e.target.value); setIsFocused(true); }}
             onFocus={() => setIsFocused(true)}
             onKeyDown={handleKeyDown}
           />
         </div>
       </div>
 
-      {isFocused && (sortedSuggestions.length > 0) && (
-        <div className="absolute z-50 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl max-h-60 overflow-y-auto custom-scrollbar">
-          {sortedSuggestions.slice(0, 50).map((deck, idx) => {
-            const isNew = deferredInput && deck === deferredInput && !availableDecks.includes(deferredInput);
-            return (
-              <div
-                key={deck}
-                className="px-4 py-2 hover:bg-zinc-700 cursor-pointer text-sm text-zinc-200 flex items-center justify-between border-b border-zinc-700/30 last:border-0"
-                onClick={() => handleSelect(deck)}
-              >
-                <span>{deck}</span>
-                {isNew ? (
-                  <span className="text-xs text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded">New</span>
-                ) : (
-                  frequencies[deck] > 0 && <span className="text-xs text-zinc-500 font-bold uppercase tracking-widest">{frequencies[deck]}回</span>
-                )}
+      {isFocused && (popularDecks.length > 0 || sortedSuggestions.length > 0) && (
+        <div className="absolute z-[100] w-full mt-2 bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl max-h-80 overflow-hidden flex flex-col animate-in slide-in-from-top-2 duration-200">
+          
+          {/* Popular Decks Quick Access */}
+          {!inputValue && popularDecks.length > 0 && (
+            <div className="p-4 border-b border-zinc-800/50 bg-indigo-500/5">
+              <div className="text-[10px] font-black text-indigo-400/70 uppercase tracking-widest mb-3 px-1">よく使うデッキ</div>
+              <div className="flex flex-wrap gap-2">
+                {popularDecks.map(deck => (
+                  <button
+                    key={`pop-${deck}`}
+                    type="button"
+                    onClick={() => handleSelect(deck)}
+                    className="px-3 py-1.5 rounded-lg bg-zinc-800 border border-zinc-700 text-xs font-bold text-zinc-300 hover:border-indigo-500 hover:text-indigo-400 transition-all active:scale-95"
+                  >
+                    {deck}
+                  </button>
+                ))}
               </div>
-            );
-          })}
+            </div>
+          )}
+
+          {/* All Suggestions */}
+          <div className="overflow-y-auto custom-scrollbar flex-1">
+            {sortedSuggestions.length > 0 ? (
+              sortedSuggestions.slice(0, 50).map((deck, idx) => {
+                const isActive = idx === selectedIndex;
+                const isNew = deferredInput && deck.toLowerCase() === deferredInput.toLowerCase() && !availableDecks.includes(deck);
+                return (
+                  <div
+                    key={deck}
+                    className={`px-4 py-3 cursor-pointer text-sm flex items-center justify-between border-b border-zinc-800/30 last:border-0 transition-all
+                      ${isActive ? 'bg-indigo-600 text-white' : 'text-zinc-300 hover:bg-zinc-800/80 hover:text-indigo-400'}`}
+                    onClick={() => handleSelect(deck)}
+                    onMouseEnter={() => setSelectedIndex(idx)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className={`font-bold ${isActive ? 'text-white' : 'text-zinc-100'}`}>{deck}</span>
+                    </div>
+                    {isNew ? (
+                      <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded ${isActive ? 'bg-white/20 text-white' : 'bg-emerald-500/10 text-emerald-400'}`}>New Deck</span>
+                    ) : (
+                      frequencies[deck] > 0 && (
+                        <span className={`text-[10px] font-black uppercase tracking-tight ${isActive ? 'text-white/60' : 'text-zinc-600'}`}>
+                          {frequencies[deck]} matches
+                        </span>
+                      )
+                    )}
+                  </div>
+                );
+              })
+            ) : inputValue && (
+              <div className="p-8 text-center text-zinc-500 italic text-sm">
+                No matching decks. Press <kbd className="bg-zinc-800 px-1 rounded font-mono text-xs">Enter</kbd> to add "{inputValue}".
+              </div>
+            )}
+          </div>
+
           {sortedSuggestions.length > 50 && (
-            <div className="p-3 text-center text-[10px] text-zinc-500 font-black uppercase tracking-widest">
-              Showing top 50 / {sortedSuggestions.length} items. Keep typing to filter.
+            <div className="p-3 bg-zinc-950/50 text-center text-[9px] text-zinc-600 font-black uppercase tracking-[0.2em] border-t border-zinc-800/50">
+              Top 50 of {sortedSuggestions.length} Results
             </div>
           )}
         </div>
