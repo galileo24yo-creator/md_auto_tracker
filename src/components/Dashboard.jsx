@@ -147,6 +147,9 @@ const MatchupRankings = memo(({ data, tab, onTabChange, minLimit, onLimitChange 
 
 export default function Dashboard({ records, onRefresh, decks, reasons, activeProfile }) {
   const [filterMode, setFilterMode] = useState('ALL');
+  const [filterDateType, setFilterDateType] = useState('30D');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [chunkSize, setChunkSize] = useState('ALL');
   const [setRange, setSetRange] = useState([1, 1]);
   const [filterMyDeck, setFilterMyDeck] = useState('ALL');
@@ -291,10 +294,38 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
   
   const baseFilteredRecords = useMemo(() => {
     let r = records;
+    
+    // 1. Date Range Filtering
+    if (filterDateType !== 'ALL') {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      r = r.filter(v => {
+        if (!v.date) return false;
+        const d = new Date(v.date.replace(/\//g, '-')); // standard format for reliably parsing
+        
+        if (filterDateType === 'TODAY') return d >= today;
+        if (filterDateType === '7D') return d >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        if (filterDateType === '30D') return d >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        if (filterDateType === 'CUSTOM') {
+          const s = startDate ? new Date(startDate) : null;
+          const e = endDate ? new Date(endDate) : null;
+          if (e) e.setHours(23, 59, 59, 999); // Include the end date fully
+          
+          if (s && e) return d >= s && d <= e;
+          if (s) return d >= s;
+          if (e) return d <= e;
+        }
+        return true;
+      });
+    }
+
+    // 2. Mode and MyDeck Filtering
     if (filterMode !== 'ALL') r = r.filter(v => v.mode === filterMode);
     if (filterMyDeck !== 'ALL') r = r.filter(v => v.myDeck?.split(',').map(x => x.trim()).sort().join(' + ') === filterMyDeck);
+    
     return r.slice().reverse();
-  }, [records, filterMode, filterMyDeck]);
+  }, [records, filterMode, filterMyDeck, filterDateType, startDate, endDate]);
 
   const totalSets = useMemo(() => chunkSize === 'ALL' ? 1 : Math.max(1, Math.ceil(baseFilteredRecords.length / parseInt(chunkSize, 10))), [baseFilteredRecords.length, chunkSize]);
 
@@ -377,6 +408,22 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
             )}
           </div>
           <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <select value={filterDateType} onChange={(e) => { setFilterDateType(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-500">
+              <option value="ALL">全ての期間</option>
+              <option value="TODAY">今日のみ</option>
+              <option value="7D">過去7日間</option>
+              <option value="30D">過去30日間</option>
+              <option value="CUSTOM">カスタム指定</option>
+            </select>
+            
+            {filterDateType === 'CUSTOM' && (
+              <div className="flex items-center gap-1 animate-in slide-in-from-left-2 duration-300">
+                <input type="date" value={startDate} onChange={e => { setStartDate(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500" />
+                <span className="text-zinc-600 text-xs">-</span>
+                <input type="date" value={endDate} onChange={e => { setEndDate(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500" />
+              </div>
+            )}
+
             <select value={filterMode} onChange={(e) => { setFilterMode(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-500">
               <option value="ALL">全てのモード</option>
               <option value="ランク戦">ランク戦</option>
