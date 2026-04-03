@@ -79,6 +79,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const detectedBboxRef = useRef(null);
   const intervalRef = useRef(null);
   const isBusyRef = useRef(false);
+  const stablePointsBufferRef = useRef([]); // Buffer for temporal consistency (3 frames)
 
   const [lastRating, setLastRating] = useState(null);
   const lastSaveTimeRef = useRef(0);
@@ -145,6 +146,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
     if (!isOpponentDeckLocked) setOppDecks([]);
     if (!isTagsLocked) setSelectedTags([]);
     
+    stablePointsBufferRef.current = []; // Clear OCR buffer
     setCurrentState(STATES.DETECTING_TURN); // 次の試合の検知を自動開始
     setOcrLog("スロットリセット → 次の試合待機中");
   }, [isMyDeckLocked, isOpponentDeckLocked, isTagsLocked]);
@@ -356,54 +358,38 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
           drawBinarizedToCanvas(bin, debugTemplateCanvasRef.current.getContext('2d'), targetW, targetH);
         }
 
-        const debugResult = detectRating(id, true);
-        
-        // デバッグキャンバスにコンポーネントのバウンディングボックスを描画
-        if (debugRoiCanvasRef.current && debugResult.comps) {
-          const dCtx = debugRoiCanvasRef.current.getContext('2d');
-          const ox = debugResult.trimOffset?.x || 0;
-          const oy = debugResult.trimOffset?.y || 0;
-          const scaleX = targetW / id.width;
-          const scaleY = targetH / id.height;
-          
-          for (const c of debugResult.comps) {
-            // トリミングオフセットを加算して元画像座標に戻す
-            const rx = (c.x + ox) * scaleX;
-            const ry = (c.y + oy) * scaleY;
-            const rw = c.w * scaleX;
-            const rh = c.h * scaleY;
-            
-            dCtx.strokeStyle = c.accepted ? '#22c55e' : '#ef4444';
-            dCtx.lineWidth = 2;
-            dCtx.strokeRect(rx, ry, rw, rh);
-            
-            // マッチした文字とエラー値を表示
-            dCtx.fillStyle = c.accepted ? '#22c55e' : '#ef4444';
-            dCtx.font = 'bold 12px monospace';
-            dCtx.fillText(`${c.bestMatch}(${c.error})`, rx, ry - 3);
-          }
-        }
-
-        console.table(debugResult.comps);
-        console.log(`[RATING] ${debugResult.debugLog} | 全comp: ${debugResult.allComps}, 有効: ${debugResult.validComps}, 中央値H: ${debugResult.medianH}`);
-        
-        const compSummary = (debugResult.comps || []).map(c => 
-          `${c.bestMatch}(${c.error}${c.accepted ? '✓' : '✗'})`
-        ).join(' ');
-        setDebugInfo(`RATE: ${debugResult.debugLog} | ${compSummary}`);
-
-        // 実際の確定処理はDETECTING_RATINGステート時のみ
+        // 実際の確定処理
         if (currentState === STATES.DETECTING_RATING && !isDiffLocked) {
-          const detected = debugResult.result;
+          const { multiThresholdDetectRating } = await import('../lib/visionEngine');
+          const multiRes = multiThresholdDetectRating(id);
+          const detected = multiRes.result;
+
           if (detected && detected.length >= 4) {
-            const isDC = curMode === 'DC';
-            const formatted = isDC ? detected.replace(/\./g, '') : (parseFloat(detected) / 100).toFixed(2);
-            setDiff(formatted); setRatingChange(formatted); setIsDiffLocked(true);
-            setOcrLog(`ポイント取得 (${isDC ? 'DC' : 'Rate'}): ${formatted}`);
-            const nextState = STATES.NEXT_MATCH_STANDBY;
-            setCurrentState(nextState);
-            stateRef.current = nextState;
-            playNotificationSound('single');
+            // Adding to buffer for 3-frame consistency
+            const buffer = stablePointsBufferRef.current;
+            buffer.push(detected);
+            if (buffer.length > 3) buffer.shift();
+
+            const isStable = buffer.length === 3 && buffer.every(v => v === detected);
+            const statusMsg = `安定化中... (${buffer.length}/3)`;
+            setOcrLog(isStable ? `ポイント確定!` : statusMsg);
+            setDebugInfo(`OCR Consensus: "${detected}" | Votes: ${multiRes.votes} | Buffer: ${buffer.length}/3`);
+
+            if (isStable) {
+              const isDC = curMode === 'DC';
+              const formatted = isDC ? detected.replace(/\./g, '') : (parseFloat(detected) / 100).toFixed(2);
+              setDiff(formatted); setRatingChange(formatted); setIsDiffLocked(true);
+              setOcrLog(`ポイント取得 (${isDC ? 'DC' : 'Rate'}): ${formatted}`);
+              const nextState = STATES.NEXT_MATCH_STANDBY;
+              setCurrentState(nextState);
+              stateRef.current = nextState;
+              playNotificationSound('single');
+              stablePointsBufferRef.current = []; // Clear after success
+            }
+          } else {
+            // Content not found or unreliable - clear buffer to be safe
+            stablePointsBufferRef.current = [];
+            setDebugInfo(`RATE: ${multiRes.debugLog || "Wait for stable image..."}`);
           }
         }
       }

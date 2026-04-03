@@ -237,8 +237,9 @@ export const binarizeROI = (imageData, threshold = 180) => {
   const bin = new Uint8Array(imageData.width * imageData.height);
   for (let i = 0; i < bin.length; i++) {
     const r = data[i * 4], g = data[i * 4 + 1], b = data[i * 4 + 2];
-    const lum = r * 0.299 + g * 0.587 + b * 0.114;
-    bin[i] = lum > threshold ? 1 : 0; // 1 for foreground
+    // Slightly weight green for MD's blueish backgrounds
+    const lum = r * 0.2126 + g * 0.7152 + b * 0.0722; 
+    bin[i] = lum > threshold ? 1 : 0;
   }
   return bin;
 };
@@ -358,11 +359,11 @@ export const matchDigit = (features, templates) => {
 /**
  * Detects entire rating string from a ROI imageData.
  */
-export const detectRating = (roiImageData, debug = false) => {
+export const detectRating = (roiImageData, debug = false, threshold = 200) => {
   const w = roiImageData.width, h = roiImageData.height;
-  const bin = binarizeROI(roiImageData, 200);
+  const bin = binarizeROI(roiImageData, threshold);
 
-  // --- 余白トリミング: 白ピクセルがある行・列だけを残す ---
+  // --- Excess trimming ---
   const rowSums = new Int32Array(h);
   const colSums = new Int32Array(w);
   for (let y = 0; y < h; y++) {
@@ -370,17 +371,16 @@ export const detectRating = (roiImageData, debug = false) => {
       if (bin[y * w + x]) { rowSums[y]++; colSums[x]++; }
     }
   }
-  const minPx = 2; // ノイズ除外用の最低ピクセル数
-  let minY = 0; while (minY < h && rowSums[minY] < minPx) minY++;
-  let maxY = h - 1; while (maxY > minY && rowSums[maxY] < minPx) maxY--;
-  let minX = 0; while (minX < w && colSums[minX] < minPx) minX++;
-  let maxX = w - 1; while (maxX > minX && colSums[maxX] < minPx) maxX--;
+  const minPixelsPerRow = Math.max(2, Math.floor(w * 0.05));
+  let minY = 0; while (minY < h && rowSums[minY] < minPixelsPerRow) minY++;
+  let maxY = h - 1; while (maxY > minY && rowSums[maxY] < minPixelsPerRow) maxY--;
+  let minX = 0; while (minX < w && colSums[minX] < minPixelsPerRow) minX++;
+  let maxX = w - 1; while (maxX > minX && colSums[maxX] < minPixelsPerRow) maxX--;
 
   if (minX >= maxX || minY >= maxY) {
-    return debug ? { result: "", debugLog: "トリミング後に文字なし", comps: [] } : "";
+    return debug ? { result: "", debugLog: "No content after trimming", comps: [] } : "";
   }
 
-  // パディング追加
   const pad = 2;
   minX = Math.max(0, minX - pad); maxX = Math.min(w - 1, maxX + pad);
   minY = Math.max(0, minY - pad); maxY = Math.min(h - 1, maxY + pad);
@@ -394,47 +394,72 @@ export const detectRating = (roiImageData, debug = false) => {
   }
 
   const comps = findComponents(trimmedBin, tw, th);
+  if (comps.length === 0) return debug ? { result: "", debugLog: "No components", comps: [] } : "";
 
-  if (comps.length === 0) return debug ? { result: "", debugLog: "コンポーネント未検出", comps: [] } : "";
-
-  // コンポーネントの高さの中央値を求め、極端に大きい/小さいものを除外するが、「.」のために下限は緩めに
+  // Medians and strict sizing filters
   const heights = comps.map(c => c.h).sort((a, b) => a - b);
   const medianH = heights[Math.floor(heights.length / 2)];
-  const validComps = comps.filter(c => c.h > medianH * 0.3 && c.h < medianH * 2.5);
+  const validComps = comps.filter(c => c.h > medianH * 0.4 && c.h < medianH * 1.6); // Stricter gate
 
   let result = "";
+  let totalError = 0;
   const compDetails = [];
+  
   for (const comp of validComps) {
     const feats = extractDigitFeatures(trimmedBin, tw, th, comp);
     const { char, error } = matchDigit(feats, DIGIT_TEMPLATES);
-    const accepted = error < 120;
-    if (accepted) result += char;
+    const accepted = error < 100; // Even stricter error threshold for points
+    if (accepted) {
+      result += char; 
+      totalError += error;
+    }
     const tmpl = DIGIT_TEMPLATES[char];
-    compDetails.push({
-      pos: `(${comp.x},${comp.y})`,
-      size: `${comp.w}x${comp.h}`,
-      x: comp.x, y: comp.y, w: comp.w, h: comp.h,
-      bestMatch: char,
-      error: error,
-      accepted,
-      extractedH: `[${feats.h.join(',')}]`,
-      extractedV: `[${feats.v.join(',')}]`,
-      extractedQ: `[${feats.q.join(',')}]`,
-      templateH: tmpl ? `[${tmpl.h.join(',')}]` : '?',
-      templateV: tmpl ? `[${tmpl.v.join(',')}]` : '?',
-      templateQ: tmpl?.q ? `[${tmpl.q.join(',')}]` : '?',
-    });
+    compDetails.push({ char, error, accepted, x: comp.x + minX, y: comp.y + minY, w: comp.w, h: comp.h });
   }
 
-  // 妥当性チェック: レートは通常3-7桁の数字列（小数点含む）
-  const digitsOnly = result.replace(/\./g, '');
-  if (digitsOnly.length < 3 || digitsOnly.length > 7) {
-    if (debug) return { result: "", debugLog: `桁数不正(${digitsOnly.length}桁): "${result}"`, comps: compDetails, allComps: comps.length, validComps: validComps.length, medianH, trimOffset: { x: minX, y: minY } };
-    return "";
+  const avgError = validComps.length > 0 ? (totalError / validComps.length) : 999;
+  
+  // Format check 3-7 digits
+  const cleanResult = result.replace(/\./g, '');
+  if (cleanResult.length < 3 || cleanResult.length > 7) {
+    return debug ? { result: "", debugLog: `Bad digit count: ${cleanResult.length}`, comps: compDetails, avgError } : "";
   }
 
-  if (debug) return { result, debugLog: `OK: "${result}"`, comps: compDetails, allComps: comps.length, validComps: validComps.length, medianH, trimOffset: { x: minX, y: minY } };
-  return result;
+  return debug ? { result, debugLog: `SUCCESS (${avgError.toFixed(1)})`, comps: compDetails, avgError, trimOffset: { x: minX, y: minY } } : result;
+};
+
+/**
+ * Multi-threshold voting for points recognition to eliminate misreads.
+ */
+export const multiThresholdDetectRating = (roiImageData) => {
+  const thresholds = [180, 200, 220];
+  const votes = {};
+  const details = [];
+
+  for (const t of thresholds) {
+    const res = detectRating(roiImageData, true, t);
+    if (res.result) {
+      votes[res.result] = (votes[res.result] || 0) + 1;
+      details.push(res);
+    }
+  }
+
+  // Find most voted result
+  let bestValue = "";
+  let maxVotes = 0;
+  for (const [val, count] of Object.entries(votes)) {
+    if (count > maxVotes) {
+      maxVotes = count;
+      bestValue = val;
+    }
+  }
+
+  // If no votes, just return null
+  if (!bestValue) return { result: "", debugLog: "No consensus among thresholds" };
+
+  // Return the result with the lowest average error among the winners
+  const bestDetail = details.filter(d => d.result === bestValue).sort((a, b) => a.avgError - b.avgError)[0];
+  return { ...bestDetail, votes: maxVotes };
 };
 
 /**
