@@ -751,8 +751,9 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
         startDate={startDate}
         endDate={endDate}
         onApply={(start, end) => {
-          setStartDate(start ? start.toISOString().split('T')[0] : '');
-          setEndDate(end ? end.toISOString().split('T')[0] : '');
+          const toLocal = (d) => d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : '';
+          setStartDate(toLocal(start));
+          setEndDate(toLocal(end));
           setIsDateModalOpen(false);
           setSetRange([1, 1]);
         }}
