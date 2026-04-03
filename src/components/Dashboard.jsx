@@ -495,11 +495,55 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
   }, [filteredRecords, matchupTab, minMatchLimit]);
 
   const trendData = useMemo(() => {
-    let r = records.slice().reverse();
-    if (filterMode !== 'ALL') r = r.filter(x => String(x.mode).includes(String(filterMode).replace('戦','')));
-    if (chunkSize !== 'ALL') { const s = parseInt(chunkSize, 10); r = r.slice((Math.max(1, setRange[0]) - 1) * s, Math.min(totalSets, setRange[1]) * s); }
-    return r.reverse().map((x, i) => { const v = parseFloat(String(x.diff).replace(/[^0-9.-]/g, '')); if (isNaN(v)) return null; return { index: i + 1, rating: v, opponentDeck: x.opponentDeck, result: String(x.result).includes('VIC') ? 'WIN' : 'LOSE', date: x.date, myDeck: x.myDeck }; }).filter(v => v !== null);
-  }, [records, filterMode, chunkSize, setRange, totalSets]);
+    // グラフ用には使用デッキフィルターを無視する
+    let r = records;
+    
+    // 1. 日付フィルターの適用
+    if (filterDateType !== 'ALL') {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      r = r.filter(v => {
+        if (!v.date) return false;
+        const d = new Date(v.date.replace(/\//g, '-'));
+        if (filterDateType === 'TODAY') return d >= today;
+        if (filterDateType === '7D') return d >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        if (filterDateType === '30D') return d >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        if (filterDateType === 'CUSTOM') {
+          const s = startDate ? new Date(startDate) : null;
+          const e = endDate ? new Date(endDate) : null;
+          if (e) e.setHours(23, 59, 59, 999);
+          if (s && e) return d >= s && d <= e;
+          if (s) return d >= s;
+          if (e) return d <= e;
+        }
+        return true;
+      });
+    }
+
+    // 2. モードフィルターの適用
+    if (filterMode !== 'ALL') r = r.filter(v => String(v.mode || "").includes(String(filterMode).replace('戦','')));
+    
+    // 3. セット範囲（Chunk）の適用
+    r = r.slice().reverse(); // baseFilteredRecordsと同様に新しい順にするための準備
+    if (chunkSize !== 'ALL') {
+      const s = parseInt(chunkSize, 10);
+      r = r.slice((Math.max(1, Math.min(setRange[0], setRange[1])) - 1) * s, Math.min(totalSets, Math.max(setRange[0], setRange[1])) * s);
+    }
+
+    // グラフ表示用に古い順に戻してマッピング
+    return r.reverse().map((x, i) => { 
+      const v = parseFloat(String(x.diff).replace(/[^0-9.-]/g, '')); 
+      if (isNaN(v)) return null; 
+      return { 
+        index: i + 1, 
+        rating: v, 
+        opponentDeck: x.opponentDeck, 
+        result: String(x.result).includes('VIC') ? 'WIN' : 'LOSE', 
+        date: x.date, 
+        myDeck: x.myDeck 
+      }; 
+    }).filter(v => v !== null);
+  }, [records, filterMode, filterDateType, startDate, endDate, chunkSize, setRange, totalSets]);
 
   return (
     <div className="space-y-6">
