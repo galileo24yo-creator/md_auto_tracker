@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, memo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { Trophy, Swords, XCircle, TrendingUp, Activity, Download, ArrowLeftRight, Pencil, Save, Loader2, Trash2, Settings, Plus, ExternalLink } from 'lucide-react';
+import { Trophy, Swords, XCircle, TrendingUp, Activity, Download, ArrowLeftRight, Pencil, Save, Loader2, Trash2, Settings, Plus, ExternalLink, Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { postData } from '../lib/api';
 import DeckSelect from './DeckSelect';
 
@@ -142,6 +142,118 @@ const MatchupRankings = memo(({ data, tab, onTabChange, minLimit, onLimitChange 
 ));
 
 // ==========================================
+// DateRange Selector Modal
+// ==========================================
+
+const CalendarModal = memo(({ isOpen, onClose, startDate, endDate, onApply }) => {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [tempStart, setTempStart] = useState(startDate ? new Date(startDate) : null);
+  const [tempEnd, setTempEnd] = useState(endDate ? new Date(endDate) : null);
+
+  if (!isOpen) return null;
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
+  const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
+
+  const handleDayClick = (day) => {
+    const selected = new Date(year, month, day);
+    if (!tempStart || (tempStart && tempEnd)) {
+      setTempStart(selected);
+      setTempEnd(null);
+    } else if (tempStart && !tempEnd) {
+      if (selected < tempStart) {
+        setTempEnd(tempStart);
+        setTempStart(selected);
+      } else {
+        setTempEnd(selected);
+      }
+    }
+  };
+
+  const isSelected = (d) => {
+    const target = new Date(year, month, d);
+    if (tempStart && target.toDateString() === tempStart.toDateString()) return 'start';
+    if (tempEnd && target.toDateString() === tempEnd.toDateString()) return 'end';
+    if (tempStart && tempEnd && target > tempStart && target < tempEnd) return 'between';
+    return null;
+  };
+
+  const formatDateLabel = (d) => d ? `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}` : "---";
+
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in" onClick={onClose}>
+      <div className="bg-zinc-900 border border-zinc-800 rounded-[2.5rem] w-full max-w-sm overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="p-6 border-b border-zinc-800 flex items-center justify-between bg-white/[0.02]">
+          <div className="flex items-center gap-3">
+            <Calendar className="w-5 h-5 text-indigo-500" />
+            <h3 className="text-sm font-black uppercase tracking-widest text-zinc-100">Select Range</h3>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-zinc-800 rounded-full transition-all text-zinc-500 hover:text-white"><X className="w-5 h-5" /></button>
+        </div>
+
+        <div className="p-8 space-y-6">
+          <div className="flex items-center justify-between">
+            <button onClick={prevMonth} className="p-2 hover:bg-zinc-800 rounded-xl text-zinc-400"><ChevronLeft className="w-5 h-5" /></button>
+            <div className="text-sm font-black text-white">{year} / {month + 1}</div>
+            <button onClick={nextMonth} className="p-2 hover:bg-zinc-800 rounded-xl text-zinc-400"><ChevronRight className="w-5 h-5" /></button>
+          </div>
+
+          <div className="grid grid-cols-7 gap-1">
+            {['S','M','T','W','T','F','S'].map(d => <div key={d} className="text-center text-[10px] font-black text-zinc-600 pb-2">{d}</div>)}
+            {Array(firstDay).fill(0).map((_, i) => <div key={`empty-${i}`} />)}
+            {days.map(d => {
+              const state = isSelected(d);
+              return (
+                <button 
+                  key={d} 
+                  onClick={() => handleDayClick(d)}
+                  className={`aspect-square text-[10px] font-bold rounded-lg transition-all flex items-center justify-center
+                    ${state === 'start' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 
+                      state === 'end' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 
+                      state === 'between' ? 'bg-indigo-500/20 text-indigo-400' : 
+                      'text-zinc-400 hover:bg-zinc-800 hover:text-white'}`}
+                >
+                  {d}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="pt-4 border-t border-zinc-800 grid grid-cols-2 gap-4">
+            <div className="bg-zinc-950 p-3 rounded-2xl border border-zinc-800 text-center">
+              <div className="text-[8px] text-zinc-600 font-black uppercase mb-1">From</div>
+              <div className="text-[10px] font-bold text-zinc-300">{formatDateLabel(tempStart)}</div>
+            </div>
+            <div className="bg-zinc-950 p-3 rounded-2xl border border-zinc-800 text-center">
+              <div className="text-[8px] text-zinc-600 font-black uppercase mb-1">To</div>
+              <div className="text-[10px] font-bold text-zinc-300">{formatDateLabel(tempEnd)}</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 bg-white/[0.01] border-t border-zinc-800 flex gap-3">
+          <button onClick={onClose} className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-colors">Cancel</button>
+          <button 
+            onClick={() => onApply(tempStart, tempEnd)} 
+            disabled={!tempStart}
+            className="flex-[2] py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-indigo-600/20 transition-all"
+          >
+            Apply Range
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+// ==========================================
 // Main Dashboard
 // ==========================================
 
@@ -150,6 +262,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
   const [filterDateType, setFilterDateType] = useState('30D');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
   const [chunkSize, setChunkSize] = useState('ALL');
   const [setRange, setSetRange] = useState([1, 1]);
   const [filterMyDeck, setFilterMyDeck] = useState('ALL');
@@ -417,11 +530,13 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
             </select>
             
             {filterDateType === 'CUSTOM' && (
-              <div className="flex items-center gap-1 animate-in slide-in-from-right-2 duration-300 shrink-0">
-                <input type="date" value={startDate} onChange={e => { setStartDate(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-1.5 py-1 text-[8px] outline-none focus:ring-1 focus:ring-indigo-500 w-[85px]" />
-                <span className="text-zinc-600 text-xs">-</span>
-                <input type="date" value={endDate} onChange={e => { setEndDate(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-1.5 py-1 text-[8px] outline-none focus:ring-1 focus:ring-indigo-500 w-[85px]" />
-              </div>
+              <button 
+                onClick={() => setIsDateModalOpen(true)}
+                className="flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-lg px-2.5 py-1.5 text-[10px] font-black uppercase hover:bg-indigo-500/20 transition-all animate-in slide-in-from-right-2"
+              >
+                <Calendar className="w-3.5 h-3.5" />
+                {startDate ? `${startDate.split('-').slice(1).join('/')} - ${endDate ? endDate.split('-').slice(1).join('/') : '...'}` : '期間を選択'}
+              </button>
             )}
 
             <select value={filterMode} onChange={(e) => { setFilterMode(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 shrink-0">
@@ -629,6 +744,19 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
           </div>
         </div>
       )}
+
+      <CalendarModal 
+        isOpen={isDateModalOpen} 
+        onClose={() => setIsDateModalOpen(false)}
+        startDate={startDate}
+        endDate={endDate}
+        onApply={(start, end) => {
+          setStartDate(start ? start.toISOString().split('T')[0] : '');
+          setEndDate(end ? end.toISOString().split('T')[0] : '');
+          setIsDateModalOpen(false);
+          setSetRange([1, 1]);
+        }}
+      />
     </div>
   );
 }
