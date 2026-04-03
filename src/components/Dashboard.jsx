@@ -3,6 +3,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Ba
 import { Trophy, Swords, XCircle, TrendingUp, Activity, Download, ArrowLeftRight, Pencil, Save, Loader2, Trash2, Settings, Plus, ExternalLink, Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { postData } from '../lib/api';
 import DeckSelect from './DeckSelect';
+import FilterSelect from './FilterSelect';
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6366f1', '#f43f5e', '#06b6d4', '#84cc16', '#f97316', '#a855f7', '#14b8a6'];
 
@@ -590,9 +591,12 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
               <option value="DC">モード: DC</option>
             </select>
             
-            <select value={filterMyDeck} onChange={(e) => { setFilterMyDeck(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 max-w-[100px] shrink-0">
-              <option value="ALL">マイデッキ</option>{availableMyDecks.map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
+            <FilterSelect 
+              options={availableMyDecks} 
+              value={filterMyDeck} 
+              onChange={(v) => { setFilterMyDeck(v); setSetRange([1, 1]); }} 
+              placeholder="マイデッキ" 
+            />
 
             <select value={chunkSize} onChange={(e) => { setChunkSize(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 shrink-0">
               <option value="ALL">全ての試合</option>
