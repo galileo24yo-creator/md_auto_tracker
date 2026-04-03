@@ -371,11 +371,11 @@ export const detectRating = (roiImageData, debug = false, threshold = 200) => {
       if (bin[y * w + x]) { rowSums[y]++; colSums[x]++; }
     }
   }
-  const minPixelsPerRow = Math.max(2, Math.floor(w * 0.05));
-  let minY = 0; while (minY < h && rowSums[minY] < minPixelsPerRow) minY++;
-  let maxY = h - 1; while (maxY > minY && rowSums[maxY] < minPixelsPerRow) maxY--;
-  let minX = 0; while (minX < w && colSums[minX] < minPixelsPerRow) minX++;
-  let maxX = w - 1; while (maxX > minX && colSums[maxX] < minPixelsPerRow) maxX--;
+  const minPx = 2; // Restore previous stable threshold
+  let minY = 0; while (minY < h && rowSums[minY] < minPx) minY++;
+  let maxY = h - 1; while (maxY > minY && rowSums[maxY] < minPx) maxY--;
+  let minX = 0; while (minX < w && colSums[minX] < minPx) minX++;
+  let maxX = w - 1; while (maxX > minX && colSums[maxX] < minPx) maxX--;
 
   if (minX >= maxX || minY >= maxY) {
     return debug ? { result: "", debugLog: "No content after trimming", comps: [] } : "";
@@ -396,10 +396,10 @@ export const detectRating = (roiImageData, debug = false, threshold = 200) => {
   const comps = findComponents(trimmedBin, tw, th);
   if (comps.length === 0) return debug ? { result: "", debugLog: "No components", comps: [] } : "";
 
-  // Medians and strict sizing filters
+  // Medians and stabilized sizing filters
   const heights = comps.map(c => c.h).sort((a, b) => a - b);
   const medianH = heights[Math.floor(heights.length / 2)];
-  const validComps = comps.filter(c => c.h > medianH * 0.4 && c.h < medianH * 1.6); // Stricter gate
+  const validComps = comps.filter(c => c.h > medianH * 0.3 && c.h < medianH * 2.5); // Reverted to loose gate
 
   let result = "";
   let totalError = 0;
@@ -408,7 +408,7 @@ export const detectRating = (roiImageData, debug = false, threshold = 200) => {
   for (const comp of validComps) {
     const feats = extractDigitFeatures(trimmedBin, tw, th, comp);
     const { char, error } = matchDigit(feats, DIGIT_TEMPLATES);
-    const accepted = error < 100; // Even stricter error threshold for points
+    const accepted = error < 120; // Reverted to 120
     if (accepted) {
       result += char; 
       totalError += error;
