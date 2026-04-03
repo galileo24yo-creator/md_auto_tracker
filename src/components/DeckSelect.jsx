@@ -128,5 +128,3 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
     </div>
   );
 }
-  );
-}
