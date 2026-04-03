@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, memo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { Trophy, Swords, XCircle, TrendingUp, Activity, Download, ArrowLeftRight, Pencil, Save, Loader2, Trash2, Settings, Plus } from 'lucide-react';
+import { Trophy, Swords, XCircle, TrendingUp, Activity, Download, ArrowLeftRight, Pencil, Save, Loader2, Trash2, Settings, Plus, ExternalLink } from 'lucide-react';
 import { postData } from '../lib/api';
 import DeckSelect from './DeckSelect';
 
@@ -365,6 +365,16 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
             <h2 className="text-xl font-black text-zinc-100 flex items-center gap-2"><TrendingUp className="w-5 h-5 text-indigo-500" /> Match Analytics</h2>
             <button onClick={exportToCSV} className="px-3 py-1.5 bg-zinc-800 border border-zinc-700 text-zinc-300 rounded-lg text-[10px] font-black uppercase flex items-center gap-2 hover:bg-zinc-700 transition-colors"><Download className="w-3.5 h-3.5" /> CSV</button>
             <button onClick={() => { setEditingDecks(decks); setEditingReasons(reasons); setShowSettingsEditor(true); }} className="px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-lg text-[10px] font-black uppercase flex items-center gap-2 hover:bg-indigo-500/20 transition-colors"><Settings className="w-3.5 h-3.5" /> Decks</button>
+            {activeProfile?.sheetUrl && (
+              <a 
+                href={activeProfile.sheetUrl} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-[10px] font-black uppercase flex items-center gap-2 hover:bg-emerald-500/20 transition-colors"
+              >
+                <ExternalLink className="w-3.5 h-3.5" /> Sheets
+              </a>
+            )}
           </div>
           <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
             <select value={filterMode} onChange={(e) => { setFilterMode(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-500">
