@@ -272,7 +272,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
               if (detectedTurn) {
                 if (currentState === STATES.NEXT_MATCH_STANDBY) {
                   const cur = slotsRef.current;
-                  if (cur.turn || cur.result) triggerAutoSaveForNextMatch(cur);
+                  if (cur.turn || cur.result) await triggerAutoSaveForNextMatch(cur);
                   
                   setResult(''); setIsResultLocked(false);
                   setDiff(''); setRatingChange(''); setIsDiffLocked(false);
