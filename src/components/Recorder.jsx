@@ -295,11 +295,11 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
               const hasSecondChar = cleanText.includes('後');
               
               let foundTurnValue = null;
-              if (hasFirstChar && !hasSecondChar) foundTurnValue = '先攻';
-              else if (hasSecondChar && !hasFirstChar) foundTurnValue = '後攻';
+              if (hasFirstChar && !hasSecondChar) foundTurnValue = '先';
+              else if (hasSecondChar && !hasFirstChar) foundTurnValue = '後';
               else {
                 // Fallback to phrase matching if character is not clear
-                foundTurnValue = res_f.match ? '先攻' : '後攻';
+                foundTurnValue = res_f.match ? '先' : '後';
               }
               
               const foundScore = res_f.match ? res_f.confidence : res_s.confidence;
@@ -315,7 +315,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
               setTurnScore(foundScore / 100);
               setCurrentState(STATES.IN_MATCH); 
               stateRef.current = STATES.IN_MATCH;
-              setOcrLog(`対戦中... [${foundTurnValue}] を検知しました`);
+              setOcrLog(`対戦中... [${foundTurnValue === '先' ? '先攻' : '後攻'}] を検知しました`);
               playNotificationSound('single');
               stablePointsBufferRef.current = [];
             }
@@ -466,11 +466,11 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div 
-                onClick={() => { setTurn(t => t === '先攻' ? '後攻' : '先攻'); setIsTurnLocked(true); }}
+                onClick={() => { setTurn(t => t === '先' ? '後' : '先'); setIsTurnLocked(true); }}
                 className="p-4 rounded-xl border border-zinc-700 bg-zinc-900/50 text-center cursor-pointer hover:border-indigo-500 transition-colors group"
               >
                 <div className="text-[9px] text-zinc-500 uppercase font-bold mb-1 group-hover:text-indigo-400">Turn</div>
-                <div className="text-xl font-black text-indigo-400">{turn || '--'}</div>
+                <div className="text-xl font-black text-indigo-400">{turn ? (turn + '攻') : '--'}</div>
               </div>
               <div 
                 onClick={() => { setResult(r => r === 'VICTORY' ? 'DEFEAT' : 'VICTORY'); setIsResultLocked(true); }}
