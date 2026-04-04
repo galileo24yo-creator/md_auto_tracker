@@ -290,7 +290,18 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
             const res_s = { match: fuzzyIncludes(cleanText, 'あなたが後攻です', 2), confidence };
 
             if (res_f.match || res_s.match) {
-              const foundTurnValue = res_f.match ? '先攻' : '後攻';
+              // Priority: Explicitly look for the character '先' or '後'
+              const hasFirstChar = cleanText.includes('先');
+              const hasSecondChar = cleanText.includes('後');
+              
+              let foundTurnValue = null;
+              if (hasFirstChar && !hasSecondChar) foundTurnValue = '先攻';
+              else if (hasSecondChar && !hasFirstChar) foundTurnValue = '後攻';
+              else {
+                // Fallback to phrase matching if character is not clear
+                foundTurnValue = res_f.match ? '先攻' : '後攻';
+              }
+              
               const foundScore = res_f.match ? res_f.confidence : res_s.confidence;
               
               if (currentState === STATES.NEXT_MATCH_STANDBY) {
