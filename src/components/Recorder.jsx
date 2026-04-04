@@ -6,18 +6,6 @@ import { fuzzyIncludes } from '../lib/utils';
 import { createWorker } from 'tesseract.js';
 import { ROIS, getROIData, STATES, detectRating, normalizeContent, drawBinarizedToCanvas, createBinarizedCanvas } from '../lib/visionEngine';
 
-const TEMPLATES = {
-  "0": { h: [32, 21, 18, 18, 18, 18, 23, 32], v: [28, 32, 14, 11, 11, 19, 32, 23] },
-  "1": { h: [16, 10, 9, 9, 9, 9, 15, 24], v: [0, 1, 11, 22, 32, 21, 6, 0] },
-  "2": { h: [32, 22, 15, 12, 24, 18, 14, 32], v: [17, 30, 22, 19, 20, 22, 29, 16] },
-  "3": { h: [32, 17, 11, 22, 14, 14, 23, 31], v: [6, 23, 17, 18, 18, 23, 32, 19] },
-  "4": { h: [13, 17, 18, 18, 18, 27, 32, 11], v: [10, 16, 19, 19, 18, 32, 32, 7] },
-  "5": { h: [31, 10, 13, 32, 17, 15, 23, 30], v: [12, 32, 23, 19, 19, 22, 29, 12] },
-  "6": { h: [32, 21, 12, 31, 30, 19, 21, 32], v: [28, 32, 25, 18, 18, 21, 32, 23] },
-  "7": { h: [32, 18, 15, 10, 10, 10, 10, 10], v: [2, 13, 16, 17, 19, 19, 19, 12] },
-  "8": { h: [32, 20, 18, 32, 30, 14, 19, 32], v: [28, 32, 18, 18, 18, 23, 32, 28] },
-  "9": { h: [32, 17, 15, 32, 29, 18, 20, 32], v: [27, 32, 20, 17, 17, 21, 32, 22] },
-};
 
 // ==========================================
 // Sound Effects (Web Audio API)
@@ -80,6 +68,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const intervalRef = useRef(null);
   const isBusyRef = useRef(false);
   const stablePointsBufferRef = useRef([]); // Buffer for temporal consistency (3 frames)
+  const workerRef = useRef(null);
+  const isRecordingRef = useRef(isRecording);
 
   const [lastRating, setLastRating] = useState(null);
   const lastSaveTimeRef = useRef(0);
@@ -93,16 +83,12 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const stateRef = useRef(currentState);
   useEffect(() => { stateRef.current = currentState; }, [currentState]);
 
-  const recordingRef = useRef(isRecording);
-  useEffect(() => { recordingRef.current = isRecording; }, [isRecording]);
+  useEffect(() => { isRecordingRef.current = isRecording; }, [isRecording]);
 
   // Refs for loop
   const slotsRef = useRef({ turn, result, diff, mode, isTurnLocked, isResultLocked, myDecks, oppDecks });
   useEffect(() => { slotsRef.current = { turn, result, diff, mode, isTurnLocked, isResultLocked, myDecks, oppDecks }; }, [turn, result, diff, mode, isTurnLocked, isResultLocked, myDecks, oppDecks]);
 
-  // OCRワーカーは廃止
-
-  // テンプレート画像をロード＆グレースケールバッファに変換
   // OCRワーカーの参照
   const workersRef = useRef({ jpn: null, eng: null });
 
@@ -128,12 +114,17 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       if (intervalRef.current) clearTimeout(intervalRef.current);
       if (workersRef.current.jpn) workersRef.current.jpn.terminate();
       if (workersRef.current.eng) workersRef.current.eng.terminate();
+      if (workerRef.current) workerRef.current.terminate();
     };
   }, []);
 
-
-
-  useEffect(() => { if (stream && videoRef.current) videoRef.current.srcObject = stream; }, [stream]);
+  useEffect(() => { 
+    if (stream) {
+      if (videoRef.current) videoRef.current.srcObject = stream;
+      const previewVideo = document.getElementById('capture-preview');
+      if (previewVideo) previewVideo.srcObject = stream;
+    }
+  }, [stream]);
 
   const resetSlots = useCallback(() => {
     setTurn(''); setIsTurnLocked(false);
@@ -196,7 +187,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
 
   // --- 認識ロジック本体（キャプチャ＋OCRを逐次実行） ---
   const captureAndAnalyze = useCallback(async () => {
-    if (!videoRef.current || !canvasRef.current || videoRef.current.readyState < 2) return;
+    if (!videoRef.current || !canvasRef.current || videoRef.current.readyState < 2 || isBusyRef.current) return;
+    isBusyRef.current = true;
 
     const v = videoRef.current, c = canvasRef.current, ctx = c.getContext('2d');
     const vw = v.videoWidth, vh = v.videoHeight;
@@ -419,52 +411,45 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         }
       }
     } catch (err) { console.error(err); }
-  }, [currentState, showRoiOverlay, saveMatch]);
-
-  const currentAnalyzeRef = useRef(null);
-  currentAnalyzeRef.current = captureAndAnalyze;
+    finally { isBusyRef.current = false; }
+  }, [currentState, showRoiOverlay, saveMatch, isProcessing, onRecorded, resetSlots, lastRating, mode, turn, result, diff, myDecks, oppDecks, selectedTags]);
 
   useEffect(() => {
-    if (!isRecording) {
-      isBusyRef.current = false;
-      return;
-    }
-    
-    let active = true;
-    const loop = async () => {
-      while (active && recordingRef.current) {
-        // 前の処理が終わるまで待機
-        if (isBusyRef.current) {
-          await new Promise(r => setTimeout(r, 100));
-          continue;
-        }
-
-        try {
-          isBusyRef.current = true;
-          if (currentAnalyzeRef.current) {
-            await currentAnalyzeRef.current();
+    if (!workerRef.current) {
+      const blob = new Blob([`
+        let timer = null;
+        self.onmessage = (e) => {
+          if (e.data === 'start') {
+            if (timer) clearInterval(timer);
+            timer = setInterval(() => self.postMessage('tick'), 1000);
+          } else if (e.data === 'stop') {
+            clearInterval(timer);
+            timer = null;
           }
-        } catch (e) {
-          console.error("Loop error:", e);
-        } finally {
-          isBusyRef.current = false;
         }
-        
-        // ステートに応じて待機時間を調整（CPU負荷軽減と応答速度のバランス）
-        const curState = stateRef.current;
-        let wait = 500; // 基本間隔を高速化
-        if (curState === STATES.IN_MATCH) wait = 800; // 試合中も1秒以下に短縮
-        if (curState === STATES.NEXT_MATCH_STANDBY) wait = 500;
-        
-        await new Promise(r => setTimeout(r, wait));
+      `], { type: 'application/javascript' });
+      workerRef.current = new Worker(URL.createObjectURL(blob));
+    }
+
+    const loopHandler = async (e) => {
+      if (e.data === 'tick' && isRecordingRef.current) {
+        await captureAndAnalyze();
       }
     };
+    workerRef.current.onmessage = loopHandler;
+    
+    if (isRecording) {
+      workerRef.current.postMessage('start');
+    } else {
+      workerRef.current.postMessage('stop');
+    }
 
-    loop();
-    return () => { 
-      active = false; 
+    return () => {
+      if (workerRef.current) {
+        workerRef.current.postMessage('stop');
+      }
     };
-  }, [isRecording]);
+  }, [isRecording, captureAndAnalyze]);
 
   const startCapture = async () => {
     try {
@@ -535,7 +520,12 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       </div>
 
       <div className="aspect-video bg-black border border-zinc-800 rounded-xl overflow-hidden relative shadow-inner">
-        {stream ? <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-contain" /> : (
+        {/* Hidden Video for stable background capture */}
+        <video ref={videoRef} autoPlay playsInline muted className="invisible absolute w-1 h-1 pointer-events-none" />
+        
+        {stream ? (
+          <video id="capture-preview" autoPlay playsInline muted className="w-full h-full object-contain" />
+        ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 p-4 text-center">
             <MonitorUp className="w-10 h-10 mb-4 opacity-30" />
             <p className="text-sm font-medium">Capture Master Duel Window</p>
