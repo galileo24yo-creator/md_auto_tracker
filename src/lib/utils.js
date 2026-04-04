@@ -61,3 +61,17 @@ export function fuzzyIncludes(text, target, maxDistance = 2) {
   }
   return false;
 }
+
+/**
+ * Decodes HTML entities like &forall; back to their original characters.
+ */
+export function decodeHTMLEntities(text) {
+  if (!text || typeof text !== 'string') return text;
+  if (!text.includes('&')) return text;
+  try {
+    const doc = new DOMParser().parseFromString(text, 'text/html');
+    return doc.documentElement.textContent;
+  } catch (e) {
+    return text.replace(/&forall;/g, '∀').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  }
+}

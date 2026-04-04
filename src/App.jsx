@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Loader2, RefreshCw, Settings, X, Save, HelpCircle, Database, Pencil, Trash2, Plus, Check } from 'lucide-react';
 import { fetchData, getGasUrl, getProfiles, getActiveProfile, saveProfiles } from './lib/api';
+import { decodeHTMLEntities } from './lib/utils';
 import Dashboard from './components/Dashboard';
 import Recorder from './components/Recorder';
 import SetupGuide from './components/SetupGuide';
@@ -30,10 +31,20 @@ function App() {
     const result = await fetchData();
     
     if (result.success) {
+      // Decode entities for all string data
+      const decodedRecords = (result.records || []).map(r => ({
+        ...r,
+        myDeck: decodeHTMLEntities(r.myDeck),
+        opponentDeck: decodeHTMLEntities(r.opponentDeck),
+        memo: decodeHTMLEntities(r.memo)
+      }));
+      const decodedDecks = (result.decks || []).map(d => decodeHTMLEntities(d));
+      const decodedReasons = (result.reasons || []).map(r => decodeHTMLEntities(r));
+
       setData({
-        records: result.records || [],
-        decks: result.decks || [],
-        reasons: result.reasons || []
+        records: decodedRecords,
+        decks: decodedDecks,
+        reasons: decodedReasons
       });
     } else {
       setError(result.error || "Failed to load data from GAS.");
@@ -242,8 +253,8 @@ function App() {
       )}
       
       <main className="max-w-[1600px] mx-auto grid grid-cols-1 xl:grid-cols-5 gap-8">
-        {/* Left Column: Recording and Configuration (Increased width to 40%) */}
-        <div className="xl:col-span-2 border border-white/5 bg-slate-900/80 rounded-2xl p-6 shadow-2xl ring-1 ring-white/10">
+        {/* Left Column: Recording and Configuration (Sticky on XL screens) */}
+        <div className="xl:col-span-2 sticky top-6 self-start z-20 border border-white/5 bg-slate-900/60 backdrop-blur-md rounded-2xl p-6 shadow-2xl ring-1 ring-white/10">
           <Recorder 
             availableDecks={data.decks} 
             availableTags={data.reasons} 

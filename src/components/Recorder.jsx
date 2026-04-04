@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { MonitorUp, Square, Save, Loader2, Sparkles, ScanText, RotateCcw, ShieldCheck, AlertCircle, PlayCircle, Trophy, Activity, Lock, LockOpen, Eye, EyeOff } from 'lucide-react';
+import { MonitorUp, Square, Save, Loader2, Sparkles, ScanText, RotateCcw, ShieldCheck, AlertCircle, PlayCircle, Trophy, Activity, Lock, LockOpen, Eye, EyeOff, Monitor } from 'lucide-react';
 import DeckSelect from './DeckSelect';
 import { postData } from '../lib/api';
 import { fuzzyIncludes } from '../lib/utils';
@@ -68,8 +68,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const intervalRef = useRef(null);
   const isBusyRef = useRef(false);
   const stablePointsBufferRef = useRef([]); // Buffer for temporal consistency (3 frames)
-  const workerRef = useRef(null);
-  const isRecordingRef = useRef(isRecording);
+  const ocrWorkerRef = useRef(null);
+  const [isPipActive, setIsPipActive] = useState(false);
 
   const [lastRating, setLastRating] = useState(null);
   const lastSaveTimeRef = useRef(0);
@@ -83,7 +83,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const stateRef = useRef(currentState);
   useEffect(() => { stateRef.current = currentState; }, [currentState]);
 
-  useEffect(() => { isRecordingRef.current = isRecording; }, [isRecording]);
+  const recordingRef = useRef(isRecording);
+  useEffect(() => { recordingRef.current = isRecording; }, [isRecording]);
 
   // Refs for loop
   const slotsRef = useRef({ turn, result, diff, mode, isTurnLocked, isResultLocked, myDecks, oppDecks });
@@ -110,21 +111,51 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   };
 
   useEffect(() => {
+    // Initialize OCR Worker for stable background timing
+    try {
+      ocrWorkerRef.current = new Worker(new URL('/ocrWorker.js', import.meta.url));
+    } catch (e) {
+      console.error("Worker initialization failed, falling back to main-thread timer (less stable in background):", e);
+    }
+    
+    if (ocrWorkerRef.current) {
+      ocrWorkerRef.current.onmessage = (e) => {
+        if (e.data.type === 'tick' && isBusyRef.current === false && recordingRef.current) {
+          isBusyRef.current = true;
+          if (currentAnalyzeRef.current) {
+            currentAnalyzeRef.current().finally(() => {
+              isBusyRef.current = false;
+            });
+          }
+        }
+      };
+    }
+
     return () => {
       if (intervalRef.current) clearTimeout(intervalRef.current);
+      if (ocrWorkerRef.current) ocrWorkerRef.current.terminate();
       if (workersRef.current.jpn) workersRef.current.jpn.terminate();
       if (workersRef.current.eng) workersRef.current.eng.terminate();
-      if (workerRef.current) workerRef.current.terminate();
     };
   }, []);
 
-  useEffect(() => { 
-    if (stream) {
-      if (videoRef.current) videoRef.current.srcObject = stream;
-      const previewVideo = document.getElementById('capture-preview');
-      if (previewVideo) previewVideo.srcObject = stream;
+  useEffect(() => {
+    if (isRecording && ocrWorkerRef.current) {
+      // ステートに応じて待機時間を調整（CPU負荷軽減と応答速度のバランス）
+      const curState = stateRef.current;
+      let interval = 500; // 基本間隔
+      if (curState === STATES.IN_MATCH) interval = 800; // 試合中は少し間隔を広げる
+      if (curState === STATES.NEXT_MATCH_STANDBY) interval = 500;
+      
+      ocrWorkerRef.current.postMessage({ action: 'start', interval });
+    } else if (ocrWorkerRef.current) {
+      ocrWorkerRef.current.postMessage({ action: 'stop' });
     }
-  }, [stream]);
+  }, [isRecording, currentState]);
+
+
+
+  useEffect(() => { if (stream && videoRef.current) videoRef.current.srcObject = stream; }, [stream]);
 
   const resetSlots = useCallback(() => {
     setTurn(''); setIsTurnLocked(false);
@@ -187,8 +218,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
 
   // --- 認識ロジック本体（キャプチャ＋OCRを逐次実行） ---
   const captureAndAnalyze = useCallback(async () => {
-    if (!videoRef.current || !canvasRef.current || videoRef.current.readyState < 2 || isBusyRef.current) return;
-    isBusyRef.current = true;
+    if (!videoRef.current || !canvasRef.current || videoRef.current.readyState < 2) return;
 
     const v = videoRef.current, c = canvasRef.current, ctx = c.getContext('2d');
     const vw = v.videoWidth, vh = v.videoHeight;
@@ -411,52 +441,10 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         }
       }
     } catch (err) { console.error(err); }
-    finally { isBusyRef.current = false; }
-  }, [currentState, showRoiOverlay, saveMatch, isProcessing, onRecorded, resetSlots, lastRating, mode, turn, result, diff, myDecks, oppDecks, selectedTags]);
+  }, [currentState, showRoiOverlay, saveMatch]);
 
-  // 最新の解析関数を常に保持するRef（タイマーリセット防止）
-  const captureAndAnalyzeRef = useRef(null);
-  useEffect(() => {
-    captureAndAnalyzeRef.current = captureAndAnalyze;
-  }, [captureAndAnalyze]);
-
-  useEffect(() => {
-    if (!workerRef.current) {
-      const blob = new Blob([`
-        let timer = null;
-        self.onmessage = (e) => {
-          if (e.data === 'start') {
-            if (timer) clearInterval(timer);
-            timer = setInterval(() => self.postMessage('tick'), 1000);
-          } else if (e.data === 'stop') {
-            clearInterval(timer);
-            timer = null;
-          }
-        }
-      `], { type: 'application/javascript' });
-      workerRef.current = new Worker(URL.createObjectURL(blob));
-      
-      workerRef.current.onmessage = async (e) => {
-        if (e.data === 'tick' && isRecordingRef.current) {
-          if (captureAndAnalyzeRef.current) {
-            await captureAndAnalyzeRef.current();
-          }
-        }
-      };
-    }
-
-    if (isRecording) {
-      workerRef.current.postMessage('start');
-    } else {
-      workerRef.current.postMessage('stop');
-      isBusyRef.current = false; // 強制解除
-    }
-
-    // クリーンアップ時は停止のみ（terminateは全体アンマウント時）
-    return () => {
-      if (workerRef.current) workerRef.current.postMessage('stop');
-    };
-  }, [isRecording]);
+  const currentAnalyzeRef = useRef(null);
+  currentAnalyzeRef.current = captureAndAnalyze;
 
   const startCapture = async () => {
     try {
@@ -476,15 +464,33 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       const nextState = STATES.DETECTING_TURN;
       setCurrentState(nextState);
       stateRef.current = nextState;
-      mediaStream.getVideoTracks()[0].onended = () => stopCapture();
+      mediaStream.getVideoTracks()[0].onended = () => stopRecording();
+      if (ocrWorkerRef.current) ocrWorkerRef.current.postMessage({ action: 'start' });
     } catch (err) { setOcrLog("キャプチャ失敗"); }
   };
 
-  const stopCapture = () => {
-    if (intervalRef.current) clearTimeout(intervalRef.current);
-    if (stream) stream.getTracks().forEach(t => t.stop());
-    setStream(null); setIsRecording(false);
-    isBusyRef.current = false;
+  const stopRecording = () => {
+    if (stream) { stream.getTracks().forEach(t => t.stop()); setStream(null); }
+    setIsRecording(false);
+    if (ocrWorkerRef.current) ocrWorkerRef.current.postMessage({ action: 'stop' });
+  };
+
+  const togglePip = async () => {
+    try {
+      const video = videoRef.current;
+      if (!video) return;
+
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+        setIsPipActive(false);
+      } else {
+        await video.requestPictureInPicture();
+        setIsPipActive(true);
+      }
+    } catch (err) {
+      console.error("PiP error:", err);
+      alert("このブラウザはPiP（小窓表示）をサポートしていないか、現在利用できません。");
+    }
   };
 
   // キーボードショートカットの実装 (関数の初期化後に配置)
@@ -495,7 +501,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       const key = e.key.toUpperCase();
       if (key === 'S') { e.preventDefault(); saveMatch(); }
       else if (key === 'R') { e.preventDefault(); resetSlots(); }
-      else if (key === 'V') { e.preventDefault(); if (stream) stopCapture(); else startCapture(); }
+      else if (key === 'V') { e.preventDefault(); if (stream) stopRecording(); else startCapture(); }
       else if (key === 'M') { e.preventDefault(); setIsMyDeckLocked(prev => !prev); }
       else if (key === 'K') { e.preventDefault(); setIsOpponentDeckLocked(prev => !prev); }
       else if (key === 'T') { e.preventDefault(); setIsTagsLocked(prev => !prev); }
@@ -503,7 +509,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [stream, saveMatch, resetSlots, startCapture, stopCapture]);
+  }, [stream, saveMatch, resetSlots, startCapture, stopRecording]);
 
   return (
     <div className="space-y-6">
@@ -527,16 +533,23 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       </div>
 
       <div className="aspect-video bg-black border border-zinc-800 rounded-xl overflow-hidden relative shadow-inner">
-        {/* Hidden Video for stable background capture */}
-        <video ref={videoRef} autoPlay playsInline muted className="invisible absolute w-1 h-1 pointer-events-none" />
-        
-        {stream ? (
-          <video id="capture-preview" autoPlay playsInline muted className="w-full h-full object-contain" />
-        ) : (
+        {stream ? <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-contain" /> : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 p-4 text-center">
             <MonitorUp className="w-10 h-10 mb-4 opacity-30" />
             <p className="text-sm font-medium">Capture Master Duel Window</p>
           </div>
+        )}
+        
+        {/* Picture-in-Picture Button */}
+        {isRecording && (
+          <button 
+            onClick={togglePip}
+            className={`absolute bottom-4 right-4 z-30 p-2.5 rounded-full backdrop-blur-md border transition-all shadow-xl
+              ${isPipActive ? 'bg-indigo-600 border-indigo-400 text-white' : 'bg-zinc-950/60 border-zinc-700 text-zinc-400 hover:text-white hover:border-indigo-500/50'}`}
+            title="Picture in Picture (小窓表示)"
+          >
+            <Monitor className="w-5 h-5" />
+          </button>
         )}
       </div>
 
@@ -632,7 +645,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
             <PlayCircle className="w-7 h-7" /> Launch Vision Flow
           </button>
         ) : (
-          <button onClick={stopCapture} className="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-5 rounded-xl font-bold transition-all shadow-lg text-xl flex items-center justify-center gap-3 active:scale-[0.98]" title="キャプチャを停止 [V]">
+          <button onClick={stopRecording} className="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-5 rounded-xl font-bold transition-all shadow-lg text-xl flex items-center justify-center gap-3 active:scale-[0.98]" title="キャプチャを停止 [V]">
             <Square className="w-7 h-7" /> Stop Flow
           </button>
         )}

@@ -58,18 +58,22 @@ function doGet(e) {
     const lastRow = dataSheet.getLastRow();
     if (lastRow > 1) {
       const getRows = Math.min(lastRow - 1, 1000);
-      // getDisplayValues を使用して表示文字列のまま取得
-      const values = dataSheet.getRange(lastRow - getRows + 1, 1, getRows, 8).getDisplayValues();
-      records = values.map(row => ({
-        date: row[0],
-        mode: row[1],
-        turn: row[2],
-        result: row[3],
-        myDeck: row[4],
-        opponentDeck: row[5],
-        diff: row[6],
-        memo: row[7]
-      }));
+      // getValues を使用して生の文字（∀等）を取得し、日付は別途フォーマットする
+      const values = dataSheet.getRange(lastRow - getRows + 1, 1, getRows, 8).getValues();
+      records = values.map(row => {
+        const d = row[0];
+        const dateStr = (d instanceof Date) ? Utilities.formatDate(d, "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss") : String(d);
+        return {
+          date: dateStr,
+          mode: row[1],
+          turn: row[2],
+          result: row[3],
+          myDeck: row[4],
+          opponentDeck: row[5],
+          diff: row[6],
+          memo: row[7]
+        };
+      });
     }
   }
 
@@ -117,7 +121,7 @@ function doPost(e) {
       const dataSheet = ss.getSheetByName(SHEET_DATA_NAME);
       if (!dataSheet) return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Data sheet not found" })).setMimeType(ContentService.MimeType.JSON);
       
-      const data = dataSheet.getDataRange().getDisplayValues();
+      const data = dataSheet.getDataRange().getValues();
       const searchId = String(payload.id || "").trim();
       let rowIndex = -1;
       
@@ -147,13 +151,14 @@ function doPost(e) {
     
     // 更新モード（payload.id があり、action指定がない場合）
     if (payload.id) {
-      const data = dataSheet.getDataRange().getDisplayValues();
+      const data = dataSheet.getDataRange().getValues();
       let rowIndex = -1;
       const searchId = String(payload.id).trim();
       
       // A列を上から検索して日時が一致するものを探す
       for (let i = 1; i < data.length; i++) {
-        const sheetTime = String(data[i][0]).trim();
+        const d = data[i][0];
+        const sheetTime = (d instanceof Date) ? Utilities.formatDate(d, "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss") : String(d).trim();
         if (sheetTime === searchId) {
           rowIndex = i + 1; // 1-indexed
           break;
