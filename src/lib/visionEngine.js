@@ -6,8 +6,8 @@
 // ROI definitions (relative to screen width/height)
 export const ROIS = {
   TURN: { x: 0.35, y: 0.63, w: 0.30, h: 0.08 },    // あなたが先攻/後攻です (縦横にタイト)
-  RESULT: { x: 0.10, y: 0.35, w: 0.80, h: 0.30 },  // VICTORY/DEFEAT (画面中央大きく)
-  RATING: { x: 0.57, y: 0.52, w: 0.14, h: 0.08 },   // Rating Result Value (画面中央右側)
+  RESULT: { x: 0.10, y: 0.35, w: 0.80, h: 0.30 }, // Wide version for better stability
+  RATING: { x: 0.38, y: 0.70, w: 0.24, h: 0.10 },   // Rating Result Value (画面中央右側)
   DC_POINTS: { x: 0.57, y: 0.52, w: 0.16, h: 0.08 } // DC Points (桁数増加に備えて少し広く設定)
 };
 
@@ -131,29 +131,90 @@ export const createBinarizedCanvas = (bin, w = 128, h = 32, invert = true) => {
   return c;
 };
 
-export const normalizeContent = (sourceCanvasOrVideo, sx, sy, sw, sh, IGNORED_W, targetHeight = 60, threshold = 160) => {
+/**
+ * Otsu's Method: Automatically calculates the optimal binarize threshold
+ */
+const calculateOtsuThreshold = (data) => {
+  const histogram = new Int32Array(256);
+  let totalValid = 0;
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3] < 128) continue; // Skip transparent pixels
+    const l = Math.floor(data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
+    histogram[l]++;
+    totalValid++;
+  }
+
+  if (totalValid === 0) return 128; // Fallback
+
+  let sum = 0;
+  for (let t = 0; t < 256; t++) sum += t * histogram[t];
+
+  let sumB = 0;
+  let wB = 0;
+  let wF = 0;
+  let varMax = 0;
+  let threshold = 0;
+
+  for (let t = 0; t < 256; t++) {
+    wB += histogram[t];
+    if (wB === 0) continue;
+    wF = totalValid - wB;
+    if (wF === 0) break;
+
+    sumB += t * histogram[t];
+    const mB = sumB / wB;
+    const mF = (sum - sumB) / wF;
+
+    const varBetween = wB * wF * (mB - mF) * (mB - mF);
+
+    if (varBetween > varMax) {
+      varMax = varBetween;
+      threshold = t;
+    }
+  }
+  return threshold;
+};
+
+export const normalizeContent = (sourceCanvasOrVideo, sx, sy, sw, sh, IGNORED_W, targetHeight = 60, threshold = 160, angle = 0) => {
   sx = Math.floor(sx);
   sy = Math.floor(sy);
   sw = Math.floor(sw);
   sh = Math.floor(sh);
 
-  const tmpCanvas = document.createElement('canvas');
-  tmpCanvas.width = sw;
-  tmpCanvas.height = sh;
-  const ctx = tmpCanvas.getContext('2d');
-  ctx.drawImage(sourceCanvasOrVideo, sx, sy, sw, sh, 0, 0, sw, sh);
+  const psw = sw + 100;
+  const psh = sh + 100;
 
-  const imgData = ctx.getImageData(0, 0, sw, sh);
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width = psw;
+  tmpCanvas.height = psh;
+  const ctx = tmpCanvas.getContext('2d');
+  
+  if (angle !== 0) {
+    ctx.save();
+    ctx.translate(psw / 2, psh / 2);
+    ctx.rotate((angle * Math.PI) / 180);
+    ctx.drawImage(sourceCanvasOrVideo, sx, sy, sw, sh, -sw / 2, -sh / 2, sw, sh);
+    ctx.restore();
+  } else {
+    ctx.drawImage(sourceCanvasOrVideo, sx, sy, sw, sh, (psw - sw) / 2, (psh - sh) / 2, sw, sh);
+  }
+
+  const imgData = ctx.getImageData(0, 0, psw, psh);
   const { data } = imgData;
 
-  const rowSums = new Int32Array(sh);
-  const colSums = new Int32Array(sw);
+  // Use Otsu's Method if threshold is 0 or below (Offset +25 for balanced extraction)
+  const effThreshold = threshold <= 0 ? calculateOtsuThreshold(data) + 25 : threshold;
+  // if (angle !== 0) console.log(`ROI Otsu Threshold: ${effThreshold} (Auto: ${threshold <= 0})`);
 
-  for (let y = 0; y < sh; y++) {
-    for (let x = 0; x < sw; x++) {
-      const i = (y * sw + x) * 4;
+  const rowSums = new Int32Array(psh);
+  const colSums = new Int32Array(psw);
+  
+  for (let y = 0; y < psh; y++) {
+    for (let x = 0; x < psw; x++) {
+      const i = (y * psw + x) * 4;
       const lum = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-      if (lum > threshold) {
+
+      if (lum > effThreshold) {
         rowSums[y]++;
         colSums[x]++;
         data[i] = 255; data[i + 1] = 255; data[i + 2] = 255; // 白
@@ -163,42 +224,41 @@ export const normalizeContent = (sourceCanvasOrVideo, sx, sy, sw, sh, IGNORED_W,
       data[i + 3] = 255;
     }
   }
-  ctx.putImageData(imgData, 0, 0); // 二値化結果を書き戻す（スケール時の消失を防ぐため）
+  // ctx.putImageData(imgData, 0, 0); // Removed to keep raw color for better scaling
 
-  // プロジェクションプロファイル法によるノイズ除去（細い文字を切らないように緩和）
-  const minPixelsPerRow = Math.max(2, Math.floor(sw * 0.01)); // 行(横ライン)に必要な白ピクセル
-  const minPixelsPerCol = Math.max(2, Math.floor(sh * 0.02)); // 列(縦ライン)に必要な白ピクセル
+  const minPixelsPerRow = Math.max(2, Math.floor(psw * 0.01));
+  const minPixelsPerCol = Math.max(2, Math.floor(psh * 0.02));
 
   let minY = 0;
-  while (minY < sh && rowSums[minY] < minPixelsPerRow) minY++;
+  while (minY < psh && rowSums[minY] < minPixelsPerRow) minY++;
 
-  let maxY = sh - 1;
+  let maxY = psh - 1;
   while (maxY > minY && rowSums[maxY] < minPixelsPerRow) maxY--;
 
   let minX = 0;
-  while (minX < sw && colSums[minX] < minPixelsPerCol) minX++;
+  while (minX < psw && colSums[minX] < minPixelsPerCol) minX++;
 
-  let maxX = sw - 1;
+  let maxX = psw - 1;
   while (maxX > minX && colSums[maxX] < minPixelsPerCol) maxX--;
 
-  // 白文字が規定より少ない（背景ノイズのみ）場合は全領域、またはエラーとして扱う
-  if (minX >= maxX || minY >= Math.max(maxY, sh - 1)) {
-    minX = 0; minY = 0; maxX = sw - 1; maxY = sh - 1;
+  // If no content found, default to full padded area
+  if (minX >= maxX || minY >= Math.max(maxY, psh - 1)) {
+    minX = 0; minY = 0; maxX = psw - 1; maxY = psh - 1;
   } else {
-    // OCRが読みやすいように、周囲に適切な余白（パディング）を追加
-    const padX = Math.floor(sw * 0.05);
-    const padY = Math.floor(sh * 0.1);
+    // Add small padding around word
+    const padX = Math.floor(psw * 0.02);
+    const padY = Math.floor(psh * 0.05);
     minX = Math.max(0, minX - padX);
-    maxX = Math.min(sw - 1, maxX + padX);
+    maxX = Math.min(psw - 1, maxX + padX);
     minY = Math.max(0, minY - padY);
-    maxY = Math.min(sh - 1, maxY + padY);
+    maxY = Math.min(psh - 1, maxY + padY);
   }
 
   const boxW = maxX - minX + 1;
   const boxH = maxY - minY + 1;
 
-  // サイズによるノイズフィルター：想定される文字サイズ（ROIの20%以上）を下回る場合はただのノイズと断定
-  if (boxW < sw * 0.2 || boxH < sh * 0.2) {
+  // サイズによるノイズフィルター：想定される文字サイズ（ROIの15%以上）を下回る場合はただのノイズと断定
+  if (boxW < psw * 0.15 || boxH < psh * 0.1) {
     return { bin: new Uint8Array(1), width: 1, height: 1, bbox: { x: minX, y: minY, w: boxW, h: boxH } };
   }
 
@@ -218,14 +278,16 @@ export const normalizeContent = (sourceCanvasOrVideo, sx, sy, sw, sh, IGNORED_W,
 
   fctx.drawImage(tmpCanvas, minX, minY, boxW, boxH, 0, 0, targetWidth, targetHeight);
 
+  // Returned bin is STILL binarized here for legacy compatibility in other parts of the app,
+  // but extracted features will use the raw RGB finalData.
   const finalData = fctx.getImageData(0, 0, targetWidth, targetHeight);
-  const bin = new Uint8Array(targetWidth * targetHeight);
-  for (let i = 0; i < bin.length; i++) {
-    // 既に白黒になっているものをスケールしたので、中間値(128)で再二値化する
-    bin[i] = finalData.data[i * 4] > 128 ? 1 : 0;
-  }
-
-  return { bin, width: targetWidth, height: targetHeight, bbox: { x: minX, y: minY, w: boxW, h: boxH } };
+  return { 
+    bin: binarizeROI(finalData, effThreshold), 
+    width: targetWidth, 
+    height: targetHeight, 
+    bbox: { x: minX, y: minY, w: boxW, h: boxH },
+    raw: finalData // New: return raw RGB data for better downstream binarization
+  };
 };
 
 /**
@@ -282,9 +344,47 @@ export const findComponents = (bin, w, h) => {
 };
 
 /**
- * Extracts 8x8 features (profiles) from a single component.
+ * Merges components that are horizontally overlapping or extremely close.
+ * Essential for stylized/decorative text where a single character might be split.
  */
-export const extractDigitFeatures = (bin, w, h, comp) => {
+export const mergeNearbyComponents = (comps, xThreshold = 0.5) => {
+  if (comps.length <= 1) return comps;
+  
+  const merged = [];
+  let current = { ...comps[0] };
+  
+  for (let i = 1; i < comps.length; i++) {
+    const next = comps[i];
+    // Check for horizontal proximity/overlap
+    const isClose = next.x <= (current.x + current.w + xThreshold);
+    
+    if (isClose) {
+      // Merge: Update current bounding box
+      const newX = Math.min(current.x, next.x);
+      const newY = Math.min(current.y, next.y);
+      const newMaxX = Math.max(current.x + current.w, next.x + next.w);
+      const newMaxY = Math.max(current.y + current.h, next.y + next.h);
+      
+      current.x = newX;
+      current.y = newY;
+      current.w = newMaxX - newX;
+      current.h = newMaxY - newY;
+      current.cx = current.x + current.w / 2;
+      current.cy = current.y + current.h / 2;
+    } else {
+      merged.push(current);
+      current = { ...next };
+    }
+  }
+  merged.push(current);
+  return merged;
+};
+
+/**
+ * Extracts 8x8 features (profiles) from a single component.
+ * Renamed to extractComponentFeatures for general use (letters, icons, etc.)
+ */
+export const extractComponentFeatures = (bin, w, h, comp) => {
   const { x, y, w: cw, h: ch } = comp;
   const hFeat = new Array(8).fill(0);
   const vFeat = new Array(8).fill(0);
@@ -337,23 +437,114 @@ export const extractDigitFeatures = (bin, w, h, comp) => {
   return { h: hFeat, v: vFeat, q: qFeat };
 };
 
+/**
+ * Calculates the comparison error between two feature sets.
+ * Used for both digits and letter/icon sequences.
+ */
+export const compareComponentFeatures = (f1, f2) => {
+  let err = 0;
+  if (!f1 || !f2) return 999;
+  for (let i = 0; i < 8; i++) {
+    err += Math.abs((f1.h[i] || 0) - (f2.h[i] || 0)) + Math.abs((f1.v[i] || 0) - (f2.v[i] || 0));
+  }
+  for (let i = 0; i < 4; i++) {
+    err += Math.abs((f1.q[i] || 0) - (f2.q ? (f2.q[i] || 0) : 0));
+  }
+  return err;
+};
+
 export const matchDigit = (features, templates) => {
   let best = '?';
   let minErr = Infinity;
   for (const [char, pt] of Object.entries(templates)) {
-    let err = 0;
-    for (let i = 0; i < 8; i++) {
-      err += Math.abs(features.h[i] - pt.h[i]) + Math.abs(features.v[i] - pt.v[i]);
-    }
-    for (let i = 0; i < 4; i++) {
-      err += Math.abs(features.q[i] - (pt.q ? pt.q[i] : 0));
-    }
+    const err = compareComponentFeatures(features, pt);
     if (err < minErr) {
       minErr = err;
       best = char;
     }
   }
   return { char: best, error: minErr };
+};
+
+/**
+ * Compares a dynamic sequence of features (like V-I-C-T-O-R-Y) against a template sequence.
+ */
+export const matchSequence = (liveSeq, templateSeq, maxTotalErr = 400) => {
+  // If component counts are drastically different, the match is unlikely
+  if (Math.abs(liveSeq.length - templateSeq.length) > 1) return { match: false, error: 999 };
+  
+  // Basic sequence alignment (assuming mostly perfect order for MD status words)
+  let totalErr = 0;
+  const count = Math.min(liveSeq.length, templateSeq.length);
+  for (let i = 0; i < count; i++) {
+    totalErr += compareComponentFeatures(liveSeq[i], templateSeq[i]);
+  }
+
+  // Handle case where one char is missing or extra (simple offset check)
+  const avgErr = totalErr / count;
+  return { 
+    match: avgErr < (maxTotalErr / count), 
+    error: avgErr,
+    confidence: Math.max(0, 100 - (avgErr * 2)) 
+  };
+};
+
+/**
+ * High-level helper: extracts all component features from an image.
+ */
+export const extractSequenceFeatures = (imageData, threshold = 0, angle = 0) => {
+  const w = imageData.width, h = imageData.height;
+  
+  // Padding to avoid clipping during rotation
+  const pad = angle !== 0 ? Math.floor(Math.max(w, h) * 0.3) : 0;
+  const pw = w + pad * 2, ph = h + pad * 2;
+  
+  let processedImageData = imageData;
+  let finalW = w, finalH = h;
+  
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width = pw; tmpCanvas.height = ph;
+  const tctx = tmpCanvas.getContext('2d');
+
+  if (angle !== 0) {
+    tctx.save();
+    tctx.translate(pw / 2, ph / 2);
+    tctx.rotate((angle * Math.PI) / 180);
+    const off = document.createElement('canvas');
+    off.width = w; off.height = h;
+    off.getContext('2d').putImageData(imageData, 0, 0);
+    tctx.drawImage(off, -w / 2, -h / 2);
+    tctx.restore();
+    processedImageData = tctx.getImageData(0, 0, pw, ph);
+    finalW = pw; finalH = ph;
+  } else {
+    // Just wrap in ImageData for consistency if not rotated
+    tctx.putImageData(imageData, 0, 0);
+    processedImageData = tctx.getImageData(0, 0, w, h);
+    finalW = w; finalH = h;
+  }
+
+  // Dynamic thresholding for extraction (Otsu + Safety Offset)
+  let effThreshold = threshold;
+  if (threshold <= 0) {
+    const otsu = calculateOtsuThreshold(processedImageData.data);
+    // Add offset (+25) for more precise character separation
+    effThreshold = Math.max(60, Math.min(240, otsu + 25));
+    // if (angle !== 0) console.log(`Extraction Otsu: ${otsu} -> Final: ${effThreshold}`);
+  }
+
+  const bin = binarizeROI(processedImageData, effThreshold);
+  const rawComps = findComponents(bin, finalW, finalH);
+  // Balanced merge distance for 120px target height (back to sweet spot)
+  const mergedComps = mergeNearbyComponents(rawComps, 1.0); 
+  
+  return {
+    features: mergedComps.map(c => extractComponentFeatures(bin, finalW, finalH, c)),
+    comps: mergedComps,
+    bin: bin, // For debug visualization
+    width: finalW,
+    height: finalH
+  };
 };
 
 /**
@@ -406,7 +597,7 @@ export const detectRating = (roiImageData, debug = false, threshold = 200) => {
   const compDetails = [];
   
   for (const comp of validComps) {
-    const feats = extractDigitFeatures(trimmedBin, tw, th, comp);
+    const feats = extractComponentFeatures(trimmedBin, tw, th, comp);
     const { char, error } = matchDigit(feats, DIGIT_TEMPLATES);
     const accepted = error < 120; // Reverted to 120
     if (accepted) {
