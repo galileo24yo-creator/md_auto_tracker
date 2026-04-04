@@ -414,6 +414,12 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
     finally { isBusyRef.current = false; }
   }, [currentState, showRoiOverlay, saveMatch, isProcessing, onRecorded, resetSlots, lastRating, mode, turn, result, diff, myDecks, oppDecks, selectedTags]);
 
+  // 最新の解析関数を常に保持するRef（タイマーリセット防止）
+  const captureAndAnalyzeRef = useRef(null);
+  useEffect(() => {
+    captureAndAnalyzeRef.current = captureAndAnalyze;
+  }, [captureAndAnalyze]);
+
   useEffect(() => {
     if (!workerRef.current) {
       const blob = new Blob([`
@@ -429,27 +435,28 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         }
       `], { type: 'application/javascript' });
       workerRef.current = new Worker(URL.createObjectURL(blob));
+      
+      workerRef.current.onmessage = async (e) => {
+        if (e.data === 'tick' && isRecordingRef.current) {
+          if (captureAndAnalyzeRef.current) {
+            await captureAndAnalyzeRef.current();
+          }
+        }
+      };
     }
 
-    const loopHandler = async (e) => {
-      if (e.data === 'tick' && isRecordingRef.current) {
-        await captureAndAnalyze();
-      }
-    };
-    workerRef.current.onmessage = loopHandler;
-    
     if (isRecording) {
       workerRef.current.postMessage('start');
     } else {
       workerRef.current.postMessage('stop');
+      isBusyRef.current = false; // 強制解除
     }
 
+    // クリーンアップ時は停止のみ（terminateは全体アンマウント時）
     return () => {
-      if (workerRef.current) {
-        workerRef.current.postMessage('stop');
-      }
+      if (workerRef.current) workerRef.current.postMessage('stop');
     };
-  }, [isRecording, captureAndAnalyze]);
+  }, [isRecording]);
 
   const startCapture = async () => {
     try {
