@@ -7,8 +7,8 @@
 export const ROIS = {
   TURN: { x: 0.35, y: 0.63, w: 0.30, h: 0.08 },    // あなたが先攻/後攻です (縦横にタイト)
   RESULT: { x: 0.10, y: 0.35, w: 0.80, h: 0.30 }, // Wide version for better stability
-  RATING: { x: 0.38, y: 0.70, w: 0.24, h: 0.10 },   // Rating Result Value (画面中央右側)
-  DC_POINTS: { x: 0.57, y: 0.52, w: 0.16, h: 0.08 } // DC Points (桁数増加に備えて少し広く設定)
+  RATING: { x: 0.57, y: 0.52, w: 0.14, h: 0.08 },   // Rating Result Value (以前の正常値に復元)
+  DC_POINTS: { x: 0.60, y: 0.58, w: 0.15, h: 0.08 } // DC Points (2nd STAGE リザルト画面の最終DP位置に調整済)
 };
 
 export const DIGIT_TEMPLATES = {
