@@ -115,7 +115,7 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
   return (
     <div className="relative w-full" ref={wrapperRef}>
       <div 
-        className={`flex flex-wrap gap-2 items-center min-h-[48px] p-2 bg-zinc-900 border rounded-xl transition-all cursor-text
+        className={`flex flex-wrap gap-2 items-center min-h-[48px] max-h-[120px] overflow-y-auto custom-scrollbar p-2 bg-zinc-900 border rounded-xl transition-all cursor-text
           ${isFocused ? 'border-indigo-500 ring-2 ring-indigo-500/20 bg-zinc-900/50 shadow-lg shadow-indigo-500/5' : 'border-zinc-800 hover:border-zinc-700'}`}
         onClick={() => inputRef.current?.focus()}
       >
@@ -151,29 +151,26 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
       </div>
 
       {isFocused && (popularDecks.length > 0 || sortedSuggestions.length > 0) && (
-        <div className="absolute z-[100] w-full mt-2 bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl max-h-80 overflow-hidden flex flex-col animate-in slide-in-from-top-2 duration-200">
-          
-          {/* Popular Decks Quick Access */}
-          {!inputValue && popularDecks.length > 0 && (
-            <div className="p-4 border-b border-zinc-800/50 bg-indigo-500/5">
-              <div className="text-[10px] font-black text-indigo-400/70 uppercase tracking-widest mb-3 px-1">よく使うデッキ</div>
-              <div className="flex flex-wrap gap-2">
-                {popularDecks.map(deck => (
-                  <button
-                    key={`pop-${deck}`}
-                    type="button"
-                    onClick={() => handleSelect(deck)}
-                    className="px-3 py-1.5 rounded-lg bg-zinc-800 border border-zinc-700 text-xs font-bold text-zinc-300 hover:border-indigo-500 hover:text-indigo-400 transition-all active:scale-95"
-                  >
-                    {deck}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* All Suggestions */}
+        <div className="absolute z-[100] w-full mt-2 bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl max-h-[300px] overflow-hidden flex flex-col animate-in slide-in-from-top-2 duration-200">
           <div className="overflow-y-auto custom-scrollbar flex-1">
+            {/* Popular Decks Quick Access */}
+            {!inputValue && popularDecks.length > 0 && (
+              <div className="p-4 border-b border-zinc-800/50 bg-indigo-500/5">
+                <div className="text-[10px] font-black text-indigo-400/70 uppercase tracking-widest mb-3 px-1">よく使う</div>
+                <div className="flex flex-wrap gap-2">
+                  {popularDecks.map(deck => (
+                    <button
+                      key={`pop-${deck}`}
+                      type="button"
+                      onClick={() => handleSelect(deck)}
+                      className="px-2 py-1 rounded bg-zinc-800 border border-zinc-700 text-[10px] font-bold text-zinc-300 hover:border-indigo-500 hover:text-indigo-400 transition-all active:scale-95"
+                    >
+                      {deck}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             {sortedSuggestions.length > 0 ? (
               sortedSuggestions.slice(0, 50).map((deck, idx) => {
                 const isActive = idx === selectedIndex;
