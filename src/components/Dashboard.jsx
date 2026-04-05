@@ -728,6 +728,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
                   </div>
                   <DeckSelect availableDecks={decks} selectedDecks={editData.myDeck} onChange={v => setEditData({...editData, myDeck: v})} placeholder="My Deck" />
                   <DeckSelect availableDecks={decks} selectedDecks={editData.oppDeck} onChange={v => setEditData({...editData, oppDeck: v})} placeholder="Opponent Deck" />
+                  <DeckSelect availableDecks={reasons} selectedDecks={editData.memo} onChange={v => setEditData({...editData, memo: v})} placeholder="Match Deciding Factor (Tags)" />
                   <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 text-center shadow-inner group"><label className="text-[9px] text-zinc-600 uppercase font-black block mb-2">Points</label><input type="text" value={editData.diff} onChange={e => setEditData({...editData, diff: e.target.value})} className="bg-transparent text-4xl font-black text-indigo-400 outline-none text-center w-full" /></div>
                 </div>
               ) : (
@@ -741,6 +742,13 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
                     <div className="bg-zinc-950/50 p-4 rounded-2xl border border-zinc-800/50 text-center"><div className="text-[9px] text-zinc-600 uppercase font-black mb-1">State</div><div className="text-sm font-black">{selectedMatch.turn}攻 / {selectedMatch.result}</div></div>
                     <div className="bg-zinc-950/50 p-4 rounded-2xl border border-zinc-800/50 text-center"><div className="text-[9px] text-zinc-600 uppercase font-black mb-1">Delta</div><div className="text-sm font-black text-indigo-400">{selectedMatch.diff || "---"}</div></div>
                   </div>
+                  {selectedMatch.memo && (
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {selectedMatch.memo.split(',').map((tag, idx) => (
+                        <span key={idx} className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] text-indigo-400 font-black uppercase tracking-wider">{tag.trim()}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

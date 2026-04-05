@@ -62,6 +62,9 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const binCanvasRef = useRef(null); // Full ROI Binarized Preview
+  const lastAnalyzeTimeRef = useRef(0);
+  const rvfcIdRef = useRef(null);
+  const silentOscRef = useRef(null);
   const rawRoiCanvasRef = useRef(null); // Raw Source ROI
   const debugTemplateCanvasRef = useRef(null);
   const debugRoiCanvasRef = useRef(null);
@@ -171,6 +174,10 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       ocrWorkerRef.current = new Worker(new URL('/ocrWorker.js', import.meta.url));
       ocrWorkerRef.current.onmessage = (e) => {
         if (e.data.type === 'tick' && isBusyRef.current === false && recordingRef.current) {
+          // If rvfc is active, we let it take precedence for background stability.
+          // Worker tick acts as a fallback for browsers without rvfc.
+          if (videoRef.current && 'requestVideoFrameCallback' in videoRef.current) return;
+
           isBusyRef.current = true;
           if (currentAnalyzeRef.current) {
             currentAnalyzeRef.current().finally(() => { isBusyRef.current = false; });
@@ -193,8 +200,44 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       let interval = 500;
       if (curState === STATES.IN_MATCH) interval = 800;
       ocrWorkerRef.current.postMessage({ action: 'start', interval });
-    } else if (ocrWorkerRef.current) {
-      ocrWorkerRef.current.postMessage({ action: 'stop' });
+
+      // Start Silent Audio Heartbeat to prevent deep sleep
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        g.gain.value = 0.0001; // Near-silent
+        osc.connect(g); g.connect(audioCtx.destination);
+        osc.start();
+        silentOscRef.current = osc;
+      } catch(e) {}
+
+      // Start rvfc loop if supported
+      if (videoRef.current && 'requestVideoFrameCallback' in videoRef.current) {
+        const loop = (now, metadata) => {
+          if (!recordingRef.current) return;
+          const curTime = Date.now();
+          const targetInterval = stateRef.current === STATES.IN_MATCH ? 800 : 500;
+          
+          if (curTime - lastAnalyzeTimeRef.current >= targetInterval && isBusyRef.current === false) {
+            isBusyRef.current = true;
+            lastAnalyzeTimeRef.current = curTime;
+            if (currentAnalyzeRef.current) {
+               currentAnalyzeRef.current().finally(() => { isBusyRef.current = false; });
+            }
+          }
+          rvfcIdRef.current = videoRef.current.requestVideoFrameCallback(loop);
+        };
+        rvfcIdRef.current = videoRef.current.requestVideoFrameCallback(loop);
+      }
+    } else {
+      if (ocrWorkerRef.current) ocrWorkerRef.current.postMessage({ action: 'stop' });
+      if (silentOscRef.current) { try { silentOscRef.current.stop(); } catch(e){} silentOscRef.current = null; }
+      if (videoRef.current && rvfcIdRef.current) {
+        videoRef.current.cancelVideoFrameCallback(rvfcIdRef.current);
+        rvfcIdRef.current = null;
+      }
     }
   }, [isRecording, currentState]);
 
