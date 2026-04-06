@@ -812,7 +812,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
 
       {activeTab === 'insights' && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl">
-          <SmartInsights records={baseFilteredRecords} availableTags={displayReasons || reasons} />
+          <SmartInsights records={filteredRecords} availableTags={displayReasons || reasons} />
         </div>
       )}
 

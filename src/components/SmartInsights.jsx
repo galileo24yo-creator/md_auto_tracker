@@ -4,7 +4,6 @@ import { TrendingDown, Swords, Zap, Lightbulb, Activity, User, Target, Flame, Sh
 export default function SmartInsights({ records, availableTags }) {
   const analysis = useMemo(() => {
     if (!records || records.length < 5) return null;
-
     const list = [];
     const winRate = (recs) => {
       if (!recs.length) return 0;
@@ -116,37 +115,38 @@ export default function SmartInsights({ records, availableTags }) {
       potentialWR,
       wrLift,
       totalAccountability,
-      globalWinRate
+      globalWinRate,
+      tagRate: Math.round((records.filter(r => r.memo && r.memo.trim().length > 0).length / records.length) * 100)
     };
   }, [records, availableTags]);
 
-  const tagRate = useMemo(() => {
-    if (!records || records.length === 0) return 0;
-    const tagged = records.filter(r => r.memo && r.memo.trim().length > 0).length;
-    return Math.round((tagged / records.length) * 100);
-  }, [records]);
-
-  if (!analysis) return (
-    <div className="animate-in fade-in duration-700">
-      <div className="mb-6 flex items-center gap-2">
-        <Lightbulb className="w-5 h-5 text-indigo-400" />
-        <h3 className="text-lg font-black text-white tracking-tighter uppercase">Smart Insights</h3>
-      </div>
-      <div className="p-10 rounded-2xl bg-zinc-900/30 border border-zinc-800/50 flex flex-col items-center justify-center text-center group">
-        <div className="p-4 rounded-full bg-zinc-800 text-zinc-600 group-hover:text-indigo-500 transition-all mb-4 transform group-hover:scale-110 shadow-lg">
-          <Activity className="w-8 h-8" />
+  if (!analysis) {
+    return (
+      <div className="bg-zinc-900 border border-zinc-800 p-12 rounded-[2.5rem] flex flex-col items-center justify-center text-center space-y-6 shadow-2xl animate-in fade-in duration-700 max-w-2xl mx-auto my-10 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-zinc-700/50 to-transparent" />
+        <div className="w-20 h-20 bg-zinc-950 border border-zinc-800 rounded-3xl flex items-center justify-center mb-2 shadow-inner group">
+          <Activity className="w-10 h-10 text-zinc-700 group-hover:text-amber-500 transition-colors animate-pulse" />
         </div>
-        <h4 className="text-zinc-400 font-bold text-sm mb-1">分析データが不足しています</h4>
-        <p className="text-zinc-600 text-xs max-w-sm">5試合以上の記録（特に敗因タグ）が必要です。データを蓄積してAI分析を有効化しましょう。</p>
+        <div className="space-y-2">
+          <h3 className="text-xl font-black text-white tracking-tight uppercase tracking-widest">分析データ不足</h3>
+          <p className="text-sm text-zinc-500 leading-relaxed font-medium mx-auto max-w-sm">
+            AIによる詳細な分析を行うには、現在のフィルター条件下で **少なくとも5試合以上の対戦データ** が必要です。
+          </p>
+        </div>
+        <div className="pt-4">
+          <div className="px-4 py-2 bg-zinc-800 rounded-xl text-[10px] font-black text-zinc-400 uppercase tracking-widest border border-zinc-700/50 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-amber-500/50" />
+            現在の試合数: {records?.length || 0} / 5
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 
-  const { insights, selfRatio, potentialWR, wrLift, totalAccountability, globalWinRate } = analysis;
+  const { selfRatio, potentialWR, wrLift, globalWinRate, insights, tagRate } = analysis;
 
   return (
-    <div className="animate-in fade-in slide-in-from-top-4 duration-700 space-y-6">
-      
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Visual Header Metrics */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         
@@ -235,9 +235,9 @@ export default function SmartInsights({ records, availableTags }) {
           <div className="flex items-center gap-2">
             <h3 className="text-xs font-black text-white tracking-widest uppercase italic">Pattern Detection Highlights</h3>
           </div>
-          <div className="flex items-center gap-2 bg-zinc-950 p-1.5 rounded-lg border border-zinc-900">
+          <div className="flex items-center gap-3 bg-zinc-950 p-1.5 rounded-lg border border-zinc-900 shadow-inner">
             <Info className="w-3 h-3 text-zinc-500" />
-            <span className="text-[9px] text-zinc-500 font-bold uppercase">分析精度 {tagRate}%</span>
+            <span className="text-[9px] text-zinc-500 font-bold uppercase">タグ付け精度 {tagRate}%</span>
           </div>
         </div>
 
@@ -261,7 +261,7 @@ export default function SmartInsights({ records, availableTags }) {
           ))}
           {insights.length === 0 && (
             <div className="col-span-3 p-8 rounded-2xl border border-dashed border-zinc-800 text-center">
-              <p className="text-zinc-600 text-xs italic">さらに特定のパターンを検知するには、より多くの詳細データが必要です。</p>
+              <p className="text-zinc-600 text-xs italic font-medium tracking-wide">さらに特定のパターンを検知するには、より多くの敗因タグが必要です。</p>
             </div>
           )}
         </div>
@@ -269,3 +269,4 @@ export default function SmartInsights({ records, availableTags }) {
     </div>
   );
 }
+
