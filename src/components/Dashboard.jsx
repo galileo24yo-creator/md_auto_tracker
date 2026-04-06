@@ -34,16 +34,28 @@ const DualRangeSlider = ({ min, max, value, onChange }) => {
     setMaxVal(v); onChange([minVal, v]);
   };
 
-  const den = max - min || 1;
-  const leftPos = ((minVal - min) / den) * 100;
-  const rightPos = 100 - ((maxVal - min) / den) * 100;
-
   return (
-    <div className="relative w-full h-8 flex items-center">
-      <div className="absolute w-full h-1 bg-zinc-800 rounded-full" />
-      <div className="absolute h-1 bg-indigo-600 rounded-full" style={{ left: `${leftPos}%`, right: `${rightPos}%` }} />
-      <input type="range" min={min} max={max} value={minVal} onChange={handleMinChange} className={`absolute w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md ${minVal >= max / 2 ? 'z-30' : 'z-20'}`} />
-      <input type="range" min={min} max={max} value={maxVal} onChange={handleMaxChange} className={`absolute w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md ${maxVal <= max / 2 ? 'z-30' : 'z-20'}`} />
+    <div className="flex-1 space-y-3">
+      <div className="flex items-center gap-3">
+        <span className="text-[8px] font-black text-zinc-600 uppercase w-12 shrink-0">Start</span>
+        <div className="relative flex-1 group">
+          <input 
+            type="range" min={min} max={max} value={minVal} onChange={handleMinChange} 
+            className="w-full h-1 bg-zinc-800 rounded-full appearance-none outline-none focus:ring-1 focus:ring-indigo-500/50 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform hover:[&::-webkit-slider-thumb]:scale-125" 
+          />
+        </div>
+        <span className="text-[10px] font-black text-zinc-300 w-6 text-center">{minVal}</span>
+      </div>
+      <div className="flex items-center gap-3">
+        <span className="text-[8px] font-black text-zinc-600 uppercase w-12 shrink-0">End</span>
+        <div className="relative flex-1 group">
+          <input 
+            type="range" min={min} max={max} value={maxVal} onChange={handleMaxChange} 
+            className="w-full h-1 bg-zinc-800 rounded-full appearance-none outline-none focus:ring-1 focus:ring-indigo-500/50 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform hover:[&::-webkit-slider-thumb]:scale-125" 
+          />
+        </div>
+        <span className="text-[10px] font-black text-zinc-300 w-6 text-center">{maxVal}</span>
+      </div>
     </div>
   );
 };
@@ -65,14 +77,14 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
-const MatchList = memo(({ records, onSelect, limit = 15 }) => (
+const MatchList = memo(({ records, onSelect }) => (
   <div className="bg-zinc-800/80 p-5 rounded-xl border border-zinc-700/50 flex flex-col h-full shadow-lg">
     <h3 className="text-zinc-300 text-[10px] font-black uppercase tracking-widest mb-4 flex items-center justify-between">
       Matches In Set
-      <span className="text-zinc-500 font-normal">{Math.min(records.length, limit)} matches</span>
+      <span className="text-zinc-500 font-normal">{records.length} matches</span>
     </h3>
     <div className="flex-1 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
-      {records.slice(0, limit).map((r, i) => (
+      {records.map((r, i) => (
         <button key={i} onClick={() => onSelect(r)} className="w-full text-left flex items-center justify-between p-3 rounded-lg bg-zinc-950/40 border border-zinc-800 text-sm hover:border-indigo-500/50 hover:bg-zinc-800/80 transition-all group">
           <div className="flex flex-col flex-1 mx-4">
             <div className="flex items-center gap-2">
@@ -825,7 +837,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                 <DeckSelect 
                   availableDecks={nextAvailableMyThemes} 
                   selectedDecks={filterMyDecks} 
-                  onChange={(v) => { setFilterMyDecks(v); setSetRange([1, 1]); }} 
+                  onChange={(v) => { setFilterMyDecks(v); }} 
                   placeholder="自分のテーマを選択..." 
                 />
               </div>
@@ -835,7 +847,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                 <DeckSelect 
                   availableDecks={nextAvailableOpponentThemes} 
                   selectedDecks={filterOpponentDecks} 
-                  onChange={(v) => { setFilterOpponentDecks(v); setSetRange([1, 1]); }} 
+                  onChange={(v) => { setFilterOpponentDecks(v); }} 
                   placeholder="相手のテーマを選択..." 
                 />
               </div>
@@ -845,7 +857,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                 <DeckSelect 
                   availableDecks={nextAvailableTags} 
                   selectedDecks={filterTags} 
-                  onChange={(v) => { setFilterTags(v); setSetRange([1, 1]); }} 
+                  onChange={(v) => { setFilterTags(v); }} 
                   placeholder="タグを選択..." 
                 />
               </div>
@@ -854,8 +866,16 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
         </div>
         {chunkSize !== 'ALL' && (
           <div className="mt-4 pt-4 border-t border-zinc-800">
-            <div className="flex items-center gap-4">
-              <span className="text-[9px] text-zinc-400 font-black uppercase tracking-widest">Select Set: {setRange[0]} - {setRange[1]}</span>
+            <div className="flex flex-col md:flex-row md:items-center gap-4">
+              <div className="flex flex-col shrink-0">
+                <span className="text-[9px] text-zinc-400 font-black uppercase tracking-widest">Select Set Context</span>
+                <span className="text-[11px] text-indigo-400 font-bold">
+                  {setRange[0] === setRange[1] ? `Set ${setRange[0]}` : `Sets ${setRange[0]} - ${setRange[1]}`}
+                  <span className="text-zinc-600 mx-2">|</span>
+                  Recent { (setRange[0]-1) * parseInt(chunkSize, 10) + 1 } - { Math.min(setRange[1] * parseInt(chunkSize, 10), scopeFilteredRecords.length) } Matches
+                  <span className="text-[9px] text-zinc-500 font-normal ml-2 tracking-tighter">(Total {scopeFilteredRecords.length})</span>
+                </span>
+              </div>
               <DualRangeSlider min={1} max={totalSets} value={setRange} onChange={setSetRange} />
             </div>
           </div>
@@ -905,7 +925,6 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                         if (data && data.name && data.name !== 'その他') {
                           const themes = data.name.split(' + ');
                           setFilterOpponentDecks(prev => prev.length === themes.length && prev.every((t, idx) => t === themes[idx]) ? [] : themes);
-                          setSetRange([1, 1]);
                         }
                       }}
                       style={{ cursor: 'pointer', outline: 'none' }}
@@ -935,7 +954,6 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                     onClick={() => {
                       const themes = d.name.split(' + ');
                       setFilterMyDecks(prev => prev.length === themes.length && prev.every((t, idx) => t === themes[idx]) ? [] : themes);
-                      setSetRange([1, 1]);
                     }}
                   >
                     <div className="flex items-center justify-between mb-1.5 px-1">
@@ -964,8 +982,8 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
             </div>
 
             {/* Bottom Row Components */}
-            <div className="h-[400px]"><MatchList records={filteredRecords} onSelect={setSelectedMatch} limit={chunkSize === 'ALL' ? 15 : parseInt(chunkSize, 10)} /></div>
-            <div className="h-[400px]"><MatchupRankings data={matchupData} tab={matchupTab} onTabChange={setMatchupTab} minLimit={minMatchLimit} onLimitChange={setMinMatchLimit} currentDecks={filterOpponentDecks} onDeckClick={(d) => { const themes = d.split(' + '); setFilterOpponentDecks(prev => prev.join(' + ') === d ? [] : themes); setSetRange([1, 1]); }} /></div>
+            <div className="h-[400px]"><MatchList records={filteredRecords} onSelect={setSelectedMatch} /></div>
+            <div className="h-[400px]"><MatchupRankings data={matchupData} tab={matchupTab} onTabChange={setMatchupTab} minLimit={minMatchLimit} onLimitChange={setMinMatchLimit} currentDecks={filterOpponentDecks} onDeckClick={(d) => { const themes = d.split(' + '); setFilterOpponentDecks(prev => prev.join(' + ') === d ? [] : themes); }} /></div>
           </div>
         </div>
       )}
