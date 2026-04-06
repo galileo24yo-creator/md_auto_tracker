@@ -1,9 +1,10 @@
 import React, { useMemo, useState, useEffect, memo } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Trophy, Swords, XCircle, TrendingUp, Activity, Download, ArrowLeftRight, Pencil, Save, Loader2, Trash2, Settings, Plus, ExternalLink, Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { postData } from '../lib/api';
 import DeckSelect from './DeckSelect';
 import FilterSelect from './FilterSelect';
+import SmartInsights from './SmartInsights';
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6366f1', '#f43f5e', '#06b6d4', '#84cc16', '#f97316', '#a855f7', '#14b8a6'];
 
@@ -33,10 +34,14 @@ const DualRangeSlider = ({ min, max, value, onChange }) => {
     setMaxVal(v); onChange([minVal, v]);
   };
 
+  const den = max - min || 1;
+  const leftPos = ((minVal - min) / den) * 100;
+  const rightPos = 100 - ((maxVal - min) / den) * 100;
+
   return (
     <div className="relative w-full h-8 flex items-center">
       <div className="absolute w-full h-1 bg-zinc-800 rounded-full" />
-      <div className="absolute h-1 bg-indigo-600 rounded-full" style={{ left: `${((minVal - min) / (max - min)) * 100}%`, right: `${100 - ((maxVal - min) / (max - min)) * 100}%` }} />
+      <div className="absolute h-1 bg-indigo-600 rounded-full" style={{ left: `${leftPos}%`, right: `${rightPos}%` }} />
       <input type="range" min={min} max={max} value={minVal} onChange={handleMinChange} className={`absolute w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md ${minVal >= max / 2 ? 'z-30' : 'z-20'}`} />
       <input type="range" min={min} max={max} value={maxVal} onChange={handleMaxChange} className={`absolute w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md ${maxVal <= max / 2 ? 'z-30' : 'z-20'}`} />
     </div>
@@ -60,21 +65,27 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
-const MatchList = memo(({ records, onSelect }) => (
+const MatchList = memo(({ records, onSelect, limit = 15 }) => (
   <div className="bg-zinc-800/80 p-5 rounded-xl border border-zinc-700/50 flex flex-col h-full shadow-lg">
     <h3 className="text-zinc-300 text-[10px] font-black uppercase tracking-widest mb-4 flex items-center justify-between">
       Matches In Set
-      <span className="text-zinc-500 font-normal">{Math.min(records.length, 15)} matches</span>
+      <span className="text-zinc-500 font-normal">{Math.min(records.length, limit)} matches</span>
     </h3>
-    <div className="flex-1 overflow-y-auto pr-2 space-y-2 max-h-72 custom-scrollbar">
-      {records.slice(0, 15).map((r, i) => (
+    <div className="flex-1 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
+      {records.slice(0, limit).map((r, i) => (
         <button key={i} onClick={() => onSelect(r)} className="w-full text-left flex items-center justify-between p-3 rounded-lg bg-zinc-950/40 border border-zinc-800 text-sm hover:border-indigo-500/50 hover:bg-zinc-800/80 transition-all group">
           <div className="flex flex-col flex-1 mx-4">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors uppercase tracking-tight text-xs">{r.opponentDeck || "UNKNOWN"}</span>
+              <span className="font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors uppercase tracking-tight text-xs">
+                {r.opponentDeck || "UNKNOWN"}
+              </span>
               {r.memo && r.memo.split(',').map((tag, idx) => <span key={idx} className="px-1.5 py-0.5 rounded bg-indigo-500/5 border border-indigo-500/10 text-[9px] text-indigo-400 font-bold whitespace-nowrap">{tag.trim()}</span>)}
             </div>
-            <span className="text-[9px] text-zinc-400 uppercase tracking-widest font-bold mt-0.5">{r.date.split(' ')[0]} • {r.mode} • {r.turn}</span>
+            <div className="text-[9px] font-bold uppercase tracking-widest mt-1 flex items-center gap-1">
+              <span className="text-zinc-500">MY:</span>
+              <span className="text-zinc-300 group-hover:text-zinc-100 transition-colors">{r.myDeck || "---"}</span>
+            </div>
+            <span className="text-[8px] text-zinc-400 uppercase tracking-widest font-bold mt-1">{r.date.split(' ')[0]} • {r.mode} • {r.turn}</span>
           </div>
           <div className={`font-black px-3 py-1 rounded-full text-[10px] ${String(r.result).includes('VIC') ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>{String(r.result).includes('VIC') ? 'WIN' : 'LOSE'}</div>
         </button>
@@ -84,7 +95,7 @@ const MatchList = memo(({ records, onSelect }) => (
   </div>
 ));
 
-const MatchupRankings = memo(({ data, tab, onTabChange, minLimit, onLimitChange }) => (
+const MatchupRankings = memo(({ data, tab, onTabChange, minLimit, onLimitChange, onDeckClick, currentFilter }) => (
   <div className="bg-zinc-800/80 p-5 rounded-xl border border-zinc-700/50 flex flex-col h-full shadow-lg">
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-3">
@@ -126,21 +137,117 @@ const MatchupRankings = memo(({ data, tab, onTabChange, minLimit, onLimitChange 
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/30">
-          {data.map((d, i) => (
-            <tr key={i} className="group hover:bg-white/[0.02] transition-colors">
-              <td className="py-2.5 pr-4"><span className="font-bold text-zinc-200 text-xs truncate max-w-[90px] block" title={d.deck}>{d.deck}</span></td>
-              <td className="py-2.5 px-2 text-center font-mono text-zinc-400 text-[10px]">{d.total}</td>
-              <td className={`py-2.5 px-2 text-right font-black text-xs ${d.winRate >= 50 ? 'text-emerald-400' : 'text-rose-400'}`}>{d.winRate.toFixed(0)}%</td>
-              <td className="py-2.5 px-2 text-right text-zinc-400 text-[10px]">{d.firstRate.toFixed(0)}%</td>
-              <td className={`py-2.5 px-2 text-right text-[10px] ${d.firstWinRate >= 50 ? 'text-emerald-400/80' : 'text-rose-400/80'}`}>{d.firstWinRate.toFixed(0)}%</td>
-              <td className={`py-2.5 pl-2 text-right text-[10px] ${d.secondWinRate >= 50 ? 'text-emerald-400/80' : 'text-rose-400/80'}`}>{d.secondWinRate.toFixed(0)}%</td>
-            </tr>
-          ))}
+          {data.map((d, i) => {
+            const isSelected = currentFilter === d.deck;
+            return (
+              <tr key={i} className={`group hover:bg-white/[0.02] transition-colors ${isSelected ? 'bg-indigo-500/5' : ''}`}>
+                <td className="py-2.5 pr-4 text-xs font-bold">
+                  <button 
+                    onClick={() => onDeckClick(d.deck)}
+                    className={`truncate max-w-[90px] block transition-colors text-left ${isSelected ? 'text-indigo-400 font-black' : 'text-zinc-200 group-hover:text-indigo-400'}`} 
+                    title={d.deck}
+                  >
+                    {d.deck}
+                    {isSelected && <span className="ml-1 inline-block w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.5)]" />}
+                  </button>
+                </td>
+                <td className="py-2.5 px-2 text-center font-mono text-zinc-400 text-[10px]">{d.total}</td>
+                <td className={`py-2.5 px-2 text-right font-black text-xs ${d.winRate >= 50 ? 'text-emerald-400' : 'text-rose-400'}`}>{d.winRate.toFixed(0)}%</td>
+                <td className="py-2.5 px-2 text-right text-zinc-400 text-[10px]">{d.firstRate.toFixed(0)}%</td>
+                <td className={`py-2.5 px-2 text-right text-[10px] ${d.firstWinRate >= 50 ? 'text-emerald-400/80' : 'text-rose-400/80'}`}>{d.firstWinRate.toFixed(0)}%</td>
+                <td className={`py-2.5 pl-2 text-right text-[10px] ${d.secondWinRate >= 50 ? 'text-emerald-400/80' : 'text-rose-400/80'}`}>{d.secondWinRate.toFixed(0)}%</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
   </div>
 ));
+
+// ==========================================
+// Data Processing Utilities (Pure Functions)
+// ==========================================
+
+const getFilteredRecords = (records, filters) => {
+  if (!Array.isArray(records)) return [];
+  let r = records;
+  const { mode, myDeck, opponentDeck, dateType, startDate, endDate, chunkSize, setRange } = filters;
+
+  if (dateType !== 'ALL') {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    r = r.filter(v => {
+      if (!v.date) return false;
+      const d = new Date(v.date.replace(/\//g, '-'));
+      if (dateType === 'TODAY') return d >= today;
+      if (dateType === '7D') return d >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      if (dateType === '30D') return d >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      if (dateType === 'CUSTOM') {
+        const s = startDate ? new Date(startDate) : null;
+        const e = endDate ? new Date(endDate) : null;
+        if (e) e.setHours(23, 59, 59, 999);
+        if (s && e) return d >= s && d <= e;
+        if (s) return d >= s;
+        if (e) return d <= e;
+      }
+      return true;
+    });
+  }
+
+  if (mode && mode !== 'ALL') r = r.filter(v => String(v.mode || "").includes(String(mode).replace('戦','')));
+  if (myDeck && myDeck !== 'ALL') r = r.filter(v => v.myDeck?.split(',').map(x => x.trim()).sort().join(' + ') === myDeck);
+  if (opponentDeck && opponentDeck !== 'ALL') r = r.filter(v => v.opponentDeck?.split(',').map(x => x.trim()).sort().join(' + ') === opponentDeck);
+  
+  r = r.slice().reverse();
+
+  // 3. Chunking (Sets) - Calculate totals first
+  if (chunkSize && chunkSize !== 'ALL' && setRange) {
+    const s = parseInt(chunkSize, 10);
+    const totalSets = Math.max(1, Math.ceil(r.length / s));
+    const startIdx = (Math.max(1, Math.min(setRange[0], setRange[1])) - 1) * s;
+    const endIdx = Math.min(totalSets, Math.max(setRange[0], setRange[1])) * s;
+    r = r.slice(startIdx, endIdx);
+  }
+
+  return r;
+};
+
+const calculateStats = (records) => {
+  const t = records.length;
+  let w = 0, ft = 0, fw = 0, st = 0, sw = 0;
+  records.forEach(r => {
+    const isWin = String(r.result).toUpperCase().includes('VIC') || r.result === 'WIN';
+    if (isWin) w++;
+    if (String(r.turn).includes('先')) { ft++; if (isWin) fw++; } else { st++; if (isWin) sw++; }
+  });
+  return { 
+    total: t, wins: w, 
+    winRate: t > 0 ? parseFloat(((w/t)*100).toFixed(1)) : 0, 
+    fRate: t > 0 ? parseFloat(((ft/t)*100).toFixed(1)) : 0,
+    fWinRate: ft > 0 ? parseFloat(((fw/ft)*100).toFixed(1)) : 0, 
+    sWinRate: st > 0 ? parseFloat(((sw/st)*100).toFixed(1)) : 0 
+  };
+};
+
+const getRankings = (records, minLimit) => {
+  const s = {};
+  records.forEach(r => { 
+    if (!r.opponentDeck) return; 
+    const d = r.opponentDeck.split(',').map(x => x.trim()).sort().join(' + '); 
+    if (!d) return; 
+    const w = String(r.result).toUpperCase().includes('VIC') || r.result === 'WIN'; 
+    if (!s[d]) s[d] = { t: 0, w: 0, ft: 0, fw: 0, st: 0, sw: 0 }; 
+    s[d].t++; if (w) s[d].w++; 
+    if (String(r.turn).includes('先')) { s[d].ft++; if (w) s[d].fw++; } else { s[d].st++; if (w) s[d].sw++; } 
+  });
+  return Object.entries(s).map(([n, x]) => ({ 
+    deck: n, total: x.t, winRate: (x.w/x.t)*100, 
+    firstRate: (x.ft/x.t)*100,
+    firstWinRate: x.ft > 0 ? (x.fw/x.ft)*100 : 0, 
+    secondWinRate: x.st > 0 ? (x.sw/x.st)*100 : 0 
+  })).filter(x => x.total >= minLimit);
+};
 
 // ==========================================
 // DateRange Selector Modal
@@ -257,8 +364,10 @@ const CalendarModal = memo(({ isOpen, onClose, startDate, endDate, onApply }) =>
 // ==========================================
 // Main Dashboard
 // ==========================================
+// Main Dashboard
+// ==========================================
 
-export default function Dashboard({ records, onRefresh, decks, reasons, activeProfile }) {
+export default function Dashboard({ records, onRefresh, decks, reasons, displayReasons, activeProfile }) {
   const [filterMode, setFilterMode] = useState('ALL');
   const [filterDateType, setFilterDateType] = useState('30D');
   const [startDate, setStartDate] = useState('');
@@ -267,6 +376,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
   const [chunkSize, setChunkSize] = useState('ALL');
   const [setRange, setSetRange] = useState([1, 1]);
   const [filterMyDeck, setFilterMyDeck] = useState('ALL');
+  const [filterOpponentDeck, setFilterOpponentDeck] = useState('ALL');
   const [matchupTab, setMatchupTab] = useState('WORST');
   const [minMatchLimit, setMinMatchLimit] = useState(3);
   const [activeTab, setActiveTab] = useState('overview');
@@ -407,64 +517,16 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
   }, [records]);
   
   const baseFilteredRecords = useMemo(() => {
-    let r = records;
-    
-    // 1. Date Range Filtering
-    if (filterDateType !== 'ALL') {
-      const now = new Date();
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      
-      r = r.filter(v => {
-        if (!v.date) return false;
-        const d = new Date(v.date.replace(/\//g, '-')); // standard format for reliably parsing
-        
-        if (filterDateType === 'TODAY') return d >= today;
-        if (filterDateType === '7D') return d >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        if (filterDateType === '30D') return d >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-        if (filterDateType === 'CUSTOM') {
-          const s = startDate ? new Date(startDate) : null;
-          const e = endDate ? new Date(endDate) : null;
-          if (e) e.setHours(23, 59, 59, 999); // Include the end date fully
-          
-          if (s && e) return d >= s && d <= e;
-          if (s) return d >= s;
-          if (e) return d <= e;
-        }
-        return true;
-      });
-    }
-
-    // 2. Mode and MyDeck Filtering
-    if (filterMode !== 'ALL') r = r.filter(v => String(v.mode || "").includes(String(filterMode).replace('戦','')));
-    if (filterMyDeck !== 'ALL') r = r.filter(v => v.myDeck?.split(',').map(x => x.trim()).sort().join(' + ') === filterMyDeck);
-    
-    return r.slice().reverse();
-  }, [records, filterMode, filterMyDeck, filterDateType, startDate, endDate]);
+    return getFilteredRecords(records, { mode: filterMode, myDeck: filterMyDeck, opponentDeck: filterOpponentDeck, dateType: filterDateType, startDate, endDate });
+  }, [records, filterMode, filterMyDeck, filterOpponentDeck, filterDateType, startDate, endDate]);
 
   const totalSets = useMemo(() => chunkSize === 'ALL' ? 1 : Math.max(1, Math.ceil(baseFilteredRecords.length / parseInt(chunkSize, 10))), [baseFilteredRecords.length, chunkSize]);
 
   const filteredRecords = useMemo(() => {
-    if (chunkSize === 'ALL') return baseFilteredRecords;
-    const s = parseInt(chunkSize, 10);
-    return baseFilteredRecords.slice((Math.max(1, Math.min(setRange[0], setRange[1])) - 1) * s, Math.min(totalSets, Math.max(setRange[0], setRange[1])) * s);
-  }, [baseFilteredRecords, chunkSize, setRange, totalSets]);
+    return getFilteredRecords(baseFilteredRecords.slice().reverse(), { chunkSize, setRange });
+  }, [baseFilteredRecords, chunkSize, setRange]);
 
-  const stats = useMemo(() => {
-    const t = filteredRecords.length; let w = 0, ft = 0, fw = 0, st = 0, sw = 0;
-    filteredRecords.forEach(r => {
-      const isWin = String(r.result).toUpperCase().includes('VIC');
-      if (isWin) w++;
-      if (String(r.turn).includes('先')) { ft++; if (isWin) fw++; } else { st++; if (isWin) sw++; }
-    });
-    return { 
-      total: t, 
-      wins: w, 
-      winRate: t > 0 ? ((w/t)*100).toFixed(1) : 0, 
-      fRate: t > 0 ? ((ft/t)*100).toFixed(1) : 0,
-      fWinRate: ft > 0 ? ((fw/ft)*100).toFixed(1) : 0, 
-      sWinRate: st > 0 ? ((sw/st)*100).toFixed(1) : 0 
-    };
-  }, [filteredRecords]);
+  const stats = useMemo(() => calculateStats(filteredRecords), [filteredRecords]);
 
   const opponentDeckData = useMemo(() => {
     const c = {};
@@ -480,16 +542,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
   }, [filteredRecords]);
 
   const matchupData = useMemo(() => {
-    const s = {};
-    filteredRecords.forEach(r => { if (!r.opponentDeck) return; const d = r.opponentDeck.split(',').map(x => x.trim()).sort().join(' + '); if (!d) return; const w = String(r.result).toUpperCase().includes('VIC'); if (!s[d]) s[d] = { t: 0, w: 0, ft: 0, fw: 0, st: 0, sw: 0 }; s[d].t++; if (w) s[d].w++; if (String(r.turn).includes('先')) { s[d].ft++; if (w) s[d].fw++; } else { s[d].st++; if (w) s[d].sw++; } });
-    const v = Object.entries(s).map(([n, x]) => ({ 
-      deck: n, 
-      total: x.t, 
-      firstRate: (x.ft/x.t)*100,
-      winRate: (x.w/x.t)*100, 
-      firstWinRate: x.ft > 0 ? (x.fw/x.ft)*100 : 0, 
-      secondWinRate: x.st > 0 ? (x.sw/x.st)*100 : 0 
-    })).filter(x => x.total >= minMatchLimit);
+    const v = getRankings(filteredRecords, minMatchLimit);
     if (matchupTab === 'FREQ') return v.sort((a,b) => b.total - a.total).slice(0, 15);
     if (matchupTab === 'WORST') return v.sort((a,b) => a.winRate - b.winRate).slice(0, 15);
     return v.sort((a,b) => b.winRate - a.winRate).slice(0, 15);
@@ -525,26 +578,73 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
     if (filterMode !== 'ALL') r = r.filter(v => String(v.mode || "").includes(String(filterMode).replace('戦','')));
     
     // 3. セット範囲（Chunk）の適用
-    r = r.slice().reverse(); // baseFilteredRecordsと同様に新しい順にするための準備
+    r = r.slice().reverse(); 
     if (chunkSize !== 'ALL') {
       const s = parseInt(chunkSize, 10);
       r = r.slice((Math.max(1, Math.min(setRange[0], setRange[1])) - 1) * s, Math.min(totalSets, Math.max(setRange[0], setRange[1])) * s);
     }
 
-    // グラフ表示用に古い順に戻してマッピング
-    return r.reverse().map((x, i) => { 
+    const rMap = r.reverse().map((x, i) => { 
       const v = parseFloat(String(x.diff).replace(/[^0-9.-]/g, '')); 
       if (isNaN(v)) return null; 
+      
+      // デッキフィルターの判定
+      const currentMyDeck = x.myDeck?.split(',').map(v => v.trim()).sort().join(' + ') || '';
+      const myMatch = filterMyDeck === 'ALL' || currentMyDeck === filterMyDeck;
+
+      // 対戦相手フィルターの判定
+      const currentOppDeck = x.opponentDeck?.split(',').map(v => v.trim()).sort().join(' + ') || '';
+      const oppMatch = filterOpponentDeck === 'ALL' || currentOppDeck === filterOpponentDeck;
+
+      // 両方のフィルターに合致する場合のみ強調表示
+      const isMatch = myMatch && oppMatch;
+      
       return { 
         index: i + 1, 
         rating: v, 
+        activeRating: isMatch ? v : null,
         opponentDeck: x.opponentDeck, 
         result: String(x.result).includes('VIC') ? 'WIN' : 'LOSE', 
         date: x.date, 
-        myDeck: x.myDeck 
+        myDeck: x.myDeck,
+        isMatch
       }; 
     }).filter(v => v !== null);
-  }, [records, filterMode, filterDateType, startDate, endDate, chunkSize, setRange, totalSets]);
+    
+    return rMap;
+  }, [records, filterMode, filterMyDeck, filterOpponentDeck, filterDateType, startDate, endDate, chunkSize, setRange, totalSets]);
+
+  const tagTrendData = useMemo(() => {
+    if (!filteredRecords || filteredRecords.length === 0) return { data: [], tags: [] };
+    
+    // 1. 全体で出現頻度の高い上位5つのタグを抽出
+    const allTags = {};
+    filteredRecords.forEach(r => {
+      if (r.memo) r.memo.split(',').forEach(t => {
+        const tag = t.trim();
+        if (tag) allTags[tag] = (allTags[tag] || 0) + 1;
+      });
+    });
+    const topTags = Object.entries(allTags).sort((a,b) => b[1] - a[1]).slice(0, 5).map(x => x[0]);
+    
+    // 2. 時系列データを8つのセグメントに分割して集計
+    const segments = 8;
+    const binSize = Math.max(1, Math.ceil(filteredRecords.length / segments));
+    const bins = [];
+    
+    // filteredRecordsは新しい順なので、逆順（古い順）にして集計
+    const chronRecords = [...filteredRecords].reverse();
+    
+    for (let i = 0; i < chronRecords.length; i += binSize) {
+      const chunk = chronRecords.slice(i, i + binSize);
+      const dataPoint = { name: `${i + 1}-${Math.min(i + binSize, chronRecords.length)}` };
+      topTags.forEach(tag => {
+        dataPoint[tag] = chunk.filter(r => String(r.memo).includes(tag)).length;
+      });
+      bins.push(dataPoint);
+    }
+    return { data: bins, tags: topTags };
+  }, [filteredRecords]);
 
   return (
     <div className="space-y-6">
@@ -566,6 +666,15 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
             )}
           </div>
           <div className="flex items-center gap-2 flex-wrap md:flex-nowrap justify-end">
+            {filterOpponentDeck !== 'ALL' && (
+              <button 
+                onClick={() => setFilterOpponentDeck('ALL')}
+                className="flex items-center gap-2 bg-indigo-500 text-white rounded-lg px-3 py-1.5 text-[10px] font-black uppercase hover:bg-indigo-400 transition-all animate-in zoom-in-95"
+              >
+                対: {filterOpponentDeck}
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
             <select value={filterDateType} onChange={(e) => { setFilterDateType(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 shrink-0">
               <option value="ALL">期間: すべて</option>
               <option value="TODAY">期間: 今日</option>
@@ -618,14 +727,21 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
         )}
       </div>
 
-      <div className="flex border-b border-zinc-900 mb-6">
-        {['overview', 'trends'].map(tab => (
-          <button key={tab} onClick={() => setActiveTab(tab)} className={`px-10 py-3 text-[10px] font-black uppercase tracking-widest transition-all border-b-2 ${activeTab === tab ? 'border-indigo-500 text-indigo-400 bg-indigo-500/[0.02]' : 'border-transparent text-zinc-600 hover:text-zinc-400'}`}>{tab}</button>
+      <div className="flex border-b border-zinc-900 mb-6 px-1 overflow-x-auto no-scrollbar">
+        {['overview', 'insights', 'trends'].map(tab => (
+          <button 
+            key={tab} 
+            onClick={() => setActiveTab(tab)} 
+            className={`px-10 py-3 text-[10px] font-black uppercase tracking-widest transition-all border-b-2 whitespace-nowrap ${activeTab === tab ? 'border-indigo-500 text-indigo-400 bg-indigo-500/[0.02]' : 'border-transparent text-zinc-600 hover:text-zinc-400'}`}
+          >
+            {tab === 'overview' ? 'Overview' : tab === 'insights' ? 'AI Insights' : 'Trends'}
+          </button>
         ))}
       </div>
 
-      {activeTab === 'overview' ? (
-        <>
+      {activeTab === 'overview' && (
+        <div className="animate-in fade-in duration-500 space-y-6">
+          {/* Main Info Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             <StatCard title="Count" value={stats.total} icon={<Swords className="w-5 h-5 text-indigo-500" />} />
             <StatCard title="Win%" value={`${stats.winRate}%`} color="text-emerald-400" />
@@ -633,9 +749,11 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
             <StatCard title="1st Win%" value={`${stats.fWinRate}%`} color="text-indigo-400" />
             <StatCard title="2nd Win%" value={`${stats.sWinRate}%`} color="text-orange-400" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl h-[340px] flex flex-col shadow-lg">
-              <h3 className="text-zinc-400 text-[9px] font-black uppercase mb-4 text-center tracking-widest">Opponent Deck Meta</h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Meta Distribution */}
+            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl h-[340px] flex flex-col shadow-lg overflow-hidden group">
+              <h3 className="text-zinc-400 text-[9px] font-black uppercase mb-4 text-center tracking-widest group-hover:text-white transition-colors">Opponent Deck Meta</h3>
               <div className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -653,14 +771,16 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
                 </ResponsiveContainer>
               </div>
             </div>
-            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl h-[340px] flex flex-col shadow-lg overflow-hidden">
-              <h3 className="text-zinc-400 text-[9px] font-black uppercase mb-6 text-center tracking-widest">Performance by My Deck</h3>
+
+            {/* My Deck Performance */}
+            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl h-[340px] flex flex-col shadow-lg overflow-hidden group">
+              <h3 className="text-zinc-400 text-[9px] font-black uppercase mb-6 text-center tracking-widest group-hover:text-white transition-colors">Performance by My Deck</h3>
               <div className="flex-1 space-y-5 overflow-y-auto pr-2 custom-scrollbar">
                 {myDeckWinRateData.map((d, i) => (
-                  <div key={i} className="group">
+                  <div key={i} className="group/item">
                     <div className="flex items-center justify-between mb-1.5 px-1">
                       <div className="flex flex-col">
-                        <span className="text-[11px] font-black text-zinc-100 group-hover:text-indigo-400 transition-colors uppercase tracking-tight truncate max-w-[140px]" title={d.name}>{d.name}</span>
+                        <span className="text-[11px] font-black text-zinc-100 group-hover/item:text-indigo-400 transition-colors uppercase tracking-tight truncate max-w-[140px]" title={d.name}>{d.name}</span>
                         <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">{d.total} matches</span>
                       </div>
                       <div className="text-right">
@@ -668,7 +788,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
                         <span className="text-[8px] block text-zinc-500 font-black uppercase -mt-1 tracking-widest">WR</span>
                       </div>
                     </div>
-                    <div className="h-1.5 w-full bg-zinc-950 rounded-full overflow-hidden border border-zinc-800/50">
+                    <div className="h-1.5 w-full bg-zinc-950 rounded-full overflow-hidden border border-zinc-800/50 group-hover/item:border-zinc-700 transition-all">
                       <div 
                         className={`h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(0,0,0,0.5)] 
                           ${d.winRate >= 60 ? 'bg-gradient-to-r from-emerald-600 to-emerald-400' : 
@@ -679,26 +799,94 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
                     </div>
                   </div>
                 ))}
-                {myDeckWinRateData.length === 0 && <div className="h-full flex items-center justify-center text-zinc-700 italic text-xs">No deck rankings</div>}
+                {myDeckWinRateData.length === 0 && <div className="h-full flex items-center justify-center text-zinc-700 italic text-xs">No deck data available</div>}
               </div>
             </div>
-            <div className="h-[340px]"><MatchList records={filteredRecords} onSelect={setSelectedMatch} /></div>
-            <div className="h-[340px]"><MatchupRankings data={matchupData} tab={matchupTab} onTabChange={setMatchupTab} minLimit={minMatchLimit} onLimitChange={setMinMatchLimit} /></div>
+
+            {/* Bottom Row Components */}
+            <div className="h-[400px]"><MatchList records={filteredRecords} onSelect={setSelectedMatch} limit={chunkSize === 'ALL' ? 15 : parseInt(chunkSize, 10)} /></div>
+            <div className="h-[400px]"><MatchupRankings data={matchupData} tab={matchupTab} onTabChange={setMatchupTab} minLimit={minMatchLimit} onLimitChange={setMinMatchLimit} currentFilter={filterOpponentDeck} onDeckClick={(d) => { setFilterOpponentDeck(prev => prev === d ? 'ALL' : d); setSetRange([1, 1]); }} /></div>
           </div>
-        </>
-      ) : (
-        <div className="bg-zinc-950 border border-zinc-900 p-8 rounded-2xl h-[550px] shadow-2xl relative overflow-hidden">
-          {trendData.length > 1 ? (
-             <ResponsiveContainer width="100%" height="100%">
-               <LineChart data={trendData} margin={{ top: 20, right: 30, left: 10, bottom: 20 }}>
-                 <CartesianGrid strokeDasharray="3 3" stroke="#09090b" vertical={false} />
-                 <XAxis dataKey="index" stroke="#a1a1aa" fontSize={10} axisLine={false} tickLine={false} />
-                 <YAxis stroke="#a1a1aa" fontSize={10} domain={['auto', 'auto']} axisLine={false} tickLine={false} />
-                 <Tooltip content={<CustomTooltip />} />
-                 <Line type="monotone" dataKey="rating" stroke="#6366f1" strokeWidth={4} dot={{ r: 5, fill: '#6366f1', stroke: '#09090b', strokeWidth: 2 }} activeDot={{ r: 7, fill: '#818cf8', stroke: '#fff', strokeWidth: 2 }} onClick={(d) => d?.payload && setSelectedMatch(d.payload)} animationDuration={1000} />
-               </LineChart>
-             </ResponsiveContainer>
-          ) : <div className="h-full flex flex-col items-center justify-center text-zinc-700 italic text-sm gap-2"><Activity className="w-8 h-8 opacity-20" /> No Rating Trend Data</div>}
+        </div>
+      )}
+
+      {activeTab === 'insights' && (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl">
+          <SmartInsights records={baseFilteredRecords} availableTags={displayReasons || reasons} />
+        </div>
+      )}
+
+      {activeTab === 'trends' && (
+        <div className="animate-in fade-in duration-500 space-y-6 overflow-y-auto pr-2 custom-scrollbar max-h-[85vh]">
+          {/* Rating Trend Chart */}
+          <div className="bg-zinc-950 border border-zinc-900 p-8 rounded-3xl h-[500px] shadow-2xl relative overflow-hidden shrink-0 group">
+            <h3 className="absolute top-4 left-8 text-[9px] font-black text-zinc-600 uppercase tracking-widest z-10 group-hover:text-indigo-400 transition-colors">Rating Trajectory</h3>
+            {trendData && trendData.length > 1 ? (
+               <ResponsiveContainer width="100%" height="100%">
+                 <LineChart data={trendData} margin={{ top: 20, right: 30, left: 10, bottom: 20 }}>
+                   <CartesianGrid strokeDasharray="3 3" stroke="#09090b" vertical={false} />
+                   <XAxis dataKey="index" stroke="#a1a1aa" fontSize={10} axisLine={false} tickLine={false} />
+                   <YAxis stroke="#a1a1aa" fontSize={10} domain={['auto', 'auto']} axisLine={false} tickLine={false} />
+                   <Tooltip content={<CustomTooltip />} />
+                   <Line type="monotone" dataKey="rating" stroke="#3f3f46" strokeWidth={1.5} dot={false} strokeDasharray="5 5" animationDuration={0} />
+                   <Line 
+                      type="monotone" 
+                      dataKey="activeRating" 
+                      stroke="#6366f1" 
+                      strokeWidth={4} 
+                      connectNulls={false}
+                      dot={(props) => {
+                        const { cx, cy, payload } = props;
+                        if (!cx || !cy) return null;
+                        return (
+                          <circle 
+                            key={`dot-${payload.index}`}
+                            cx={cx} cy={cy} r={payload.isMatch ? 5 : 3} 
+                            fill={payload.isMatch ? '#6366f1' : '#27272a'} 
+                            stroke="#09090b" strokeWidth={1}
+                          />
+                        );
+                      }}
+                      activeDot={{ r: 7, fill: '#818cf8', stroke: '#fff', strokeWidth: 2 }} 
+                      onClick={(d) => d?.payload && setSelectedMatch(d.payload)} 
+                      animationDuration={1000} 
+                   />
+                 </LineChart>
+               </ResponsiveContainer>
+            ) : <div className="h-full flex flex-col items-center justify-center text-zinc-700 italic text-sm gap-2"><Activity className="w-8 h-8 opacity-20" /> No Rating Trend Data</div>}
+          </div>
+
+          {/* Cause Breakdown Stacked Area Chart */}
+          <div className="bg-zinc-950 border border-zinc-900 p-8 rounded-3xl h-[400px] shadow-2xl relative overflow-hidden shrink-0 group">
+            <h3 className="absolute top-4 left-8 text-[9px] font-black text-zinc-600 uppercase tracking-widest z-10 group-hover:text-indigo-400 transition-colors">Cause Breakdown Trend (課題の克服推移)</h3>
+            {tagTrendData.data?.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={tagTrendData.data} margin={{ top: 40, right: 30, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#09090b" vertical={false} />
+                  <XAxis dataKey="name" stroke="#52525b" fontSize={9} axisLine={false} tickLine={false} />
+                  <YAxis stroke="#52525b" fontSize={9} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ backgroundColor: '#09090b', border: '1px solid #18181b', borderRadius: '12px', fontSize: '11px' }} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', paddingTop: '20px' }} />
+                  {tagTrendData.tags.map((tag, idx) => (
+                    <Area 
+                      key={tag} 
+                      type="monotone" 
+                      dataKey={tag} 
+                      stackId="1" 
+                      stroke={COLORS[idx % COLORS.length]} 
+                      fill={COLORS[idx % COLORS.length]} 
+                      fillOpacity={0.6} 
+                    />
+                  ))}
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-zinc-700 italic text-sm gap-2 text-center max-w-xs mx-auto">
+                <Activity className="w-8 h-8 opacity-20" />
+                タグを記録すると、時系列での課題の変化がここに表示されます。
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -728,8 +916,8 @@ export default function Dashboard({ records, onRefresh, decks, reasons, activePr
                   </div>
                   <DeckSelect availableDecks={decks} selectedDecks={editData.myDeck} onChange={v => setEditData({...editData, myDeck: v})} placeholder="My Deck" />
                   <DeckSelect availableDecks={decks} selectedDecks={editData.oppDeck} onChange={v => setEditData({...editData, oppDeck: v})} placeholder="Opponent Deck" />
-                  <DeckSelect availableDecks={reasons} selectedDecks={editData.memo} onChange={v => setEditData({...editData, memo: v})} placeholder="Match Deciding Factor (Tags)" />
-                  <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 text-center shadow-inner group"><label className="text-[9px] text-zinc-600 uppercase font-black block mb-2">Points</label><input type="text" value={editData.diff} onChange={e => setEditData({...editData, diff: e.target.value})} className="bg-transparent text-4xl font-black text-indigo-400 outline-none text-center w-full" /></div>
+                  <DeckSelect availableDecks={displayReasons || reasons} selectedDecks={editData.memo} onChange={v => setEditData({...editData, memo: v})} placeholder="Match Deciding Factor (Tags)" />
+                  <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 text-center shadow-inner group transition-all hover:border-indigo-500/50"><label className="text-[9px] text-zinc-600 uppercase font-black block mb-2">Points</label><input type="text" value={editData.diff} onChange={e => setEditData({...editData, diff: e.target.value})} className="bg-transparent text-4xl font-black text-indigo-400 outline-none text-center w-full" /></div>
                 </div>
               ) : (
                 <div className="space-y-8">

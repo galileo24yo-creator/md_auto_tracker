@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Loader2, RefreshCw, Settings, X, Save, HelpCircle, Database, Pencil, Trash2, Plus, Check } from 'lucide-react';
 import { fetchData, getGasUrl, getProfiles, getActiveProfile, saveProfiles } from './lib/api';
 import { decodeHTMLEntities } from './lib/utils';
@@ -117,6 +117,15 @@ function App() {
     }
     loadData();
   }, []);
+
+  const displayReasons = useMemo(() => {
+    const list = [];
+    (data.reasons || []).forEach(r => {
+      list.push(`自：${r}`);
+      list.push(`敵：${r}`);
+    });
+    return list;
+  }, [data.reasons]);
 
   return (
     <div className="min-h-screen py-10 px-4 md:px-10 text-zinc-200">
@@ -254,10 +263,10 @@ function App() {
       
       <main className="max-w-[1600px] mx-auto grid grid-cols-1 xl:grid-cols-5 gap-8">
         {/* Left Column: Recording and Configuration (Sticky on XL screens) */}
-        <div className="xl:col-span-2 sticky top-6 self-start z-20 border border-white/5 bg-slate-900/60 backdrop-blur-md rounded-2xl p-6 shadow-2xl ring-1 ring-white/10">
+        <div className="xl:col-span-2 xl:sticky xl:top-6 self-start z-20 border border-white/5 bg-slate-900/60 backdrop-blur-md rounded-2xl p-6 shadow-2xl ring-1 ring-white/10">
           <Recorder 
             availableDecks={data.decks} 
-            availableTags={data.reasons} 
+            availableTags={displayReasons} 
             onRecorded={() => loadData(true)} 
           />
         </div>
@@ -295,6 +304,7 @@ function App() {
               onRefresh={() => loadData(true)} 
               decks={data.decks}
               reasons={data.reasons}
+              displayReasons={displayReasons}
               activeProfile={activeProfile}
             />
           )}

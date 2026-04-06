@@ -1,241 +1,10 @@
 import React, { useState } from 'react';
 import { FileText, Copy, Check, ExternalLink, X, Settings2, Database, Globe, Play } from 'lucide-react';
 
+import gasCode from '../../backend/Code.gs?raw';
+
 export default function SetupGuide({ onClose }) {
   const [copied, setCopied] = useState(false);
-
-  const gasCode = `// ==========================================
-// Master Duel Tracker - Google Apps Script
-// ==========================================
-
-const SHEET_DATA_NAME = "対戦記録";
-const SHEET_SETTINGS_NAME = "設定";
-
-// 初期設定（初回実行時のみ手動で関数「setupSheets」を実行してください）
-function setupSheets() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  // 対戦記録シートの作成
-  let dataSheet = ss.getSheetByName(SHEET_DATA_NAME);
-  if (!dataSheet) {
-    dataSheet = ss.insertSheet(SHEET_DATA_NAME);
-    dataSheet.appendRow(["日時", "モード", "先攻/後攻", "勝敗", "自分のデッキ", "相手のデッキ", "変動", "要因"]);
-    dataSheet.getRange("A1:H1").setFontWeight("bold").setBackground("#d9ead3");
-  }
-
-  // 設定用シートの作成
-  let settingsSheet = ss.getSheetByName(SHEET_SETTINGS_NAME);
-  if (!settingsSheet) {
-    settingsSheet = ss.insertSheet(SHEET_SETTINGS_NAME);
-    settingsSheet.appendRow(["デッキリスト (A列)", "要因リスト (B列)"]);
-    settingsSheet.getRange("A1:B1").setFontWeight("bold").setBackground("#fff2cc");
-    
-    // 初期デッキ
-    const defaultDecks = ["スネークアイ", "炎王", "ラビュリンス", "ティアラメンツ", "クシャトリラ", "ピュアリィ", "レスキューエース", "R-ACE", "烙印"];
-    defaultDecks.forEach((deck, i) => settingsSheet.getRange(i + 2, 1).setValue(deck));
-    
-    // 初期要因タグ
-    const defaultTags = ["プレミ", "手札誘発", "事故", "後攻不利", "神引き", "接続切れ", "時間切れ", "運ゲー"];
-    defaultTags.forEach((tag, i) => settingsSheet.getRange(i + 2, 2).setValue(tag));
-  }
-}
-
-// GETリクエスト: デッキリストと直近の戦績をフロントエンドに返す
-function doGet(e) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  // デッキリストと要因リストの取得
-  const settingsSheet = ss.getSheetByName(SHEET_SETTINGS_NAME);
-  let decks = [];
-  let reasons = [];
-  if (settingsSheet) {
-    const lastRow = settingsSheet.getLastRow();
-    if (lastRow > 1) {
-      const settingsData = settingsSheet.getRange(2, 1, lastRow - 1, 2).getValues();
-      decks = settingsData.map(row => row[0]).filter(String);
-      reasons = settingsData.map(row => row[1]).filter(String);
-    }
-  }
-
-  // 直近1000件のデータを取得
-  const dataSheet = ss.getSheetByName(SHEET_DATA_NAME);
-  let records = [];
-  if (dataSheet) {
-    const lastRow = dataSheet.getLastRow();
-    if (lastRow > 1) {
-      const getRows = Math.min(lastRow - 1, 1000);
-      // getValues を使用して生の文字（∀等）を取得し、日付は別途フォーマットする
-      const values = dataSheet.getRange(lastRow - getRows + 1, 1, getRows, 8).getValues();
-      records = values.map(row => {
-        const d = row[0];
-        const dateStr = (d instanceof Date) ? Utilities.formatDate(d, "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss") : String(d);
-        return {
-          date: dateStr,
-          mode: row[1],
-          turn: row[2],
-          result: row[3],
-          myDeck: row[4],
-          opponentDeck: row[5],
-          diff: row[6],
-          memo: row[7]
-        };
-      });
-    }
-  }
-
-  return ContentService.createTextOutput(JSON.stringify({
-    success: true,
-    decks: decks,
-    reasons: reasons,
-    records: records
-  })).setMimeType(ContentService.MimeType.JSON);
-}
-
-// POSTリクエスト: 戦績データをシートに追記または更新する
-function doPost(e) {
-  try {
-    const payload = JSON.parse(e.postData.contents);
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    // --- アクションの分岐 ---
-    
-    // 1. 設定（マスタデータ）の更新
-    if (payload.action === 'UPDATE_SETTINGS') {
-      const settingsSheet = ss.getSheetByName(SHEET_SETTINGS_NAME);
-      if (!settingsSheet) return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Settings sheet not found" })).setMimeType(ContentService.MimeType.JSON);
-      
-      settingsSheet.clear();
-      settingsSheet.appendRow(["デッキリスト (A列)", "要因リスト (B列)"]);
-      settingsSheet.getRange("A1:B1").setFontWeight("bold").setBackground("#fff2cc");
-      
-      const newDecks = payload.decks || [];
-      const newReasons = payload.reasons || [];
-      const maxLen = Math.max(newDecks.length, newReasons.length);
-      
-      if (maxLen > 0) {
-        const rows = [];
-        for (let i = 0; i < maxLen; i++) {
-          rows.push([newDecks[i] || "", newReasons[i] || ""]);
-        }
-        settingsSheet.getRange(2, 1, rows.length, 2).setValues(rows);
-      }
-      
-      return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Settings updated" })).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    // 2. 記録の削除
-    if (payload.action === 'DELETE_RECORD') {
-      const dataSheet = ss.getSheetByName(SHEET_DATA_NAME);
-      if (!dataSheet) return ContentService.createTextOutput(JSON.stringify({ success: false, error: "Data sheet not found" })).setMimeType(ContentService.MimeType.JSON);
-      
-      const data = dataSheet.getDataRange().getValues();
-      const searchId = String(payload.id || "").trim();
-      let rowIndex = -1;
-      
-      for (let i = 1; i < data.length; i++) {
-        const d = data[i][0];
-        const sheetId = (d instanceof Date) ? Utilities.formatDate(d, "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss") : String(d).trim();
-        if (sheetId === searchId) {
-          rowIndex = i + 1;
-          break;
-        }
-      }
-      
-      if (rowIndex !== -1) {
-        dataSheet.deleteRow(rowIndex);
-        return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Record deleted" })).setMimeType(ContentService.MimeType.JSON);
-      }
-      
-      return ContentService.createTextOutput(JSON.stringify({ 
-        success: false, 
-        error: "Record not found. Searched ID: [" + searchId + "]"
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    // 既存の「更新」または「新規追記」ロジック (後続の処理)
-    let dataSheet = ss.getSheetByName(SHEET_DATA_NAME);
-    
-    // 更新モード（payload.id があり、action指定がない場合）
-    if (payload.id) {
-      const data = dataSheet.getDataRange().getValues();
-      let rowIndex = -1;
-      const searchId = String(payload.id).trim();
-      
-      // A列を上から検索して日時が一致するものを探す
-      for (let i = 1; i < data.length; i++) {
-        const d = data[i][0];
-        const sheetTime = (d instanceof Date) ? Utilities.formatDate(d, "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss") : String(d).trim();
-        if (sheetTime === searchId) {
-          rowIndex = i + 1; // 1-indexed
-          break;
-        }
-      }
-      
-      if (rowIndex !== -1) {
-        // 行の更新 (指定されたセル範囲を書き換え)
-        const rowData = [
-          payload.id, // 日時は絶対に変えない
-          payload.mode || "未分類",
-          payload.turn || "不明",
-          payload.result || "不明",
-          payload.myDeck || "",
-          payload.opponentDeck || "",
-          payload.diff || "",
-          payload.memo || ""
-        ];
-        dataSheet.getRange(rowIndex, 1, 1, 8).setValues([rowData]);
-        
-        return ContentService.createTextOutput(JSON.stringify({
-          success: true,
-          message: "Data updated successfully"
-        })).setMimeType(ContentService.MimeType.JSON);
-      } else {
-        // IDが指定されているのに見つからなかった場合（重複防止のため新規追記せずエラーにする）
-        return ContentService.createTextOutput(JSON.stringify({
-          success: false,
-          error: "Original record was not found. (ID: " + searchId + ")"
-        })).setMimeType(ContentService.MimeType.JSON);
-      }
-    }
-
-    // 新規追記モード (payload.id がない場合のみ実行)
-    const timestamp = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss");
-    dataSheet.appendRow([
-      timestamp,
-      payload.mode || "未分類",
-      payload.turn || "不明",
-      payload.result || "不明",
-      payload.myDeck || "",
-      payload.opponentDeck || "",
-      payload.diff || "",
-      payload.memo || ""
-    ]);
-
-    return ContentService.createTextOutput(JSON.stringify({
-      success: true,
-      message: "Data recorded successfully",
-      id: timestamp // 追加された日時を返す
-    })).setMimeType(ContentService.MimeType.JSON);
-    
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({
-      success: false,
-      error: err.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-// CORSエラー回避用 (Preflight OPTIONSリクエストへの対応)
-function doOptions(e) {
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-  return ContentService.createTextOutput("OK")
-    .setMimeType(ContentService.MimeType.TEXT)
-    .setHeaders(headers);
-}
-`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(gasCode);
@@ -244,114 +13,191 @@ function doOptions(e) {
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-zinc-950/95 animate-in fade-in duration-300">
-      <div 
-        className="w-full max-w-4xl max-h-[90vh] bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col animate-in zoom-in-95 duration-300"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300 px-6">
+      <div className="bg-zinc-900 border border-zinc-800 w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden relative border-t-indigo-500/50 border-t-2">
+        
         {/* Header */}
-        <div className="p-6 bg-indigo-600/10 border-b border-zinc-800 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-500 rounded-xl text-white">
-              <Database className="w-5 h-5" />
+        <div className="p-6 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/50">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shadow-inner">
+              <Settings2 className="w-7 h-7 text-indigo-400" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white tracking-tight">GAS Setup Guide</h2>
-              <p className="text-xs text-indigo-400 font-medium uppercase tracking-widest">Connect to Your Spreadsheet</p>
+              <h2 className="text-2xl font-black text-white tracking-tight">GAS Setup Guide</h2>
+              <p className="text-sm text-zinc-500 font-medium">Google Apps Script を連携してデータベースを構築しましょう</p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-zinc-800 rounded-full transition-colors text-zinc-500 hover:text-white"
+            className="p-2.5 hover:bg-zinc-800 rounded-full transition-all text-zinc-400 hover:text-white hover:rotate-90 duration-300"
           >
-            <X className="w-6 h-6" />
+            <X className="w-7 h-7" />
           </button>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-10 space-y-12 custom-scrollbar">
           
-          {/* Step 1 */}
-          <section className="space-y-4">
-            <div className="flex items-center gap-3 text-white">
-              <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-sm">1</div>
-              <h3 className="text-lg font-bold">スプレッドシートの準備</h3>
+          {/* Introduction */}
+          <div className="bg-gradient-to-br from-indigo-500/10 to-transparent border border-indigo-500/20 rounded-3xl p-8 relative overflow-hidden group">
+            <div className="absolute -right-8 -bottom-8 opacity-5 group-hover:opacity-10 transition-opacity">
+              <Database className="w-48 h-48 text-indigo-400" />
             </div>
-            <div className="ml-11 space-y-3 text-zinc-400 text-sm leading-relaxed">
-              <p>新しいGoogleスプレッドシートを作成し、名前を「MD_Tracker」などに設定します。</p>
-              <p className="flex items-center gap-2 text-amber-400/80 italic text-xs">
-                <ExternalLink className="w-3 h-3" /> <a href="https://sheets.new" target="_blank" rel="noreferrer" className="underline hover:text-amber-300">sheets.new</a> を開くと早いです
-              </p>
-            </div>
-          </section>
+            <p className="text-zinc-200 leading-relaxed text-lg relative z-10">
+              このアプリは、対戦記録を <span className="text-white font-bold underline decoration-indigo-500/50 underline-offset-4">Google スプレッドシート</span> に自動で保存し、リアルタイムで集計します。<br />
+              以下の手順に従って、Google アカウントにバックエンド・プログラムを導入してください。
+            </p>
+          </div>
 
-          {/* Step 2 */}
-          <section className="space-y-4">
-            <div className="flex items-center gap-3 text-white">
-              <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-sm">2</div>
-              <h3 className="text-lg font-bold">Apps Script を開く</h3>
+          {/* Stepper Logic with visual cues */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            {/* Step 1 */}
+            <div className="space-y-4 p-6 bg-zinc-950/40 rounded-2xl border border-zinc-800/50 hover:border-indigo-500/30 transition-colors group">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-black text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all shadow-lg">1</div>
+                <h3 className="text-xl font-bold text-white">スプレッドシートの作成</h3>
+              </div>
+              <div className="ml-14 space-y-4">
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  まずは、データを記録するための箱（スプレッドシート）を用意します。
+                </p>
+                <a 
+                  href="https://sheets.new" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-indigo-300 rounded-xl text-xs font-bold transition-all border border-zinc-700 shadow-sm"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" /> Google Sheets を開く
+                </a>
+              </div>
             </div>
-            <div className="ml-11 space-y-3 text-zinc-400 text-sm leading-relaxed">
-              <p>上部メニューの <b>「拡張機能」 → 「Apps Script」</b> をクリックします。</p>
-            </div>
-          </section>
 
-          {/* Step 3 */}
-          <section className="space-y-4">
-            <div className="flex items-center gap-3 text-white">
-              <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-sm">3</div>
-              <h3 className="text-lg font-bold">コードを貼り付ける</h3>
+            {/* Step 2 */}
+            <div className="space-y-4 p-6 bg-zinc-950/40 rounded-2xl border border-zinc-800/50 hover:border-indigo-500/30 transition-colors group">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-black text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all shadow-lg">2</div>
+                <h3 className="text-xl font-bold text-white">Apps Script を起動</h3>
+              </div>
+              <div className="ml-14">
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  上部のメニューバーから「<span className="text-zinc-200">拡張機能</span>」を選択し、「<span className="text-indigo-400 font-bold decoration-indigo-400 decoration-1 underline underline-offset-4">Apps Script</span>」をクリックします。
+                </p>
+              </div>
             </div>
-            <div className="ml-11 space-y-4">
-              <p className="text-zinc-400 text-sm">既存のコード（myFunction等）をすべて消去し、以下のコードを貼り付けてください。</p>
-              <div className="bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden relative group">
-                <div className="absolute right-4 top-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+          </div>
+
+          {/* Step 3 (Full Width) */}
+          <section className="space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-black text-indigo-400 shadow-lg">3</div>
+              <h3 className="text-2xl font-bold text-white">ソースコードの導入</h3>
+            </div>
+            
+            <div className="ml-14 space-y-6">
+              <div className="p-5 bg-zinc-950/80 rounded-2xl border border-zinc-800/80 relative overflow-hidden">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                    <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest italic">Live Code Snippet (Code.gs)</span>
+                  </div>
                   <button 
                     onClick={handleCopy}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs rounded-lg border border-zinc-700 transition"
+                    className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-black text-xs transition-all shadow-xl group/btn transform hover:-translate-y-0.5 active:translate-y-0 ${
+                      copied 
+                        ? "bg-emerald-500 text-white" 
+                        : "bg-indigo-600 hover:bg-indigo-500 text-white"
+                    }`}
                   >
-                    {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                    {copied ? "Copied!" : "Copy Code"}
+                    {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4 group-hover/btn:rotate-12 transition-transform" />}
+                    {copied ? "COPIED TO CLIPBOARD!" : "CLICK TO COPY CODE"}
                   </button>
                 </div>
-                <pre className="p-5 text-[11px] font-mono text-indigo-300/80 overflow-x-auto max-h-[300px] leading-relaxed">
-                  {gasCode}
-                </pre>
+                
+                <div className="bg-zinc-950 rounded-xl border border-zinc-900 p-6 font-mono text-[12px] text-zinc-400 max-h-64 overflow-y-auto scrollbar-thin shadow-inner relative group/code">
+                  <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-zinc-950 to-transparent pointer-events-none group-hover/code:opacity-20 transition-opacity" />
+                  <pre className="opacity-50 select-none pointer-events-none">
+                    {gasCode.substring(0, 1000)}...
+                  </pre>
+                </div>
               </div>
             </div>
           </section>
 
-          {/* Step 4 */}
-          <section className="space-y-4">
-            <div className="flex items-center gap-3 text-white">
-              <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-sm">4</div>
-              <h3 className="text-lg font-bold">初期セットアップの実行</h3>
+          {/* New Step 4: Run setupSheets (Highly Prominent) */}
+          <section className="space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-amber-500 border border-amber-400 flex items-center justify-center font-black text-white shadow-[0_0_15px_rgba(245,158,11,0.3)] animate-pulse">4</div>
+              <h3 className="text-2xl font-black text-white">初期設定の実行 (重要)</h3>
             </div>
-            <div className="ml-11 space-y-3 text-zinc-400 text-sm leading-relaxed">
-              <p>保存（Ctrl+S）後、上部の実行関数リストから <b>「setupSheets」</b> を選択し、<b>「実行」</b> をクリックします。</p>
-              <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 flex items-start gap-3">
-                <div className="mt-0.5"><Check className="w-4 h-4 text-indigo-400" /></div>
-                <p className="text-xs text-indigo-300">「承認が必要です」と表示された場合は、<b>「権限を確認」 → アカウント選択 → 「詳細」 → 「MD_Tracker（安全ではない）」へ移動</b> を許可してください。</p>
+            
+            <div className="ml-14 p-8 bg-amber-500/5 border border-amber-500/20 rounded-3xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-3xl -mr-16 -mt-16 group-hover:bg-amber-500/20 transition-all duration-700" />
+              
+              <div className="flex flex-col md:flex-row gap-8 items-start relative z-10">
+                <div className="flex-1 space-y-4">
+                  <p className="text-zinc-200 leading-relaxed">
+                    コードを保存したら、画面上部のツールバーにあるドロップダウンから <span className="text-amber-400 font-black px-2 py-0.5 bg-amber-500/10 rounded">setupSheets</span> を選択し、その左隣の「<span className="text-white font-bold">実行</span>」ボタンをクリックしてください。
+                  </p>
+                  <p className="text-zinc-400 text-sm">
+                    これにより、スプレッドシートに必要な「対戦記録」シートと「設定」シートが自動的に作成されます。これを行わないと、アプリが正しく動作しません。
+                  </p>
+                </div>
+                
+                <div className="w-full md:w-64 p-4 bg-zinc-900/80 rounded-2xl border border-white/5 flex flex-col gap-3 shadow-2xl">
+                  <div className="flex items-center gap-2 px-2 py-1.5 bg-zinc-800 rounded-lg border border-zinc-700">
+                    <Play className="w-4 h-4 text-emerald-400 fill-emerald-400" />
+                    <span className="text-[10px] font-black text-zinc-300 uppercase underline decoration-emerald-500 decoration-2 underline-offset-4">Run (実行)</span>
+                  </div>
+                  <div className="px-3 py-2 bg-zinc-950 rounded-lg border border-indigo-500/30 flex items-center justify-between">
+                    <span className="text-[11px] font-mono text-indigo-300">setupSheets</span>
+                    <div className="w-2 h-2 rounded-full bg-indigo-500" />
+                  </div>
+                  <p className="text-[9px] text-zinc-500 text-center font-bold">※実行後に「承認」を求められたら許可してください</p>
+                </div>
               </div>
             </div>
           </section>
 
-          {/* Step 5 */}
-          <section className="space-y-4 pb-4">
-            <div className="flex items-center gap-3 text-white">
-              <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-sm">5</div>
-              <h3 className="text-lg font-bold">デプロイとURLの取得</h3>
+          {/* Step 5 (Full Width) */}
+          <section className="space-y-6 pb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-black text-indigo-400 shadow-lg">5</div>
+              <h3 className="text-2xl font-bold text-white">ウェブアプリとして公開</h3>
             </div>
-            <div className="ml-11 space-y-4 text-zinc-400 text-sm leading-relaxed">
-              <ol className="list-decimal list-inside space-y-2">
-                <li>右上の <b>「デプロイ」 → 「新しいデプロイ」</b> を選択。</li>
-                <li>種類を <b>「ウェブアプリ」</b> に設定。</li>
-                <li>アクセスできるユーザーを <b>「全員 (Anyone)」</b> に設定します（最重要！）。</li>
-                <li>「デプロイ」ボタンを押し、発行された <b>「ウェブアプリのURL」</b> をコピーしてください。</li>
-              </ol>
-              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mt-6">
-                <p className="text-xs text-emerald-400 font-bold mb-1 uppercase">Next Step</p>
-                <p className="text-xs text-emerald-300/80">取得したURLを本アプリの「Settings」に貼り付けて「Save」すれば完了です！</p>
+            
+            <div className="ml-14 p-8 bg-gradient-to-r from-zinc-950/40 to-transparent rounded-3xl border border-zinc-800/30">
+              <ul className="space-y-6 text-zinc-300 text-sm">
+                <li className="flex items-start gap-4 group">
+                  <div className="w-6 h-6 rounded bg-zinc-800 flex items-center justify-center group-hover:scale-110 transition-transform">✓</div>
+                  <p>右上の「<span className="text-white font-bold">新しいデプロイ</span>」をクリックします。</p>
+                </li>
+                <li className="flex items-start gap-4 group">
+                  <div className="w-6 h-6 rounded bg-zinc-800 flex items-center justify-center group-hover:scale-110 transition-transform">✓</div>
+                  <p>種類を「<span className="text-white font-bold">ウェブアプリ</span>」に選択（歯車アイコン）。</p>
+                </li>
+                <li className="flex items-start gap-4 group">
+                  <div className="w-6 h-6 rounded bg-zinc-800 flex items-center justify-center group-hover:scale-110 transition-transform">✓</div>
+                  <p>
+                    実行ユーザーを「<span className="text-white font-bold">自分</span>」、
+                    アクセスできるユーザーを「<span className="text-white font-bold">全員</span>」に設定。<br />
+                    <span className="text-[10px] text-zinc-500">※全員にしても、このURLを知っている人しかアクセスできません。</span>
+                  </p>
+                </li>
+                <li className="flex items-start gap-4 group">
+                  <div className="w-6 h-6 rounded bg-zinc-800 flex items-center justify-center group-hover:scale-110 transition-transform text-indigo-400 font-bold">!</div>
+                  <p className="text-zinc-100 font-medium">発行された「<span className="text-indigo-400 font-black">ウェブアプリのURL</span>」をコピーして、本アプリの Settings に貼り付けてください。</p>
+                </li>
+              </ul>
+              
+              <div className="mt-10 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center gap-6">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0 animate-pulse">
+                  <Globe className="w-8 h-8 text-emerald-400" />
+                </div>
+                <div>
+                  <h4 className="text-emerald-400 font-black text-lg">You're Ready To Go!</h4>
+                  <p className="text-emerald-300/60 text-sm">URLを設定すれば、自動トラッキング＆統計管理が始まります。</p>
+                </div>
               </div>
             </div>
           </section>
@@ -359,12 +205,12 @@ function doOptions(e) {
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-zinc-800 bg-zinc-950/20 text-center">
+        <div className="p-8 border-t border-zinc-800 bg-zinc-950/50 flex justify-center">
           <button 
             onClick={onClose}
-            className="px-8 py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl transition shadow-lg"
+            className="group px-12 py-4 bg-white hover:bg-indigo-50 text-black font-black rounded-2xl transition-all shadow-xl hover:shadow-indigo-500/20 flex items-center gap-3 active:scale-95"
           >
-            I've set it up!
+            UNDERSTOOD!
           </button>
         </div>
       </div>
