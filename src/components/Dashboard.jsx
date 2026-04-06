@@ -550,36 +550,27 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
     return Array.from(s).sort();
   }, [records]);
 
-  // 期間とモードのフィルタを適用した中間データ（テーマ・タグ候補計算用）
-  const contextFilteredRecords = useMemo(() => {
-    return records.filter(r => {
-      // 1. Date Filter
-      if (filterDateType !== 'ALL') {
-        const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        if (!r.date) return false;
-        const d = new Date(String(r.date).replace(/\//g, '-'));
-        if (filterDateType === 'TODAY' && d < today) return false;
-        if (filterDateType === '7D' && d < new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)) return false;
-        if (filterDateType === '30D' && d < new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)) return false;
-        if (filterDateType === 'CUSTOM') {
-          const s = startDate ? new Date(startDate) : null;
-          const e = endDate ? new Date(endDate) : null;
-          if (e) e.setHours(23, 59, 59, 999);
-          if (s && e && (d < s || d > e)) return false;
-          if (s && d < s) return false;
-          if (e && d > e) return false;
-        }
-      }
-      // 2. Mode Filter
-      if (filterMode !== 'ALL' && !String(r.mode || "").includes(String(filterMode).replace('戦',''))) return false;
-      return true;
-    });
-  }, [records, filterDateType, startDate, endDate, filterMode]);
+  // 1. 基本となる母集団（日付とモードによる絞り込み）
+  const scopeFilteredRecords = useMemo(() => {
+    return getFilteredRecords(records, { mode: filterMode, dateType: filterDateType, startDate, endDate });
+  }, [records, filterMode, filterDateType, startDate, endDate]);
 
+  // セットの総数を計算（母集団の対戦数に基づく）
+  const totalSets = useMemo(() => {
+    const s = parseInt(chunkSize, 10);
+    return chunkSize === 'ALL' ? 1 : Math.max(1, Math.ceil(scopeFilteredRecords.length / s));
+  }, [scopeFilteredRecords.length, chunkSize]);
+
+  // 2. セットによる物理的な切り出しを優先
+  const setFilteredRecords = useMemo(() => {
+    // 既に Scope されたレコードを一旦元の順序に戻し、getFilteredRecords にて再度 reverse & chunk させる
+    return getFilteredRecords(scopeFilteredRecords.slice().reverse(), { chunkSize, setRange });
+  }, [scopeFilteredRecords, chunkSize, setRange]);
+
+  // 3. 選択された「セット」内での実績に基づいた候補リストの生成
   const nextAvailableMyThemes = useMemo(() => {
     const s = new Set();
-    contextFilteredRecords.forEach(r => {
+    setFilteredRecords.forEach(r => {
       if (!r.opponentDeck || !r.myDeck) return;
       const oppThemes = String(r.opponentDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
       const myThemes = String(r.myDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
@@ -593,11 +584,11 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
       }
     });
     return Array.from(s).sort();
-  }, [contextFilteredRecords, filterOpponentDecks, filterTags, filterMyDecks, availableMyThemes]);
+  }, [setFilteredRecords, filterOpponentDecks, filterTags, filterMyDecks]);
 
   const nextAvailableOpponentThemes = useMemo(() => {
     const s = new Set();
-    contextFilteredRecords.forEach(r => {
+    setFilteredRecords.forEach(r => {
       if (!r.opponentDeck || !r.myDeck) return;
       const oppThemes = String(r.opponentDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
       const myThemes = String(r.myDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
@@ -611,11 +602,11 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
       }
     });
     return Array.from(s).sort();
-  }, [contextFilteredRecords, filterMyDecks, filterTags, filterOpponentDecks, availableOpponentThemes]);
+  }, [setFilteredRecords, filterMyDecks, filterTags, filterOpponentDecks]);
 
   const nextAvailableTags = useMemo(() => {
     const s = new Set();
-    contextFilteredRecords.forEach(r => {
+    setFilteredRecords.forEach(r => {
       const themes = String(r.myDeck || '').split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
       const oppThemes = String(r.opponentDeck || '').split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
       const rowTags = String(r.memo || '').split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
@@ -629,17 +620,12 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
       }
     });
     return Array.from(s).sort();
-  }, [contextFilteredRecords, filterMyDecks, filterOpponentDecks, filterTags]);
+  }, [setFilteredRecords, filterMyDecks, filterOpponentDecks, filterTags]);
 
-  const baseFilteredRecords = useMemo(() => {
-    return getFilteredRecords(records, { mode: filterMode, myDecks: filterMyDecks, opponentDecks: filterOpponentDecks, tags: filterTags, dateType: filterDateType, startDate, endDate });
-  }, [records, filterMode, filterMyDecks, filterOpponentDecks, filterTags, filterDateType, startDate, endDate]);
-
-  const totalSets = useMemo(() => chunkSize === 'ALL' ? 1 : Math.max(1, Math.ceil(baseFilteredRecords.length / parseInt(chunkSize, 10))), [baseFilteredRecords.length, chunkSize]);
-
+  // 4. 固定されたセット群に対して最終的なテーマ・タグ絞り込み（内訳分析）を適用
   const filteredRecords = useMemo(() => {
-    return getFilteredRecords(baseFilteredRecords.slice().reverse(), { chunkSize, setRange });
-  }, [baseFilteredRecords, chunkSize, setRange]);
+    return getFilteredRecords(setFilteredRecords.slice().reverse(), { myDecks: filterMyDecks, opponentDecks: filterOpponentDecks, tags: filterTags });
+  }, [setFilteredRecords, filterMyDecks, filterOpponentDecks, filterTags]);
 
   const stats = useMemo(() => calculateStats(filteredRecords), [filteredRecords]);
 
