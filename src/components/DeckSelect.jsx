@@ -43,8 +43,8 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 常にリセットするためにselectedIndexを監視
-  useEffect(() => { setSelectedIndex(0); }, [inputValue]);
+  // 常に位置をリセットするために inputValue や availableDecks を監視
+  useEffect(() => { setSelectedIndex(0); }, [inputValue, availableDecks]);
 
   const sortedSuggestions = React.useMemo(() => {
     let list = availableDecks.filter(d => !selectedDecks.includes(d));

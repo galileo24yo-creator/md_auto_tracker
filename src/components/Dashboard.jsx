@@ -79,7 +79,7 @@ const MatchList = memo(({ records, onSelect, limit = 15 }) => (
               <span className="font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors uppercase tracking-tight text-xs">
                 {r.opponentDeck || "UNKNOWN"}
               </span>
-              {r.memo && r.memo.split(',').map((tag, idx) => <span key={idx} className="px-1.5 py-0.5 rounded bg-indigo-500/5 border border-indigo-500/10 text-[9px] text-indigo-400 font-bold whitespace-nowrap">{tag.trim()}</span>)}
+              {r.memo && String(r.memo).split(',').map((tag, idx) => <span key={idx} className="px-1.5 py-0.5 rounded bg-indigo-500/5 border border-indigo-500/10 text-[9px] text-indigo-400 font-bold whitespace-nowrap">{String(tag).trim()}</span>)}
             </div>
             <div className="text-[9px] font-bold uppercase tracking-widest mt-1 flex items-center gap-1">
               <span className="text-zinc-500">MY:</span>
@@ -95,7 +95,7 @@ const MatchList = memo(({ records, onSelect, limit = 15 }) => (
   </div>
 ));
 
-const MatchupRankings = memo(({ data, tab, onTabChange, minLimit, onLimitChange, onDeckClick, currentFilter }) => (
+const MatchupRankings = memo(({ data, tab, onTabChange, minLimit, onLimitChange, onDeckClick, currentDecks }) => (
   <div className="bg-zinc-800/80 p-5 rounded-xl border border-zinc-700/50 flex flex-col h-full shadow-lg">
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-3">
@@ -138,7 +138,7 @@ const MatchupRankings = memo(({ data, tab, onTabChange, minLimit, onLimitChange,
         </thead>
         <tbody className="divide-y divide-zinc-800/30">
           {data.map((d, i) => {
-            const isSelected = currentFilter === d.deck;
+            const isSelected = currentDecks.join(' + ') === d.deck;
             return (
               <tr key={i} className={`group hover:bg-white/[0.02] transition-colors ${isSelected ? 'bg-indigo-500/5' : ''}`}>
                 <td className="py-2.5 pr-4 text-xs font-bold">
@@ -172,7 +172,7 @@ const MatchupRankings = memo(({ data, tab, onTabChange, minLimit, onLimitChange,
 const getFilteredRecords = (records, filters) => {
   if (!Array.isArray(records)) return [];
   let r = records;
-  const { mode, myDeck, opponentDeck, dateType, startDate, endDate, chunkSize, setRange } = filters;
+  const { mode, myDecks, opponentDecks, tags, dateType, startDate, endDate, chunkSize, setRange } = filters;
 
   if (dateType !== 'ALL') {
     const now = new Date();
@@ -196,8 +196,25 @@ const getFilteredRecords = (records, filters) => {
   }
 
   if (mode && mode !== 'ALL') r = r.filter(v => String(v.mode || "").includes(String(mode).replace('戦','')));
-  if (myDeck && myDeck !== 'ALL') r = r.filter(v => v.myDeck?.split(',').map(x => x.trim()).sort().join(' + ') === myDeck);
-  if (opponentDeck && opponentDeck !== 'ALL') r = r.filter(v => v.opponentDeck?.split(',').map(x => x.trim()).sort().join(' + ') === opponentDeck);
+  if (myDecks && myDecks.length > 0) {
+    r = r.filter(v => {
+      const themes = String(v.myDeck || "").split(/[,、，]+/).map(x => String(x).trim()).filter(Boolean);
+      return myDecks.every(f => themes.includes(f));
+    });
+  }
+  if (opponentDecks && opponentDecks.length > 0) {
+    r = r.filter(v => {
+      const themes = String(v.opponentDeck || "").split(/[,、，]+/).map(x => String(x).trim()).filter(Boolean);
+      return opponentDecks.every(f => themes.includes(f));
+    });
+  }
+
+  if (tags && tags.length > 0) {
+    r = r.filter(v => {
+      const memoContent = String(v.memo || "");
+      return tags.every(t => memoContent.includes(t));
+    });
+  }
   
   r = r.slice().reverse();
 
@@ -234,7 +251,7 @@ const getRankings = (records, minLimit) => {
   const s = {};
   records.forEach(r => { 
     if (!r.opponentDeck) return; 
-    const d = r.opponentDeck.split(',').map(x => x.trim()).sort().join(' + '); 
+    const d = String(r.opponentDeck).split(/[,、，]+/).map(x => String(x).trim()).filter(Boolean).sort().join(' + '); 
     if (!d) return; 
     const w = String(r.result).toUpperCase().includes('VIC') || r.result === 'WIN'; 
     if (!s[d]) s[d] = { t: 0, w: 0, ft: 0, fw: 0, st: 0, sw: 0 }; 
@@ -375,8 +392,9 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
   const [chunkSize, setChunkSize] = useState('ALL');
   const [setRange, setSetRange] = useState([1, 1]);
-  const [filterMyDeck, setFilterMyDeck] = useState('ALL');
-  const [filterOpponentDeck, setFilterOpponentDeck] = useState('ALL');
+  const [filterMyDecks, setFilterMyDecks] = useState([]);
+  const [filterOpponentDecks, setFilterOpponentDecks] = useState([]);
+  const [filterTags, setFilterTags] = useState([]);
   const [matchupTab, setMatchupTab] = useState('WORST');
   const [minMatchLimit, setMinMatchLimit] = useState(3);
   const [activeTab, setActiveTab] = useState('overview');
@@ -402,10 +420,10 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
       mode: selectedMatch.mode || "ランク",
       turn: selectedMatch.turn || "先",
       result: String(selectedMatch.result).toUpperCase().includes('VIC') || selectedMatch.result === 'WIN' ? 'VICTORY' : 'DEFEAT',
-      myDeck: selectedMatch.myDeck ? selectedMatch.myDeck.split(', ').filter(Boolean) : [],
-      oppDeck: selectedMatch.opponentDeck ? selectedMatch.opponentDeck.split(', ').filter(Boolean) : [],
+      myDeck: selectedMatch.myDeck ? String(selectedMatch.myDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean) : [],
+      oppDeck: selectedMatch.opponentDeck ? String(selectedMatch.opponentDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean) : [],
       diff: selectedMatch.diff || selectedMatch.rating || "",
-      memo: selectedMatch.memo ? selectedMatch.memo.split(', ').filter(Boolean) : []
+      memo: selectedMatch.memo ? String(selectedMatch.memo).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean) : []
     }); setIsEditing(true);
   };
 
@@ -510,15 +528,112 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
     const u = URL.createObjectURL(b); const l = document.createElement("a"); l.href = u; l.setAttribute("download", `MD_Matches.csv`); l.click();
   };
 
-  const availableMyDecks = useMemo(() => {
+  const availableMyThemes = useMemo(() => {
     const s = new Set();
-    records.forEach(r => { if (r.myDeck) { const d = r.myDeck.split(',').map(v => v.trim()).filter(Boolean).sort().join(' + '); if (d) s.add(d); } });
+    records.forEach(r => { 
+      if (r.myDeck) String(r.myDeck).split(/[,、，]+/).forEach(t => { 
+        const theme = String(t).trim(); 
+        if (theme) s.add(theme); 
+      }); 
+    });
     return Array.from(s).sort();
   }, [records]);
-  
+
+  const availableOpponentThemes = useMemo(() => {
+    const s = new Set();
+    records.forEach(r => { 
+      if (r.opponentDeck) String(r.opponentDeck).split(/[,、，]+/).forEach(t => { 
+        const theme = String(t).trim(); 
+        if (theme) s.add(theme); 
+      }); 
+    });
+    return Array.from(s).sort();
+  }, [records]);
+
+  // 期間とモードのフィルタを適用した中間データ（テーマ・タグ候補計算用）
+  const contextFilteredRecords = useMemo(() => {
+    return records.filter(r => {
+      // 1. Date Filter
+      if (filterDateType !== 'ALL') {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        if (!r.date) return false;
+        const d = new Date(String(r.date).replace(/\//g, '-'));
+        if (filterDateType === 'TODAY' && d < today) return false;
+        if (filterDateType === '7D' && d < new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)) return false;
+        if (filterDateType === '30D' && d < new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)) return false;
+        if (filterDateType === 'CUSTOM') {
+          const s = startDate ? new Date(startDate) : null;
+          const e = endDate ? new Date(endDate) : null;
+          if (e) e.setHours(23, 59, 59, 999);
+          if (s && e && (d < s || d > e)) return false;
+          if (s && d < s) return false;
+          if (e && d > e) return false;
+        }
+      }
+      // 2. Mode Filter
+      if (filterMode !== 'ALL' && !String(r.mode || "").includes(String(filterMode).replace('戦',''))) return false;
+      return true;
+    });
+  }, [records, filterDateType, startDate, endDate, filterMode]);
+
+  const nextAvailableMyThemes = useMemo(() => {
+    const s = new Set();
+    contextFilteredRecords.forEach(r => {
+      if (!r.opponentDeck || !r.myDeck) return;
+      const oppThemes = String(r.opponentDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
+      const myThemes = String(r.myDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
+      
+      const oppMatch = filterOpponentDecks.length === 0 || filterOpponentDecks.every(f => oppThemes.includes(f));
+      const myMatch = filterMyDecks.length === 0 || filterMyDecks.every(f => myThemes.includes(f));
+      const tagMatch = filterTags.length === 0 || (r.memo && filterTags.every(t => String(r.memo).includes(t)));
+
+      if (oppMatch && myMatch && tagMatch) {
+        myThemes.forEach(t => { if (!filterMyDecks.includes(t)) s.add(t); });
+      }
+    });
+    return Array.from(s).sort();
+  }, [contextFilteredRecords, filterOpponentDecks, filterTags, filterMyDecks, availableMyThemes]);
+
+  const nextAvailableOpponentThemes = useMemo(() => {
+    const s = new Set();
+    contextFilteredRecords.forEach(r => {
+      if (!r.opponentDeck || !r.myDeck) return;
+      const oppThemes = String(r.opponentDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
+      const myThemes = String(r.myDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
+
+      const myMatch = filterMyDecks.length === 0 || filterMyDecks.every(f => myThemes.includes(f));
+      const oppMatch = filterOpponentDecks.length === 0 || filterOpponentDecks.every(f => oppThemes.includes(f));
+      const tagMatch = filterTags.length === 0 || (r.memo && filterTags.every(t => String(r.memo).includes(t)));
+
+      if (myMatch && oppMatch && tagMatch) {
+        oppThemes.forEach(t => { if (!filterOpponentDecks.includes(t)) s.add(t); });
+      }
+    });
+    return Array.from(s).sort();
+  }, [contextFilteredRecords, filterMyDecks, filterTags, filterOpponentDecks, availableOpponentThemes]);
+
+  const nextAvailableTags = useMemo(() => {
+    const s = new Set();
+    contextFilteredRecords.forEach(r => {
+      const themes = String(r.myDeck || '').split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
+      const oppThemes = String(r.opponentDeck || '').split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
+      const rowTags = String(r.memo || '').split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean);
+      
+      const themeMatch = filterMyDecks.length === 0 || filterMyDecks.every(f => themes.includes(f));
+      const oppMatch = filterOpponentDecks.length === 0 || filterOpponentDecks.every(f => oppThemes.includes(f));
+      const tagMatch = filterTags.length === 0 || (r.memo && filterTags.every(t => String(r.memo).includes(t)));
+      
+      if (themeMatch && oppMatch && tagMatch) {
+        rowTags.forEach(t => { if (!filterTags.includes(t)) s.add(t); });
+      }
+    });
+    return Array.from(s).sort();
+  }, [contextFilteredRecords, filterMyDecks, filterOpponentDecks, filterTags]);
+
   const baseFilteredRecords = useMemo(() => {
-    return getFilteredRecords(records, { mode: filterMode, myDeck: filterMyDeck, opponentDeck: filterOpponentDeck, dateType: filterDateType, startDate, endDate });
-  }, [records, filterMode, filterMyDeck, filterOpponentDeck, filterDateType, startDate, endDate]);
+    return getFilteredRecords(records, { mode: filterMode, myDecks: filterMyDecks, opponentDecks: filterOpponentDecks, tags: filterTags, dateType: filterDateType, startDate, endDate });
+  }, [records, filterMode, filterMyDecks, filterOpponentDecks, filterTags, filterDateType, startDate, endDate]);
 
   const totalSets = useMemo(() => chunkSize === 'ALL' ? 1 : Math.max(1, Math.ceil(baseFilteredRecords.length / parseInt(chunkSize, 10))), [baseFilteredRecords.length, chunkSize]);
 
@@ -530,14 +645,28 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
 
   const opponentDeckData = useMemo(() => {
     const c = {};
-    filteredRecords.forEach(r => { if (r.opponentDeck) { const d = r.opponentDeck.split(',').map(x => x.trim()).sort().join(' + '); if (d) c[d] = (c[d] || 0) + 1; } });
+    filteredRecords.forEach(r => { 
+      if (r.opponentDeck) { 
+        const d = String(r.opponentDeck).split(/[,、，]+/).map(x => String(x).trim()).filter(Boolean).sort().join(' + '); 
+        if (d) c[d] = (c[d] || 0) + 1; 
+      } 
+    });
     const s = Object.entries(c).map(([n, v]) => ({ name: n, value: v })).sort((a,b) => b.value - a.value);
-    if (s.length <= 7) return s; return [...s.slice(0, 6), { name: "その他", value: s.slice(6).reduce((a, x) => a + x.value, 0) }];
+    if (s.length <= 7) return s; 
+    return [...s.slice(0, 6), { name: "その他", value: s.slice(6).reduce((a, x) => a + x.value, 0) }];
   }, [filteredRecords]);
 
   const myDeckWinRateData = useMemo(() => {
     const s = {};
-    filteredRecords.forEach(r => { if (r.myDeck) { const d = r.myDeck.split(',').map(x => x.trim()).sort().join(' + '); if (!d) return; if (!s[d]) s[d] = { w: 0, t: 0 }; s[d].t++; if (String(r.result).toUpperCase().includes('VIC')) s[d].w++; } });
+    filteredRecords.forEach(r => { 
+      if (r.myDeck) { 
+        const d = String(r.myDeck).split(/[,、，]+/).map(x => String(x).trim()).filter(Boolean).sort().join(' + '); 
+        if (!d) return; 
+        if (!s[d]) s[d] = { w: 0, t: 0 }; 
+        s[d].t++; 
+        if (String(r.result).toUpperCase().includes('VIC')) s[d].w++; 
+      } 
+    });
     return Object.entries(s).map(([n, v]) => ({ name: n, winRate: parseFloat(((v.w / v.t) * 100).toFixed(1)), total: v.t })).sort((a,b) => b.total - a.total).slice(0, 5);
   }, [filteredRecords]);
 
@@ -549,16 +678,13 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
   }, [filteredRecords, matchupTab, minMatchLimit]);
 
   const trendData = useMemo(() => {
-    // グラフ用には使用デッキフィルターを無視する
     let r = records;
-    
-    // 1. 日付フィルターの適用
     if (filterDateType !== 'ALL') {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       r = r.filter(v => {
         if (!v.date) return false;
-        const d = new Date(v.date.replace(/\//g, '-'));
+        const d = new Date(String(v.date).replace(/\//g, '-'));
         if (filterDateType === 'TODAY') return d >= today;
         if (filterDateType === '7D') return d >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         if (filterDateType === '30D') return d >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -589,12 +715,12 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
       if (isNaN(v)) return null; 
       
       // デッキフィルターの判定
-      const currentMyDeck = x.myDeck?.split(',').map(v => v.trim()).sort().join(' + ') || '';
-      const myMatch = filterMyDeck === 'ALL' || currentMyDeck === filterMyDeck;
+      const currentMyThemes = String(x.myDeck || "").split(',').map(v => String(v).trim()).filter(Boolean);
+      const myMatch = filterMyDecks.length === 0 || filterMyDecks.every(f => currentMyThemes.includes(f));
 
       // 対戦相手フィルターの判定
-      const currentOppDeck = x.opponentDeck?.split(',').map(v => v.trim()).sort().join(' + ') || '';
-      const oppMatch = filterOpponentDeck === 'ALL' || currentOppDeck === filterOpponentDeck;
+      const currentOppThemes = String(x.opponentDeck || "").split(',').map(v => String(v).trim()).filter(Boolean);
+      const oppMatch = filterOpponentDecks.length === 0 || filterOpponentDecks.every(f => currentOppThemes.includes(f));
 
       // 両方のフィルターに合致する場合のみ強調表示
       const isMatch = myMatch && oppMatch;
@@ -612,7 +738,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
     }).filter(v => v !== null);
     
     return rMap;
-  }, [records, filterMode, filterMyDeck, filterOpponentDeck, filterDateType, startDate, endDate, chunkSize, setRange, totalSets]);
+  }, [records, filterMode, filterMyDecks, filterOpponentDecks, filterDateType, startDate, endDate, chunkSize, setRange, totalSets]);
 
   const tagTrendData = useMemo(() => {
     if (!filteredRecords || filteredRecords.length === 0) return { data: [], tags: [] };
@@ -620,8 +746,8 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
     // 1. 全体で出現頻度の高い上位5つのタグを抽出
     const allTags = {};
     filteredRecords.forEach(r => {
-      if (r.memo) r.memo.split(',').forEach(t => {
-        const tag = t.trim();
+      if (r.memo) String(r.memo).split(/[,、，]+/).forEach(t => {
+        const tag = String(t).trim();
         if (tag) allTags[tag] = (allTags[tag] || 0) + 1;
       });
     });
@@ -650,71 +776,94 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
     <div className="space-y-6">
       <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center shrink-0">
             <h2 className="text-xl font-black text-zinc-100 flex items-center gap-2"><TrendingUp className="w-5 h-5 text-indigo-500" /> Match Analytics</h2>
-            <button onClick={exportToCSV} className="px-3 py-1.5 bg-zinc-800 border border-zinc-700 text-zinc-300 rounded-lg text-[10px] font-black uppercase flex items-center gap-2 hover:bg-zinc-700 transition-colors"><Download className="w-3.5 h-3.5" /> CSV</button>
-            <button onClick={() => { setEditingDecks(decks); setEditingReasons(reasons); setShowSettingsEditor(true); }} className="px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-lg text-[10px] font-black uppercase flex items-center gap-2 hover:bg-indigo-500/20 transition-colors"><Settings className="w-3.5 h-3.5" /> Decks</button>
-            {activeProfile?.sheetUrl && (
-              <a 
-                href={activeProfile.sheetUrl} 
-                target="_blank" 
-                rel="noreferrer" 
-                className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-[10px] font-black uppercase flex items-center gap-2 hover:bg-emerald-500/20 transition-colors"
-              >
-                <ExternalLink className="w-3.5 h-3.5" /> Sheets
-              </a>
-            )}
           </div>
-          <div className="flex items-center gap-2 flex-wrap md:flex-nowrap justify-end">
-            {filterOpponentDeck !== 'ALL' && (
-              <button 
-                onClick={() => setFilterOpponentDeck('ALL')}
-                className="flex items-center gap-2 bg-indigo-500 text-white rounded-lg px-3 py-1.5 text-[10px] font-black uppercase hover:bg-indigo-400 transition-all animate-in zoom-in-95"
-              >
-                対: {filterOpponentDeck}
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-            <select value={filterDateType} onChange={(e) => { setFilterDateType(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 shrink-0">
-              <option value="ALL">期間: すべて</option>
-              <option value="TODAY">期間: 今日</option>
-              <option value="7D">期間: 過去7日</option>
-              <option value="30D">期間: 過去30日</option>
-              <option value="CUSTOM">期間: カスタム</option>
-            </select>
-            
-            {filterDateType === 'CUSTOM' && (
-              <button 
-                onClick={() => setIsDateModalOpen(true)}
-                className="flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-lg px-2.5 py-1.5 text-[10px] font-black uppercase hover:bg-indigo-500/20 transition-all animate-in slide-in-from-right-2"
-              >
-                <Calendar className="w-3.5 h-3.5" />
-                {startDate ? `${startDate.split('-').slice(1).join('/')} - ${endDate ? endDate.split('-').slice(1).join('/') : '...'}` : '期間を選択'}
-              </button>
-            )}
+          <div className="flex-1 flex flex-col gap-4">
+            {/* Row 1: Basic Config & Actions */}
+            <div className="flex items-center gap-2 flex-wrap md:flex-nowrap justify-end">
+              <div className="flex items-center gap-2 mr-1">
+                <button onClick={exportToCSV} className="px-3 py-1.5 bg-zinc-850 border border-zinc-800 text-zinc-400 rounded-lg text-[10px] font-black uppercase flex items-center gap-2 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"><Download className="w-3.5 h-3.5" /> CSV</button>
+                <button onClick={() => { setEditingDecks(decks); setEditingReasons(reasons); setShowSettingsEditor(true); }} className="px-3 py-1.5 bg-indigo-500/5 border border-indigo-500/10 text-indigo-400/80 rounded-lg text-[10px] font-black uppercase flex items-center gap-2 hover:bg-indigo-500/10 hover:text-indigo-400 transition-colors"><Settings className="w-3.5 h-3.5" /> Decks</button>
+                {activeProfile?.sheetUrl && (
+                  <a 
+                    href={activeProfile.sheetUrl} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="px-3 py-1.5 bg-emerald-500/5 border border-emerald-500/10 text-emerald-400/80 rounded-lg text-[10px] font-black uppercase flex items-center gap-2 hover:bg-emerald-500/10 hover:text-emerald-400 transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" /> Sheets
+                  </a>
+                )}
+              </div>
+              <div className="hidden md:block w-px h-4 bg-zinc-800 mx-1 shrink-0" />
+              <select value={filterDateType} onChange={(e) => { setFilterDateType(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-3 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 h-[42px] min-w-[120px]">
+                <option value="ALL">期間: すべて</option>
+                <option value="TODAY">期間: 今日</option>
+                <option value="7D">期間: 過去7日</option>
+                <option value="30D">期間: 過去30日</option>
+                <option value="CUSTOM">期間: カスタム</option>
+              </select>
+              
+              {filterDateType === 'CUSTOM' && (
+                <button 
+                  onClick={() => setIsDateModalOpen(true)}
+                  className="flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-lg px-3 py-1.5 text-[10px] font-black uppercase hover:bg-indigo-500/20 transition-all animate-in slide-in-from-right-2 h-[42px]"
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  {startDate ? `${startDate.split('-').slice(1).join('/')} - ${endDate ? endDate.split('-').slice(1).join('/') : '...'}` : '期間を選択'}
+                </button>
+              )}
 
-            <select value={filterMode} onChange={(e) => { setFilterMode(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 shrink-0">
-              <option value="ALL">モード: 全て</option>
-              <option value="ランク戦">モード: ランク</option>
-              <option value="レート戦">モード: レート</option>
-              <option value="DC">モード: DC</option>
-            </select>
-            
-            <FilterSelect 
-              options={availableMyDecks} 
-              value={filterMyDeck} 
-              onChange={(v) => { setFilterMyDeck(v); setSetRange([1, 1]); }} 
-              placeholder="マイデッキ" 
-            />
+              <select value={filterMode} onChange={(e) => { setFilterMode(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-3 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 h-[42px] min-w-[120px]">
+                <option value="ALL">モード: 全て</option>
+                <option value="ランク戦">モード: ランク</option>
+                <option value="レート戦">モード: レート</option>
+                <option value="DC">モード: DC</option>
+              </select>
 
-            <select value={chunkSize} onChange={(e) => { setChunkSize(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-2 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 shrink-0">
-              <option value="ALL">全ての試合</option>
-              <option value="5">5戦単位</option>
-              <option value="10">10戦単位</option>
-              <option value="20">20戦単位</option>
-              <option value="30">30戦単位</option>
-              <option value="50">50戦単位</option>
-            </select>
+              <select value={chunkSize} onChange={(e) => { setChunkSize(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-3 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 h-[42px] min-w-[120px]">
+                <option value="ALL">全ての試合</option>
+                <option value="5">5戦単位</option>
+                <option value="10">10戦単位</option>
+                <option value="20">20戦単位</option>
+                <option value="30">30戦単位</option>
+                <option value="50">50戦単位</option>
+              </select>
+            </div>
+
+            {/* Row 2: Theme & Tag Filters */}
+            <div className="flex items-center gap-3 flex-wrap md:flex-nowrap justify-end max-w-[85%] ml-auto">
+              <div className="flex-1 min-w-[200px] max-w-[320px]">
+                <div className="text-[8px] font-black text-zinc-600 uppercase tracking-widest mb-1 ml-1 text-center border-b border-zinc-800 pb-1">My Themes (実績から提案)</div>
+                <DeckSelect 
+                  availableDecks={nextAvailableMyThemes} 
+                  selectedDecks={filterMyDecks} 
+                  onChange={(v) => { setFilterMyDecks(v); setSetRange([1, 1]); }} 
+                  placeholder="自分のテーマを選択..." 
+                />
+              </div>
+
+              <div className="flex-1 min-w-[200px] max-w-[320px]">
+                <div className="text-[8px] font-black text-zinc-600 uppercase tracking-widest mb-1 ml-1 text-center border-b border-zinc-800 pb-1">Opponent Themes (実績から提案)</div>
+                <DeckSelect 
+                  availableDecks={nextAvailableOpponentThemes} 
+                  selectedDecks={filterOpponentDecks} 
+                  onChange={(v) => { setFilterOpponentDecks(v); setSetRange([1, 1]); }} 
+                  placeholder="相手のテーマを選択..." 
+                />
+              </div>
+
+              <div className="flex-1 min-w-[180px] max-w-[280px]">
+                <div className="text-[8px] font-black text-zinc-600 uppercase tracking-widest mb-1 ml-1 text-center border-b border-zinc-800 pb-1">Factors & Tags (実績から提案)</div>
+                <DeckSelect 
+                  availableDecks={nextAvailableTags} 
+                  selectedDecks={filterTags} 
+                  onChange={(v) => { setFilterTags(v); setSetRange([1, 1]); }} 
+                  placeholder="タグを選択..." 
+                />
+              </div>
+            </div>
           </div>
         </div>
         {chunkSize !== 'ALL' && (
@@ -757,7 +906,24 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
               <div className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={opponentDeckData} cx="50%" cy="50%" innerRadius={55} outerRadius={75} paddingAngle={2} dataKey="value" stroke="none">
+                    <Pie 
+                      data={opponentDeckData} 
+                      cx="50%" 
+                      cy="50%" 
+                      innerRadius={55} 
+                      outerRadius={75} 
+                      paddingAngle={2} 
+                      dataKey="value" 
+                      stroke="none"
+                      onClick={(data) => {
+                        if (data && data.name && data.name !== 'その他') {
+                          const themes = data.name.split(' + ');
+                          setFilterOpponentDecks(prev => prev.length === themes.length && prev.every((t, idx) => t === themes[idx]) ? [] : themes);
+                          setSetRange([1, 1]);
+                        }
+                      }}
+                      style={{ cursor: 'pointer', outline: 'none' }}
+                    >
                       {opponentDeckData.map((e, i) => <Cell key={i} fill={e.name === 'その他' ? '#71717a' : COLORS[i % COLORS.length]} />)}
                     </Pie>
                     <Tooltip contentStyle={{ backgroundColor: '#09090b', border: '1px solid #18181b', borderRadius: '12px', fontSize: '11px' }} />
@@ -777,7 +943,15 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
               <h3 className="text-zinc-400 text-[9px] font-black uppercase mb-6 text-center tracking-widest group-hover:text-white transition-colors">Performance by My Deck</h3>
               <div className="flex-1 space-y-5 overflow-y-auto pr-2 custom-scrollbar">
                 {myDeckWinRateData.map((d, i) => (
-                  <div key={i} className="group/item">
+                  <div 
+                    key={i} 
+                    className="group/item cursor-pointer hover:bg-white/[0.02] -mx-1 px-1 py-1 rounded-lg transition-all"
+                    onClick={() => {
+                      const themes = d.name.split(' + ');
+                      setFilterMyDecks(prev => prev.length === themes.length && prev.every((t, idx) => t === themes[idx]) ? [] : themes);
+                      setSetRange([1, 1]);
+                    }}
+                  >
                     <div className="flex items-center justify-between mb-1.5 px-1">
                       <div className="flex flex-col">
                         <span className="text-[11px] font-black text-zinc-100 group-hover/item:text-indigo-400 transition-colors uppercase tracking-tight truncate max-w-[140px]" title={d.name}>{d.name}</span>
@@ -805,7 +979,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
 
             {/* Bottom Row Components */}
             <div className="h-[400px]"><MatchList records={filteredRecords} onSelect={setSelectedMatch} limit={chunkSize === 'ALL' ? 15 : parseInt(chunkSize, 10)} /></div>
-            <div className="h-[400px]"><MatchupRankings data={matchupData} tab={matchupTab} onTabChange={setMatchupTab} minLimit={minMatchLimit} onLimitChange={setMinMatchLimit} currentFilter={filterOpponentDeck} onDeckClick={(d) => { setFilterOpponentDeck(prev => prev === d ? 'ALL' : d); setSetRange([1, 1]); }} /></div>
+            <div className="h-[400px]"><MatchupRankings data={matchupData} tab={matchupTab} onTabChange={setMatchupTab} minLimit={minMatchLimit} onLimitChange={setMinMatchLimit} currentDecks={filterOpponentDecks} onDeckClick={(d) => { const themes = d.split(' + '); setFilterOpponentDecks(prev => prev.join(' + ') === d ? [] : themes); setSetRange([1, 1]); }} /></div>
           </div>
         </div>
       )}
