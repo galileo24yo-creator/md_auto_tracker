@@ -239,18 +239,18 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       };
     } catch (e) { console.error("Worker error:", e); }
 
-    // Robust Scroll Event Listener for Sticky/Ghost Detection
+    // Robust Scroll Event Listener for Ghost Mode Detection
     let isTicking = false;
     const handleScroll = () => {
       if (!isTicking) {
         window.requestAnimationFrame(() => {
           if (stickyRef.current) {
             const rect = stickyRef.current.getBoundingClientRect();
-            // Trigger Ghost Mode when the video's original position is scrolled past the top
-            const shouldBeSticky = rect.top < 0;
+            // Enter Ghost Mode if sentinel is above top. Exit with 10px buffer.
+            const isStuck = rect.top < 0;
             setIsSticky(prev => {
-              if (shouldBeSticky && !prev) return true;
-              if (!shouldBeSticky && rect.top > 10 && prev) return false;
+              if (isStuck && !prev) return true;
+              if (!isStuck && rect.top > 10 && prev) return false;
               return prev;
             });
           }
@@ -260,7 +260,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    handleScroll(); // Initial check
 
     return () => {
       if (intervalRef.current) clearTimeout(intervalRef.current);
@@ -618,8 +618,16 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
           </div>
         ))}
       </div>
-      <div ref={stickyRef} className="h-[1px] w-full" /> {/* Ghost Sentinel */}
-      <div className={`aspect-video bg-black/80 border border-zinc-700/50 rounded-xl overflow-hidden relative sticky top-4 z-30 transition-all duration-300 ${(isSticky && !isFrozen) ? 'opacity-0 pointer-events-none' : 'opacity-100 shadow-2xl backdrop-blur-md'}`}>
+      <div ref={stickyRef} className="h-[1px] w-full bg-transparent" /> {/* Physical Sentinel */}
+      <div 
+        className={`aspect-video rounded-xl overflow-hidden relative transition-all duration-300 ${
+          isSticky 
+            ? captureStatus === 'FROZEN' 
+              ? 'sticky top-4 z-40 bg-black/80 border border-rose-500 shadow-2xl opacity-100 backdrop-blur-md' // Visible if frozen
+              : 'sticky top-4 z-0 opacity-0 pointer-events-none border-transparent' // Ghost Mode
+            : 'bg-black/80 border border-zinc-700/50 z-10 opacity-100 sticky top-4 shadow-2xl backdrop-blur-md' // Normal Mode
+        }`}
+      >
         {stream ? <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-contain" /> : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 text-sm">Launch Capture to Start</div>
         )}
