@@ -139,6 +139,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const stateRef = useRef(currentState);
   useEffect(() => { stateRef.current = currentState; }, [currentState]);
 
+  const currentAnalyzeRef = useRef(null);
+  
   const recordingRef = useRef(isRecording);
   useEffect(() => { recordingRef.current = isRecording; }, [isRecording]);
 
@@ -561,8 +563,9 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
     } catch (err) { console.error(err); }
   }, [currentState, showRoiOverlay, saveMatch]);
 
-  const currentAnalyzeRef = useRef(null);
-  currentAnalyzeRef.current = captureAndAnalyze;
+  useEffect(() => {
+    currentAnalyzeRef.current = captureAndAnalyze;
+  }, [captureAndAnalyze]);
 
   const startCapture = async () => {
     try {
