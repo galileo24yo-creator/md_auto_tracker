@@ -592,7 +592,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
           </div>
         ))}
       </div>
-      <div className="aspect-video bg-black border border-zinc-800 rounded-xl overflow-hidden relative">
+      <div className="aspect-video bg-black/80 border border-zinc-700/50 rounded-xl overflow-hidden relative sticky top-4 z-30 shadow-2xl backdrop-blur-md transition-shadow">
         {stream ? <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-contain" /> : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 text-sm">Launch Capture to Start</div>
         )}
