@@ -661,21 +661,47 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div 
-                onClick={() => { setTurn(t => t === '先' ? '後' : '先'); setIsTurnLocked(true); }}
+                onClick={() => { 
+                  setTurn(t => t === '先' ? '後' : '先'); 
+                  setIsTurnLocked(true); 
+                  if (currentState === STATES.DETECTING_TURN) {
+                    setCurrentState(STATES.IN_MATCH);
+                    stateRef.current = STATES.IN_MATCH;
+                  }
+                }}
                 className="p-4 rounded-xl border border-zinc-700 bg-zinc-900/50 text-center cursor-pointer hover:border-indigo-500 transition-colors group"
               >
                 <div className="text-[9px] text-zinc-500 uppercase font-bold mb-1 group-hover:text-indigo-400">Turn</div>
                 <div className="text-xl font-black text-indigo-400">{turn ? (turn + '攻') : '--'}</div>
               </div>
               <div 
-                onClick={() => { setResult(r => r === 'VICTORY' ? 'DEFEAT' : 'VICTORY'); setIsResultLocked(true); }}
-                className="p-4 rounded-xl border border-zinc-700 bg-zinc-900/50 text-center cursor-pointer hover:border-emerald-500 transition-colors group"
+                onClick={() => { 
+                  setResult(r => r === 'VICTORY' ? 'DEFEAT' : 'VICTORY'); 
+                  setIsResultLocked(true); 
+                  const nextState = mode === 'ランク' ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
+                  setCurrentState(nextState);
+                  stateRef.current = nextState;
+                }}
+                className={`p-4 rounded-xl border border-zinc-700 bg-zinc-900/50 text-center cursor-pointer transition-colors group ${
+                  result === 'DEFEAT' ? 'hover:border-rose-500' : 'hover:border-emerald-500'
+                }`}
               >
-                <div className="text-[9px] text-zinc-500 uppercase font-bold mb-1 group-hover:text-emerald-400">Result</div>
-                <div className="text-xl font-black text-emerald-400">{result || '--'}</div>
+                <div className={`text-[9px] uppercase font-bold mb-1 transition-colors ${
+                  result === 'DEFEAT' ? 'text-rose-900/50 group-hover:text-rose-400' : 'text-zinc-500 group-hover:text-emerald-400'
+                }`}>Result</div>
+                <div className={`text-xl font-black ${
+                  result === 'DEFEAT' ? 'text-rose-500' : 'text-emerald-400'
+                }`}>{result || '--'}</div>
               </div>
-              <div className="bg-zinc-900/80 p-5 rounded-xl border border-zinc-700 text-center col-span-2">
-                <div className="text-4xl font-black text-indigo-400">{ratingChange || '--'}</div>
+              <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 shadow-inner text-center col-span-2 relative">
+                <label className="absolute top-2 left-3 text-[9px] text-zinc-500 uppercase font-bold">Diff / Rating</label>
+                <input 
+                  type="text" 
+                  value={diff} 
+                  onChange={e => { setDiff(e.target.value); setIsDiffLocked(true); setRatingChange(e.target.value); }} 
+                  className="w-full bg-transparent text-4xl font-black text-indigo-400 outline-none text-center" 
+                  placeholder="--" 
+                />
               </div>
               <div className="flex flex-col gap-2 col-span-2 mt-2">
                 <button onClick={() => saveMatch()} disabled={isProcessing || !turn || !result} className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3 shadow-lg active:scale-[0.98]">
@@ -693,19 +719,11 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         {!isRecording ? <button onClick={startCapture} className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-5 rounded-xl font-bold text-xl flex items-center justify-center gap-3 active:scale-[0.98]"><PlayCircle className="w-7 h-7" /> Launch Vision</button> : <button onClick={stopRecording} className="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-5 rounded-xl font-bold text-xl flex items-center justify-center gap-3 active:scale-[0.98]"><Square className="w-7 h-7" /> Stop Flow</button>}
       </div>
       <div className="bg-zinc-800/50 p-6 rounded-xl border border-zinc-700/50 shadow-lg relative" onFocusCapture={() => setIsInputActive(true)} onBlurCapture={() => setIsInputActive(false)}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <select value={mode} onChange={e => setMode(e.target.value)} className="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 outline-none"><option value="ランク">Normal Ranked</option><option value="レート戦">Rating Match</option><option value="DC">DC / Event</option></select>
-            <div className="flex items-center gap-2"><div className="flex-1"><DeckSelect availableDecks={availableDecks} onChange={setMyDecks} selectedDecks={myDecks} placeholder="Select My Deck" /></div><button onClick={() => setIsMyDeckLocked(!isMyDeckLocked)} className={`p-2 rounded-lg border transition ${isMyDeckLocked ? "bg-indigo-500/20 border-indigo-500 text-indigo-400" : "bg-zinc-800 text-zinc-600 border-zinc-700"}`}>{isMyDeckLocked ? <Lock className="w-4 h-4" /> : <LockOpen className="w-4 h-4" />}</button></div>
-            <div className="flex items-center gap-2"><div className="flex-1"><DeckSelect availableDecks={availableDecks} onChange={setOppDecks} selectedDecks={oppDecks} placeholder="Select Opponent Deck" /></div><button onClick={() => setIsOpponentDeckLocked(!isOpponentDeckLocked)} className={`p-2 rounded-lg border transition ${isOpponentDeckLocked ? "bg-indigo-500/20 border-indigo-500 text-indigo-400" : "bg-zinc-800 text-zinc-600 border-zinc-700"}`}>{isOpponentDeckLocked ? <Lock className="w-4 h-4" /> : <LockOpen className="w-4 h-4" />}</button></div>
-            <div className="flex items-center gap-2"><div className="flex-1"><DeckSelect availableDecks={availableTags} onChange={setSelectedTags} selectedDecks={selectedTags} placeholder="Match Deciding Factor" /></div><button onClick={() => setIsTagsLocked(!isTagsLocked)} className={`p-2 rounded-lg border transition ${isTagsLocked ? "bg-indigo-500/20 border-indigo-500 text-indigo-400" : "bg-zinc-800 text-zinc-600 border-zinc-700"}`}>{isTagsLocked ? <Lock className="w-4 h-4" /> : <LockOpen className="w-4 h-4" />}</button></div>
-          </div>
-          <div className="space-y-4">
-            <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 shadow-inner text-center">
-              <label className="text-[10px] text-zinc-500 uppercase block mb-1">Manual Override Diff</label>
-              <input type="text" value={diff} onChange={e => { setDiff(e.target.value); setIsDiffLocked(true); }} className="w-full bg-transparent text-3xl font-black text-zinc-100 outline-none text-center" placeholder="0.00" />
-            </div>
-          </div>
+        <div className="max-w-2xl mx-auto space-y-4">
+          <select value={mode} onChange={e => setMode(e.target.value)} className="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 outline-none"><option value="ランク">Normal Ranked</option><option value="レート戦">Rating Match</option><option value="DC">DC / Event</option></select>
+          <div className="flex items-center gap-2"><div className="flex-1"><DeckSelect availableDecks={availableDecks} onChange={setMyDecks} selectedDecks={myDecks} placeholder="Select My Deck" /></div><button onClick={() => setIsMyDeckLocked(!isMyDeckLocked)} className={`p-2 rounded-lg border transition ${isMyDeckLocked ? "bg-indigo-500/20 border-indigo-500 text-indigo-400" : "bg-zinc-800 text-zinc-600 border-zinc-700"}`}>{isMyDeckLocked ? <Lock className="w-4 h-4" /> : <LockOpen className="w-4 h-4" />}</button></div>
+          <div className="flex items-center gap-2"><div className="flex-1"><DeckSelect availableDecks={availableDecks} onChange={setOppDecks} selectedDecks={oppDecks} placeholder="Select Opponent Deck" /></div><button onClick={() => setIsOpponentDeckLocked(!isOpponentDeckLocked)} className={`p-2 rounded-lg border transition ${isOpponentDeckLocked ? "bg-indigo-500/20 border-indigo-500 text-indigo-400" : "bg-zinc-800 text-zinc-600 border-zinc-700"}`}>{isOpponentDeckLocked ? <Lock className="w-4 h-4" /> : <LockOpen className="w-4 h-4" />}</button></div>
+          <div className="flex items-center gap-2"><div className="flex-1"><DeckSelect availableDecks={availableTags} onChange={setSelectedTags} selectedDecks={selectedTags} placeholder="Match Deciding Factor" /></div><button onClick={() => setIsTagsLocked(!isTagsLocked)} className={`p-2 rounded-lg border transition ${isTagsLocked ? "bg-indigo-500/20 border-indigo-500 text-indigo-400" : "bg-zinc-800 text-zinc-600 border-zinc-700"}`}>{isTagsLocked ? <Lock className="w-4 h-4" /> : <LockOpen className="w-4 h-4" />}</button></div>
         </div>
       </div>
     </div>
