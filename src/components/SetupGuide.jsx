@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Copy, Check, ExternalLink, X, Settings2, Database, Globe, Play } from 'lucide-react';
+import { FileText, Copy, Check, ExternalLink, X, Settings2, Database, Globe, Play, Activity, EyeOff, Monitor } from 'lucide-react';
 
 import gasCode from '../../backend/Code.gs?raw';
 
@@ -159,7 +159,7 @@ export default function SetupGuide({ onClose }) {
             </div>
           </section>
 
-          {/* Step 5 (Full Width) */}
+          {/* Step 5 */}
           <section className="space-y-6 pb-6">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-black text-indigo-400 shadow-lg">5</div>
@@ -178,30 +178,56 @@ export default function SetupGuide({ onClose }) {
                 </li>
                 <li className="flex items-start gap-4 group">
                   <div className="w-6 h-6 rounded bg-zinc-800 flex items-center justify-center group-hover:scale-110 transition-transform">✓</div>
-                  <p>
-                    実行ユーザーを「<span className="text-white font-bold">自分</span>」、
-                    アクセスできるユーザーを「<span className="text-white font-bold">全員</span>」に設定。<br />
-                    <span className="text-[10px] text-zinc-500">※全員にしても、このURLを知っている人しかアクセスできません。</span>
-                  </p>
+                  <p>実行ユーザーを「自分」、アクセスできるユーザーを「全員」に設定。</p>
                 </li>
                 <li className="flex items-start gap-4 group">
                   <div className="w-6 h-6 rounded bg-zinc-800 flex items-center justify-center group-hover:scale-110 transition-transform text-indigo-400 font-bold">!</div>
-                  <p className="text-zinc-100 font-medium">発行された「<span className="text-indigo-400 font-black">ウェブアプリのURL</span>」をコピーして、本アプリの Settings に貼り付けてください。</p>
+                  <p className="text-zinc-100 font-medium">発行されたURLをアプリの Settings に貼り付けてください。</p>
                 </li>
               </ul>
-              
               <div className="mt-10 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center gap-6">
                 <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0 animate-pulse">
                   <Globe className="w-8 h-8 text-emerald-400" />
                 </div>
                 <div>
                   <h4 className="text-emerald-400 font-black text-lg">You're Ready To Go!</h4>
-                  <p className="text-emerald-300/60 text-sm">URLを設定すれば、自動トラッキング＆統計管理が始まります。</p>
+                  <p className="text-emerald-300/60 text-sm">URLを設定すれば、管理が始まります。</p>
                 </div>
               </div>
             </div>
           </section>
 
+          {/* Troubleshooting: Vision Recognition */}
+          <section className="space-y-6 pb-12 border-t border-zinc-800/50 pt-10">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-rose-500/20 border border-rose-500/30 flex items-center justify-center">
+                <Activity className="w-5 h-5 text-rose-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-white">画像認識が停止・失敗する場合</h3>
+            </div>
+            
+            <div className="ml-14 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-6 bg-zinc-950/40 rounded-2xl border border-zinc-800/50 space-y-3">
+                <h4 className="text-rose-400 font-bold flex items-center gap-2">
+                  <EyeOff className="w-4 h-4" /> プレビューの画面外移動
+                </h4>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  本アプリをスクロールし、プレビュー画面がブラウザの表示領域から外れると認識が停止します。
+                  <span className="text-zinc-200 block mt-1">💡 常にプレビューが視認できる位置で操作してください。</span>
+                </p>
+              </div>
+              
+              <div className="p-6 bg-zinc-950/40 rounded-2xl border border-zinc-800/50 space-y-3">
+                <h4 className="text-amber-400 font-bold flex items-center gap-2">
+                  <Monitor className="w-4 h-4" /> MD/タブのバックグラウンド化
+                </h4>
+                <p className="text-zinc-400 text-xs leading-relaxed">
+                  他のタブに切り替えたりMDを最小化するとフリーズします。
+                  <span className="text-zinc-200 block mt-1">💡 全画面共有を利用し、MDを常に表示させておくと安定します。</span>
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
 
         {/* Footer */}

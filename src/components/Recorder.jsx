@@ -23,6 +23,12 @@ const playNotificationSound = (type = 'single') => {
       gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
       osc.frequency.setValueAtTime(1200, now + 0.12);
       gain.gain.setValueAtTime(0.1, now + 0.12); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+    osc.start(now); osc.stop(now + 0.2);
+    } else if (type === 'warning') {
+      osc.type = 'square'; osc.frequency.setValueAtTime(440, now);
+      gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      osc.frequency.setValueAtTime(330, now + 0.12);
+      gain.gain.setValueAtTime(0.05, now + 0.12); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
       osc.start(now); osc.stop(now + 0.3);
     } else {
       osc.type = 'sine'; osc.frequency.setValueAtTime(660, now);
@@ -76,6 +82,12 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const [isPipActive, setIsPipActive] = useState(false);
   const statusTemplatesRef = useRef({}); 
   const [debugGallery, setDebugGallery] = useState([]); // Visual debugging
+  const ocrCanvasRef = useRef(null); // Reusable OCR canvas
+
+  // Focus tracking for performance
+  const [isInputActive, setIsInputActive] = useState(false);
+  const inputActiveRef = useRef(false);
+  useEffect(() => { inputActiveRef.current = isInputActive; }, [isInputActive]);
 
   // Helper: Extract a component as a DataURL for debugging
   const getCompDataURL = (bin, w, h, comp) => {
@@ -98,10 +110,18 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const [lastRating, setLastRating] = useState(null);
   const lastSaveTimeRef = useRef(0);
   const [ocrLog, setOcrLog] = useState('待機中');
-  const [debugInfo, setDebugInfo] = useState('');
   const [showCelebration, setShowCelebration] = useState(false);
   const [showRoiOverlay, setShowRoiOverlay] = useState(true);
   const [currentState, setCurrentState] = useState(STATES.IDLE);
+  
+  // Visibility and Throttling States
+  const [isElementVisible, setIsElementVisible] = useState(true);
+  const [isTabVisible, setIsTabVisible] = useState(true);
+  const [isFrozen, setIsFrozen] = useState(false);
+  const isFrozenRef = useRef(false);
+  const [captureStatus, setCaptureStatus] = useState('NORMAL'); // NORMAL, HIDDEN, BACKGROUND, FROZEN
+  const lastUpdateRef = useRef(Date.now());
+  const warningCooldownRef = useRef(0);
   
   const stateRef = useRef(currentState);
   useEffect(() => { stateRef.current = currentState; }, [currentState]);
@@ -170,14 +190,34 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
 
   useEffect(() => {
     loadStatusTemplates();
+    
+    // Intersection Observer for Video Visibility
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsElementVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    if (videoRef.current) observer.observe(videoRef.current);
+
+    // Page Visibility API (Wait for freeze to trigger naturally)
+    const handleVisibilityChange = () => {
+      setIsTabVisible(document.visibilityState === 'visible');
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     try {
       ocrWorkerRef.current = new Worker(new URL('/ocrWorker.js', import.meta.url));
       ocrWorkerRef.current.onmessage = (e) => {
         if (e.data.type === 'tick' && isBusyRef.current === false && recordingRef.current) {
-          // If rvfc is active, we let it take precedence for background stability.
-          // Worker tick acts as a fallback for browsers without rvfc.
+          // Worker tick helps detect freezes if rvfc stops
+          const now = Date.now();
+          if (now - lastUpdateRef.current > 3000 && !isFrozenRef.current) {
+            setIsFrozen(true);
+            isFrozenRef.current = true;
+          }
+          
           if (videoRef.current && 'requestVideoFrameCallback' in videoRef.current) return;
-
           isBusyRef.current = true;
           if (currentAnalyzeRef.current) {
             currentAnalyzeRef.current().finally(() => { isBusyRef.current = false; });
@@ -191,8 +231,25 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       if (ocrWorkerRef.current) ocrWorkerRef.current.terminate();
       if (workersRef.current.jpn) workersRef.current.jpn.terminate();
       if (workersRef.current.eng) workersRef.current.eng.terminate();
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [loadStatusTemplates]);
+
+  // Simplified Capture Status Logic: Trigger ONLY on actual freeze
+  useEffect(() => {
+    if (isFrozen && isRecording) {
+      setCaptureStatus('FROZEN');
+      const now = Date.now();
+      // Use shorter cooldown (3s) for testing and responsiveness
+      if (now - warningCooldownRef.current > 3000) {
+        playNotificationSound('warning');
+        warningCooldownRef.current = now;
+      }
+    } else {
+      setCaptureStatus('NORMAL');
+    }
+  }, [isFrozen, isRecording]);
 
   useEffect(() => {
     if (isRecording && ocrWorkerRef.current) {
@@ -218,11 +275,18 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         const loop = (now, metadata) => {
           if (!recordingRef.current) return;
           const curTime = Date.now();
-          const targetInterval = stateRef.current === STATES.IN_MATCH ? 800 : 500;
+          // Jitter/Throttling: Slow down OCR if user is typing
+          const baseInterval = stateRef.current === STATES.IN_MATCH ? 800 : 500;
+          const targetInterval = inputActiveRef.current ? (baseInterval + 500) : baseInterval;
           
           if (curTime - lastAnalyzeTimeRef.current >= targetInterval && isBusyRef.current === false) {
             isBusyRef.current = true;
             lastAnalyzeTimeRef.current = curTime;
+            lastUpdateRef.current = curTime;
+            if (isFrozenRef.current) {
+              setIsFrozen(false);
+              isFrozenRef.current = false;
+            }
             if (currentAnalyzeRef.current) {
                currentAnalyzeRef.current().finally(() => { isBusyRef.current = false; });
             }
@@ -323,7 +387,21 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         const { bin, width, height, bbox } = normalizeContent(v, vw * roi.x, vh * roi.y, vw * roi.w, vh * roi.h, 200, 60, 160);
         detectedBboxRef.current = { ...bbox, roiName: 'TURN' };
         if (width > 1 && height > 1) {
-          const ocrCanvas = createBinarizedCanvas(bin, width, height, true);
+          if (!ocrCanvasRef.current) ocrCanvasRef.current = document.createElement('canvas');
+          const ocrCanvas = ocrCanvasRef.current;
+          if (ocrCanvas.width !== width) ocrCanvas.width = width;
+          if (ocrCanvas.height !== height) ocrCanvas.height = height;
+          
+          // Manual binarized draw to avoid createBinarizedCanvas allocation
+          const ocrCtx = ocrCanvas.getContext('2d');
+          const ocrImgData = ocrCtx.createImageData(width, height);
+          for (let i = 0; i < bin.length; i++) {
+            const val = bin[i] === 1 ? 0 : 255;
+            const idx = i * 4;
+            ocrImgData.data[idx] = val; ocrImgData.data[idx+1] = val; ocrImgData.data[idx+2] = val; ocrImgData.data[idx+3] = 255;
+          }
+          ocrCtx.putImageData(ocrImgData, 0, 0);
+
           if (jpn) {
             const { data: { text, confidence } } = await jpn.recognize(ocrCanvas);
             const cleanText = text.replace(/\s+/g, '').slice(0, 15);
@@ -372,7 +450,20 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         const { bin: roiBin, width, height, bbox } = normalizeContent(v, vw * roi.x, vh * roi.y, vw * roi.w, vh * roi.h, 300, 120, 0, -9.0);
         detectedBboxRef.current = { ...bbox, roiName: 'RESULT' };
         if (width > 1 && height > 1) {
-          const ocrCanvas = createBinarizedCanvas(roiBin, width, height, true);
+          if (!ocrCanvasRef.current) ocrCanvasRef.current = document.createElement('canvas');
+          const ocrCanvas = ocrCanvasRef.current;
+          if (ocrCanvas.width !== width) ocrCanvas.width = width;
+          if (ocrCanvas.height !== height) ocrCanvas.height = height;
+          
+          const ocrCtx = ocrCanvas.getContext('2d');
+          const ocrImgData = ocrCtx.createImageData(width, height);
+          for (let i = 0; i < roiBin.length; i++) {
+            const val = roiBin[i] === 1 ? 0 : 255;
+            const idx = i * 4;
+            ocrImgData.data[idx] = val; ocrImgData.data[idx+1] = val; ocrImgData.data[idx+2] = val; ocrImgData.data[idx+3] = 255;
+          }
+          ocrCtx.putImageData(ocrImgData, 0, 0);
+
           if (eng) {
             const { data: { text, confidence } } = await eng.recognize(ocrCanvas);
             const cleanText = text.toUpperCase().replace(/\s+/g, '').slice(0, 15);
@@ -494,7 +585,22 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         {stream ? <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-contain" /> : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 text-sm">Launch Capture to Start</div>
         )}
-        {isRecording && <button onClick={togglePip} className="absolute bottom-4 right-4 p-2.5 rounded-full bg-zinc-900/80 border border-zinc-700 text-zinc-400"><Monitor className="w-5 h-5" /></button>}
+        
+        {/* Unified Visibility/Freeze Warning Overlay */}
+        {isRecording && captureStatus === 'FROZEN' && (
+          <div className="absolute inset-0 z-30 bg-rose-900/60 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
+            <Activity className="w-12 h-12 text-rose-400 mb-2 animate-pulse" />
+            <div className="text-white font-bold text-lg mb-1">
+              画像認識が停止しています
+            </div>
+            <p className="text-rose-100 text-xs">
+              画面が隠れているか、タブが非アクティブな可能性があります。<br />
+              プレビューが見える位置に戻してください。
+            </p>
+          </div>
+        )}
+
+        {isRecording && <button onClick={togglePip} className="absolute bottom-4 right-4 p-2.5 rounded-full bg-zinc-900/80 border border-zinc-700 text-zinc-400 z-40"><Monitor className="w-5 h-5" /></button>}
       </div>
       {stream && (
         <div className="bg-zinc-800/50 p-6 rounded-xl border border-zinc-700/50 shadow-xl">
@@ -540,7 +646,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       <div className="flex gap-4">
         {!isRecording ? <button onClick={startCapture} className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-5 rounded-xl font-bold text-xl flex items-center justify-center gap-3 active:scale-[0.98]"><PlayCircle className="w-7 h-7" /> Launch Vision</button> : <button onClick={stopRecording} className="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-5 rounded-xl font-bold text-xl flex items-center justify-center gap-3 active:scale-[0.98]"><Square className="w-7 h-7" /> Stop Flow</button>}
       </div>
-      <div className="bg-zinc-800/50 p-6 rounded-xl border border-zinc-700/50 shadow-lg relative">
+      <div className="bg-zinc-800/50 p-6 rounded-xl border border-zinc-700/50 shadow-lg relative" onFocusCapture={() => setIsInputActive(true)} onBlurCapture={() => setIsInputActive(false)}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <select value={mode} onChange={e => setMode(e.target.value)} className="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-sm text-zinc-200 outline-none"><option value="ランク">Normal Ranked</option><option value="レート戦">Rating Match</option><option value="DC">DC / Event</option></select>

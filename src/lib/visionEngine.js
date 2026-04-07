@@ -175,6 +175,10 @@ const calculateOtsuThreshold = (data) => {
   return threshold;
 };
 
+// Internal canvas cache for performance optimization (reuse to avoid GC pressure)
+let _tmpCanvas = null;
+let _finalCanvas = null;
+
 export const normalizeContent = (sourceCanvasOrVideo, sx, sy, sw, sh, IGNORED_W, targetHeight = 60, threshold = 160, angle = 0) => {
   sx = Math.floor(sx);
   sy = Math.floor(sy);
@@ -184,12 +188,13 @@ export const normalizeContent = (sourceCanvasOrVideo, sx, sy, sw, sh, IGNORED_W,
   const psw = sw + 100;
   const psh = sh + 100;
 
-  const tmpCanvas = document.createElement('canvas');
-  tmpCanvas.width = psw;
-  tmpCanvas.height = psh;
-  const ctx = tmpCanvas.getContext('2d');
+  if (!_tmpCanvas) _tmpCanvas = document.createElement('canvas');
+  if (_tmpCanvas.width !== psw) _tmpCanvas.width = psw;
+  if (_tmpCanvas.height !== psh) _tmpCanvas.height = psh;
+  const ctx = _tmpCanvas.getContext('2d');
   
   if (angle !== 0) {
+    ctx.clearRect(0, 0, psw, psh);
     ctx.save();
     ctx.translate(psw / 2, psh / 2);
     ctx.rotate((angle * Math.PI) / 180);
@@ -271,12 +276,12 @@ export const normalizeContent = (sourceCanvasOrVideo, sx, sy, sw, sh, IGNORED_W,
     targetWidth = MAX_WIDTH;
   }
 
-  const finalCanvas = document.createElement('canvas');
-  finalCanvas.width = targetWidth;
-  finalCanvas.height = targetHeight;
-  const fctx = finalCanvas.getContext('2d');
+  if (!_finalCanvas) _finalCanvas = document.createElement('canvas');
+  if (_finalCanvas.width !== targetWidth) _finalCanvas.width = targetWidth;
+  if (_finalCanvas.height !== targetHeight) _finalCanvas.height = targetHeight;
+  const fctx = _finalCanvas.getContext('2d');
 
-  fctx.drawImage(tmpCanvas, minX, minY, boxW, boxH, 0, 0, targetWidth, targetHeight);
+  fctx.drawImage(_tmpCanvas, minX, minY, boxW, boxH, 0, 0, targetWidth, targetHeight);
 
   // Returned bin is STILL binarized here for legacy compatibility in other parts of the app,
   // but extracted features will use the raw RGB finalData.

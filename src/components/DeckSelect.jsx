@@ -9,7 +9,7 @@ const toKatakana = (str) => {
   });
 };
 
-export default function DeckSelect({ availableDecks, selectedDecks, onChange, placeholder }) {
+export default memo(function DeckSelect({ availableDecks, selectedDecks, onChange, placeholder }) {
   const [inputValue, setInputValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [frequencies, setFrequencies] = useState({});
@@ -214,4 +214,4 @@ export default function DeckSelect({ availableDecks, selectedDecks, onChange, pl
       )}
     </div>
   );
-}
+});
