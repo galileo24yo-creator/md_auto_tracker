@@ -527,7 +527,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
               
               const gallery = comps.map(c => getCompDataURL(bin, width, height, c));
               setDebugGallery(gallery);
-              const nextState = curMode === 'ランク' ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
+              const nextState = (curMode === 'ランク' || slotsRef.current.isDiffLocked) ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
               setCurrentState(nextState); stateRef.current = nextState;
               playNotificationSound('single');
             }
@@ -681,7 +681,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
                 onClick={() => { 
                   setResult(r => r === 'VICTORY' ? 'DEFEAT' : 'VICTORY'); 
                   setIsResultLocked(true); 
-                  const nextState = mode === 'ランク' ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
+                  const nextState = (mode === 'ランク' || isDiffLocked) ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
                   setCurrentState(nextState);
                   stateRef.current = nextState;
                 }}
@@ -701,7 +701,15 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
                 <input 
                   type="text" 
                   value={diff} 
-                  onChange={e => { setDiff(e.target.value); setIsDiffLocked(true); setRatingChange(e.target.value); }} 
+                  onChange={e => { 
+                    setDiff(e.target.value); 
+                    setIsDiffLocked(true); 
+                    setRatingChange(e.target.value); 
+                    if (currentState === STATES.DETECTING_RATING) {
+                      setCurrentState(STATES.NEXT_MATCH_STANDBY);
+                      stateRef.current = STATES.NEXT_MATCH_STANDBY;
+                    }
+                  }} 
                   className="w-full bg-transparent text-4xl font-black text-indigo-400 outline-none text-center" 
                   placeholder="--" 
                 />
