@@ -144,8 +144,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const recordingRef = useRef(isRecording);
   useEffect(() => { recordingRef.current = isRecording; }, [isRecording]);
 
-  const slotsRef = useRef({ turn, result, diff, mode, isTurnLocked, isResultLocked, myDecks, oppDecks });
-  useEffect(() => { slotsRef.current = { turn, result, diff, mode, isTurnLocked, isResultLocked, myDecks, oppDecks }; }, [turn, result, diff, mode, isTurnLocked, isResultLocked, myDecks, oppDecks]);
+  const slotsRef = useRef({ turn, result, diff, mode, isTurnLocked, isResultLocked, isDiffLocked, myDecks, oppDecks });
+  useEffect(() => { slotsRef.current = { turn, result, diff, mode, isTurnLocked, isResultLocked, isDiffLocked, myDecks, oppDecks }; }, [turn, result, diff, mode, isTurnLocked, isResultLocked, isDiffLocked, myDecks, oppDecks]);
 
   const workersRef = useRef({ jpn: null, eng: null });
 
@@ -534,7 +534,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
           }
         }
       }
-      else if (currentState === STATES.DETECTING_RATING && !isDiffLocked) {
+      else if (currentState === STATES.DETECTING_RATING && !slotsRef.current.isDiffLocked) {
         const ratingRoi = curMode === 'DC' ? ROIS.DC_POINTS : ROIS.RATING;
         const id = getROIData(ctx, v, ratingRoi, 300, 120);
         const { multiThresholdDetectRating } = await import('../lib/visionEngine');
