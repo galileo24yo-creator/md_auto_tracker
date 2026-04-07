@@ -702,12 +702,22 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
                   type="text" 
                   value={diff} 
                   onChange={e => { 
-                    setDiff(e.target.value); 
-                    setIsDiffLocked(true); 
-                    setRatingChange(e.target.value); 
-                    if (currentState === STATES.DETECTING_RATING) {
-                      setCurrentState(STATES.NEXT_MATCH_STANDBY);
-                      stateRef.current = STATES.NEXT_MATCH_STANDBY;
+                    const val = e.target.value;
+                    setDiff(val); 
+                    setRatingChange(val);
+                    const isLocked = val.trim() !== '';
+                    setIsDiffLocked(isLocked); 
+                    
+                    if (isLocked) {
+                      if (currentState === STATES.DETECTING_RATING) {
+                        setCurrentState(STATES.NEXT_MATCH_STANDBY);
+                        stateRef.current = STATES.NEXT_MATCH_STANDBY;
+                      }
+                    } else {
+                      if (currentState === STATES.NEXT_MATCH_STANDBY && result && mode !== 'ランク') {
+                        setCurrentState(STATES.DETECTING_RATING);
+                        stateRef.current = STATES.DETECTING_RATING;
+                      }
                     }
                   }} 
                   className="w-full bg-transparent text-4xl font-black text-indigo-400 outline-none text-center" 
