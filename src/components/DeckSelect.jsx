@@ -46,27 +46,43 @@ export default memo(function DeckSelect({ availableDecks, selectedDecks, onChang
   // 常に位置をリセットするために inputValue や availableDecks を監視
   useEffect(() => { setSelectedIndex(0); }, [inputValue, availableDecks]);
 
-  const sortedSuggestions = React.useMemo(() => {
-    let list = availableDecks.filter(d => !selectedDecks.includes(d));
-    
-    if (inputValue) {
-      const normalizedInput = toKatakana(inputValue.toLowerCase());
-      list = list.filter(d => {
-        const normalizedDeck = toKatakana(d.toLowerCase());
-        return normalizedDeck.includes(normalizedInput);
-      });
-    }
-    
-    // 基本のソート（表示順は50音順など）
-    list.sort((a, b) => a.localeCompare(b, 'ja'));
+  // Pre-normalize available decks to speed up search filtering
+  const normalizedDecks = React.useMemo(() => {
+    return availableDecks.map(name => ({
+      original: name,
+      searchable: toKatakana(name.toLowerCase())
+    }));
+  }, [availableDecks]);
 
-    // 入力値自体を候補に追加（既存にない場合）
-    if (inputValue && !list.some(d => d.toLowerCase() === inputValue.toLowerCase()) && !selectedDecks.includes(inputValue)) {
+  const sortedSuggestions = React.useMemo(() => {
+    if (!inputValue) {
+      return availableDecks
+        .filter(d => !selectedDecks.includes(d))
+        .sort((a, b) => a.localeCompare(b, 'ja'))
+        .slice(0, 20); // Reduce DOM items (50 -> 20)
+    }
+
+    const normalizedInput = toKatakana(inputValue.toLowerCase());
+    let list = normalizedDecks
+      .filter(item => !selectedDecks.includes(item.original) && item.searchable.includes(normalizedInput))
+      .map(item => item.original);
+    
+    // Sort results, prioritizing exact match or start match
+    list.sort((a, b) => {
+      const aLower = a.toLowerCase();
+      const bLower = b.toLowerCase();
+      if (aLower === inputValue.toLowerCase()) return -1;
+      if (bLower === inputValue.toLowerCase()) return 1;
+      return a.localeCompare(b, 'ja');
+    });
+
+    // Add input value as new option if not exists
+    if (!list.some(d => d.toLowerCase() === inputValue.toLowerCase()) && !selectedDecks.includes(inputValue)) {
       list.unshift(inputValue);
     }
     
-    return list;
-  }, [availableDecks, selectedDecks, inputValue]);
+    return list.slice(0, 20); // Limit to 20 for smoother render
+  }, [availableDecks, normalizedDecks, selectedDecks, inputValue]);
 
   const popularDecks = React.useMemo(() => {
     return Object.entries(frequencies)

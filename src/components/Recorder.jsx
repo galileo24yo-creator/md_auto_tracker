@@ -38,6 +38,12 @@ const playNotificationSound = (type = 'single') => {
   } catch (e) { console.warn("Sound play failed:", e); }
 };
 
+const OcrStatus = React.memo(({ log }) => (
+  <span className="text-xs px-3 py-1 bg-zinc-900 border border-zinc-700 rounded-full text-emerald-400 font-mono font-bold">
+    {log}
+  </span>
+));
+
 export default function Recorder({ availableDecks, availableTags, onRecorded }) {
   const [stream, setStream] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -275,9 +281,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         const loop = (now, metadata) => {
           if (!recordingRef.current) return;
           const curTime = Date.now();
-          // Jitter/Throttling: Slow down OCR if user is typing
-          const baseInterval = stateRef.current === STATES.IN_MATCH ? 800 : 500;
-          const targetInterval = inputActiveRef.current ? (baseInterval + 500) : baseInterval;
+          // Jitter/Throttling: Use consistent intervals (OCR fallback logic handles UI lag)
+          const targetInterval = stateRef.current === STATES.IN_MATCH ? 800 : 500;
           
           if (curTime - lastAnalyzeTimeRef.current >= targetInterval && isBusyRef.current === false) {
             isBusyRef.current = true;
@@ -606,7 +611,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         <div className="bg-zinc-800/50 p-6 rounded-xl border border-zinc-700/50 shadow-xl">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-zinc-100 font-semibold flex items-center gap-2"><Activity className="w-5 h-5 text-indigo-400" /> Slot-Filling Engine</h3>
-            <span className="text-xs px-3 py-1 bg-zinc-900 border border-zinc-700 rounded-full text-emerald-400 font-mono font-bold">{ocrLog}</span>
+            <OcrStatus log={ocrLog} />
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-zinc-950 p-2 rounded border border-zinc-700 shadow-inner flex flex-col items-center relative min-h-[200px]">
