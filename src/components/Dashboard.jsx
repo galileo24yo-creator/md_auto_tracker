@@ -87,11 +87,11 @@ const MatchList = memo(({ records, onSelect }) => (
       {records.map((r, i) => (
         <button key={i} onClick={() => onSelect(r)} className="w-full text-left flex items-center justify-between p-3 rounded-lg bg-zinc-950/40 border border-zinc-800 text-sm hover:border-indigo-500/50 hover:bg-zinc-800/80 transition-all group">
           <div className="flex flex-col flex-1 mx-4">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors uppercase tracking-tight text-xs">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors uppercase tracking-tight text-xs mr-1 shrink-0">
                 {r.opponentDeck || "UNKNOWN"}
               </span>
-              {r.memo && String(r.memo).split(',').map((tag, idx) => <span key={idx} className="px-1.5 py-0.5 rounded bg-indigo-500/5 border border-indigo-500/10 text-[9px] text-indigo-400 font-bold whitespace-nowrap">{String(tag).trim()}</span>)}
+              {r.memo && String(r.memo).split(',').map((tag, idx) => <span key={idx} className="px-1.5 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-[9px] text-indigo-300 font-bold whitespace-nowrap">{String(tag).trim()}</span>)}
             </div>
             <div className="text-[9px] font-bold uppercase tracking-widest mt-1 flex items-center gap-1">
               <span className="text-zinc-500">MY:</span>
