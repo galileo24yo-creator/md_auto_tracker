@@ -30,6 +30,11 @@ const playNotificationSound = (type = 'single') => {
       osc.frequency.setValueAtTime(330, now + 0.12);
       gain.gain.setValueAtTime(0.05, now + 0.12); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
       osc.start(now); osc.stop(now + 0.3);
+    } else if (type === 'restore') {
+      osc.type = 'sine'; osc.frequency.setValueAtTime(880, now);
+      gain.gain.setValueAtTime(0.08, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      osc.frequency.setValueAtTime(1100, now + 0.05);
+      osc.start(now); osc.stop(now + 0.15);
     } else {
       osc.type = 'sine'; osc.frequency.setValueAtTime(660, now);
       gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
@@ -291,6 +296,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
             if (isFrozenRef.current) {
               setIsFrozen(false);
               isFrozenRef.current = false;
+              playNotificationSound('restore'); // Play restoration sound
             }
             if (currentAnalyzeRef.current) {
                currentAnalyzeRef.current().finally(() => { isBusyRef.current = false; });
