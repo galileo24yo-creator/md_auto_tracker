@@ -130,6 +130,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const [isTabVisible, setIsTabVisible] = useState(true);
   const [isFrozen, setIsFrozen] = useState(false);
   const isFrozenRef = useRef(false);
+  const [isSticky, setIsSticky] = useState(false);
+  const stickyRef = useRef(null);
   const [captureStatus, setCaptureStatus] = useState('NORMAL'); // NORMAL, HIDDEN, BACKGROUND, FROZEN
   const lastUpdateRef = useRef(Date.now());
   const warningCooldownRef = useRef(0);
@@ -237,12 +239,36 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       };
     } catch (e) { console.error("Worker error:", e); }
 
+    // Robust Scroll Event Listener for Sticky/Ghost Detection
+    let isTicking = false;
+    const handleScroll = () => {
+      if (!isTicking) {
+        window.requestAnimationFrame(() => {
+          if (stickyRef.current) {
+            const rect = stickyRef.current.getBoundingClientRect();
+            // Trigger Ghost Mode when the video's original position is scrolled past the top
+            const shouldBeSticky = rect.top < 0;
+            setIsSticky(prev => {
+              if (shouldBeSticky && !prev) return true;
+              if (!shouldBeSticky && rect.top > 10 && prev) return false;
+              return prev;
+            });
+          }
+          isTicking = false;
+        });
+        isTicking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
     return () => {
       if (intervalRef.current) clearTimeout(intervalRef.current);
       if (ocrWorkerRef.current) ocrWorkerRef.current.terminate();
       if (workersRef.current.jpn) workersRef.current.jpn.terminate();
       if (workersRef.current.eng) workersRef.current.eng.terminate();
       observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [loadStatusTemplates]);
@@ -592,7 +618,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
           </div>
         ))}
       </div>
-      <div className="aspect-video bg-black/80 border border-zinc-700/50 rounded-xl overflow-hidden relative sticky top-4 z-30 shadow-2xl backdrop-blur-md transition-shadow">
+      <div ref={stickyRef} className="h-[1px] w-full" /> {/* Ghost Sentinel */}
+      <div className={`aspect-video bg-black/80 border border-zinc-700/50 rounded-xl overflow-hidden relative sticky top-4 z-30 transition-all duration-300 ${(isSticky && !isFrozen) ? 'opacity-0 pointer-events-none' : 'opacity-100 shadow-2xl backdrop-blur-md'}`}>
         {stream ? <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-contain" /> : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 text-sm">Launch Capture to Start</div>
         )}
