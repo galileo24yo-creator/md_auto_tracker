@@ -408,7 +408,6 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
           if (curSlots.result === 'VICTORY') { setShowCelebration(true); setTimeout(() => setShowCelebration(false), 3000); }
           playNotificationSound('double');
           setLastRating(parseFloat(curSlots.diff) || lastRating);
-          resetSlots();
           onRecorded();
         }
       } catch (e) { console.error("Auto-save failed:", e); } finally { setIsProcessing(false); }
@@ -467,10 +466,10 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
               if (currentState === STATES.NEXT_MATCH_STANDBY) {
                 const cur = slotsRef.current;
                 if (cur.turn || cur.result) {
-                  // データ送信（GASへのリクエスト）で数秒かかるため、awaitを外してOCRループのブロッキング（3秒フリーズ判定）を回避する
+                  // データ送信（GASへのリクエスト）で数秒かかるため、awaitを外してOCRループのブロッキング（6秒フリーズ判定）を回避する
                   triggerAutoSaveForNextMatch(cur).catch(err => console.error("Auto-save error:", err));
                 }
-                setResult(''); setIsResultLocked(false); setDiff(''); setRatingChange(''); setIsDiffLocked(false);
+                resetSlots();
               }
               
               setTurn(foundTurnValue); 
