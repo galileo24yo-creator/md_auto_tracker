@@ -670,9 +670,9 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
 
   const matchupData = useMemo(() => {
     const v = getRankings(filteredRecords, minMatchLimit);
-    if (matchupTab === 'FREQ') return v.sort((a,b) => b.total - a.total).slice(0, 15);
-    if (matchupTab === 'WORST') return v.sort((a,b) => a.winRate - b.winRate).slice(0, 15);
-    return v.sort((a,b) => b.winRate - a.winRate).slice(0, 15);
+    if (matchupTab === 'FREQ') return v.sort((a,b) => b.total - a.total);
+    if (matchupTab === 'WORST') return v.sort((a,b) => a.winRate - b.winRate);
+    return v.sort((a,b) => b.winRate - a.winRate);
   }, [filteredRecords, matchupTab, minMatchLimit]);
 
   const trendData = useMemo(() => {
