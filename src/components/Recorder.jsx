@@ -227,7 +227,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         if (e.data.type === 'tick' && isBusyRef.current === false && recordingRef.current) {
           // Worker tick helps detect freezes if rvfc stops
           const now = Date.now();
-          if (now - lastUpdateRef.current > 3000 && !isFrozenRef.current) {
+          if (now - lastUpdateRef.current > 6000 && !isFrozenRef.current) {
             setIsFrozen(true);
             isFrozenRef.current = true;
           }
@@ -280,8 +280,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
     if (isFrozen && isRecording) {
       setCaptureStatus('FROZEN');
       const now = Date.now();
-      // Use shorter cooldown (3s) for testing and responsiveness
-      if (now - warningCooldownRef.current > 3000) {
+      // Use shorter cooldown for testing and responsiveness
+      if (now - warningCooldownRef.current > 6000) {
         playNotificationSound('warning');
         warningCooldownRef.current = now;
       }
@@ -466,7 +466,10 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
               
               if (currentState === STATES.NEXT_MATCH_STANDBY) {
                 const cur = slotsRef.current;
-                if (cur.turn || cur.result) await triggerAutoSaveForNextMatch(cur);
+                if (cur.turn || cur.result) {
+                  // データ送信（GASへのリクエスト）で数秒かかるため、awaitを外してOCRループのブロッキング（3秒フリーズ判定）を回避する
+                  triggerAutoSaveForNextMatch(cur).catch(err => console.error("Auto-save error:", err));
+                }
                 setResult(''); setIsResultLocked(false); setDiff(''); setRatingChange(''); setIsDiffLocked(false);
               }
               
@@ -609,8 +612,10 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   return (
     <div className="space-y-6">
       {showCelebration && (
-        <div className="fixed inset-0 flex items-center justify-center bg-emerald-500/10 z-50">
-          <div className="bg-zinc-900 border-2 border-emerald-500 p-10 rounded-3xl shadow-2xl animate-bounce text-center text-3xl font-black text-emerald-400">Match Saved!</div>
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[100] pointer-events-none drop-shadow-2xl">
+          <div className="bg-zinc-900 border-2 border-emerald-500 p-6 rounded-3xl shadow-emerald-500/20 shadow-2xl animate-bounce text-center">
+            <span className="text-2xl font-black text-emerald-400 uppercase tracking-widest">Match Saved!</span>
+          </div>
         </div>
       )}
       <div className="grid grid-cols-3 gap-2">
