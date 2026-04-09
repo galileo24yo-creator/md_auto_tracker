@@ -523,7 +523,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
             if (tVictory.match) sequenceResult = 'VICTORY'; else if (tLose.match) sequenceResult = 'DEFEAT';
 
             const isVictory = fuzzyIncludes(cleanText, 'VICTORY', 2);
-            const isDefeat = fuzzyIncludes(cleanText, 'DEFEAT', 2);
+            const isDefeat = confidence > 60 && fuzzyIncludes(cleanText, 'DEFEAT', 1);
             const isLose = fuzzyIncludes(cleanText, 'LOSE', 1);
 
             if (sequenceResult || isVictory || isDefeat || (isLose && confidence > 60)) {

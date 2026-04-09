@@ -866,10 +866,10 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
         </div>
         {chunkSize !== 'ALL' && (
           <div className="mt-4 pt-4 border-t border-zinc-800">
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <div className="flex flex-col shrink-0">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <span className="text-[9px] text-zinc-400 font-black uppercase tracking-widest">Select Set Context</span>
-                <span className="text-[11px] text-indigo-400 font-bold">
+                <span className="text-[11px] text-indigo-400 font-bold truncate sm:text-right">
                   {setRange[0] === setRange[1] ? `Set ${setRange[0]}` : `Sets ${setRange[0]} - ${setRange[1]}`}
                   <span className="text-zinc-600 mx-2">|</span>
                   Recent { (setRange[0]-1) * parseInt(chunkSize, 10) + 1 } - { Math.min(setRange[1] * parseInt(chunkSize, 10), scopeFilteredRecords.length) } Matches
