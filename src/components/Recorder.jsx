@@ -23,7 +23,7 @@ const playNotificationSound = (type = 'single') => {
       gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
       osc.frequency.setValueAtTime(1200, now + 0.12);
       gain.gain.setValueAtTime(0.1, now + 0.12); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-    osc.start(now); osc.stop(now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
     } else if (type === 'warning') {
       osc.type = 'square'; osc.frequency.setValueAtTime(440, now);
       gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
@@ -57,7 +57,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const [myDecks, setMyDecks] = useState([]);
   const [oppDecks, setOppDecks] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
-  
+
   // Slot Persistence (Lock)
   const [isMyDeckLocked, setIsMyDeckLocked] = useState(true);
   const [isOpponentDeckLocked, setIsOpponentDeckLocked] = useState(false);
@@ -88,10 +88,10 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const detectedBboxRef = useRef(null);
   const intervalRef = useRef(null);
   const isBusyRef = useRef(false);
-  const stablePointsBufferRef = useRef([]); 
+  const stablePointsBufferRef = useRef([]);
   const ocrWorkerRef = useRef(null);
   const [isPipActive, setIsPipActive] = useState(false);
-  const statusTemplatesRef = useRef({}); 
+  const statusTemplatesRef = useRef({});
   const [debugGallery, setDebugGallery] = useState([]); // Visual debugging
   const ocrCanvasRef = useRef(null); // Reusable OCR canvas
 
@@ -111,7 +111,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         const i = (y * comp.w + x) * 4;
         const bi = (comp.y + y) * w + (comp.x + x);
         const val = bin[bi] === 1 ? 0 : 255;
-        id.data[i] = val; id.data[i+1] = val; id.data[i+2] = val; id.data[i+3] = 255;
+        id.data[i] = val; id.data[i + 1] = val; id.data[i + 2] = val; id.data[i + 3] = 255;
       }
     }
     ctx.putImageData(id, 0, 0);
@@ -124,7 +124,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const [showCelebration, setShowCelebration] = useState(false);
   const [showRoiOverlay, setShowRoiOverlay] = useState(true);
   const [currentState, setCurrentState] = useState(STATES.IDLE);
-  
+
   // Visibility and Throttling States
   const [isElementVisible, setIsElementVisible] = useState(true);
   const [isTabVisible, setIsTabVisible] = useState(true);
@@ -135,12 +135,12 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
   const [captureStatus, setCaptureStatus] = useState('NORMAL'); // NORMAL, HIDDEN, BACKGROUND, FROZEN
   const lastUpdateRef = useRef(Date.now());
   const warningCooldownRef = useRef(0);
-  
+
   const stateRef = useRef(currentState);
   useEffect(() => { stateRef.current = currentState; }, [currentState]);
 
   const currentAnalyzeRef = useRef(null);
-  
+
   const recordingRef = useRef(isRecording);
   useEffect(() => { recordingRef.current = isRecording; }, [isRecording]);
 
@@ -170,7 +170,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       victory: '/templates/victory.png',
       lose: '/templates/lose.png'
     };
-    
+
     const { extractSequenceFeatures } = await import('../lib/visionEngine');
     const templates = {};
 
@@ -188,11 +188,11 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
         const imageData = ctx.getImageData(0, 0, img.width, img.height);
-        
+
         // Extract features and components (both Victory/Lose use -9.0 angle)
         const { features, comps, bin, width, height } = extractSequenceFeatures(imageData, 0, -9.0);
         templates[key] = features;
-        
+
         if (key === 'victory') {
           const gallery = comps.map(c => getCompDataURL(bin, width, height, c));
           setDebugGallery(gallery);
@@ -205,7 +205,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
 
   useEffect(() => {
     loadStatusTemplates();
-    
+
     // Intersection Observer for Video Visibility
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -231,7 +231,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
             setIsFrozen(true);
             isFrozenRef.current = true;
           }
-          
+
           if (videoRef.current && 'requestVideoFrameCallback' in videoRef.current) return;
           isBusyRef.current = true;
           if (currentAnalyzeRef.current) {
@@ -267,8 +267,9 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
     return () => {
       if (intervalRef.current) clearTimeout(intervalRef.current);
       if (ocrWorkerRef.current) ocrWorkerRef.current.terminate();
-      if (workersRef.current.jpn) workersRef.current.jpn.terminate();
-      if (workersRef.current.eng) workersRef.current.eng.terminate();
+      if (workersRef.current.jpn) { workersRef.current.jpn.terminate(); workersRef.current.jpn = null; }
+      if (workersRef.current.eng) { workersRef.current.eng.terminate(); workersRef.current.eng = null; }
+      workersRef.current = { jpn: null, eng: null };
       observer.disconnect();
       window.removeEventListener('scroll', handleScroll);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -307,7 +308,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         osc.connect(g); g.connect(audioCtx.destination);
         osc.start();
         silentOscRef.current = osc;
-      } catch(e) {}
+      } catch (e) { }
 
       // Start rvfc loop if supported
       if (videoRef.current && 'requestVideoFrameCallback' in videoRef.current) {
@@ -316,7 +317,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
           const curTime = Date.now();
           // Jitter/Throttling: Use consistent intervals (OCR fallback logic handles UI lag)
           const targetInterval = stateRef.current === STATES.IN_MATCH ? 800 : 500;
-          
+
           if (curTime - lastAnalyzeTimeRef.current >= targetInterval && isBusyRef.current === false) {
             isBusyRef.current = true;
             lastAnalyzeTimeRef.current = curTime;
@@ -327,7 +328,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
               playNotificationSound('restore'); // Play restoration sound
             }
             if (currentAnalyzeRef.current) {
-               currentAnalyzeRef.current().finally(() => { isBusyRef.current = false; });
+              currentAnalyzeRef.current().finally(() => { isBusyRef.current = false; });
             }
           }
           rvfcIdRef.current = videoRef.current.requestVideoFrameCallback(loop);
@@ -336,7 +337,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       }
     } else {
       if (ocrWorkerRef.current) ocrWorkerRef.current.postMessage({ action: 'stop' });
-      if (silentOscRef.current) { try { silentOscRef.current.stop(); } catch(e){} silentOscRef.current = null; }
+      if (silentOscRef.current) { try { silentOscRef.current.stop(); } catch (e) { } silentOscRef.current = null; }
       if (videoRef.current && rvfcIdRef.current) {
         videoRef.current.cancelVideoFrameCallback(rvfcIdRef.current);
         rvfcIdRef.current = null;
@@ -400,7 +401,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
       setIsProcessing(true);
       lastSaveTimeRef.current = now;
       try {
-        const res = await postData({ 
+        const res = await postData({
           mode: curSlots.mode, turn: curSlots.turn, result: curSlots.result, diff: curSlots.diff,
           myDeck: curSlots.myDecks.join(', '), opponentDeck: curSlots.oppDecks.join(', '), memo: selectedTags.join(', ')
         });
@@ -429,14 +430,14 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
           const ocrCanvas = ocrCanvasRef.current;
           if (ocrCanvas.width !== width) ocrCanvas.width = width;
           if (ocrCanvas.height !== height) ocrCanvas.height = height;
-          
+
           // Manual binarized draw to avoid createBinarizedCanvas allocation
           const ocrCtx = ocrCanvas.getContext('2d');
           const ocrImgData = ocrCtx.createImageData(width, height);
           for (let i = 0; i < bin.length; i++) {
             const val = bin[i] === 1 ? 0 : 255;
             const idx = i * 4;
-            ocrImgData.data[idx] = val; ocrImgData.data[idx+1] = val; ocrImgData.data[idx+2] = val; ocrImgData.data[idx+3] = 255;
+            ocrImgData.data[idx] = val; ocrImgData.data[idx + 1] = val; ocrImgData.data[idx + 2] = val; ocrImgData.data[idx + 3] = 255;
           }
           ocrCtx.putImageData(ocrImgData, 0, 0);
 
@@ -452,7 +453,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
               // Priority: Explicitly look for the character '先' or '後'
               const hasFirstChar = cleanText.includes('先');
               const hasSecondChar = cleanText.includes('後');
-              
+
               let foundTurnValue = null;
               if (hasFirstChar && !hasSecondChar) foundTurnValue = '先';
               else if (hasSecondChar && !hasFirstChar) foundTurnValue = '後';
@@ -460,9 +461,9 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
                 // Fallback to phrase matching if character is not clear
                 foundTurnValue = res_f.match ? '先' : '後';
               }
-              
+
               const foundScore = res_f.match ? res_f.confidence : res_s.confidence;
-              
+
               if (currentState === STATES.NEXT_MATCH_STANDBY) {
                 const cur = slotsRef.current;
                 if (cur.turn || cur.result) {
@@ -471,11 +472,11 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
                 }
                 resetSlots();
               }
-              
-              setTurn(foundTurnValue); 
+
+              setTurn(foundTurnValue);
               setIsTurnLocked(true);
               setTurnScore(foundScore / 100);
-              setCurrentState(STATES.IN_MATCH); 
+              setCurrentState(STATES.IN_MATCH);
               stateRef.current = STATES.IN_MATCH;
               setOcrLog(`対戦中... [${foundTurnValue === '先' ? '先攻' : '後攻'}] を検知しました`);
               playNotificationSound('single');
@@ -495,13 +496,13 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
           const ocrCanvas = ocrCanvasRef.current;
           if (ocrCanvas.width !== width) ocrCanvas.width = width;
           if (ocrCanvas.height !== height) ocrCanvas.height = height;
-          
+
           const ocrCtx = ocrCanvas.getContext('2d');
           const ocrImgData = ocrCtx.createImageData(width, height);
           for (let i = 0; i < roiBin.length; i++) {
             const val = roiBin[i] === 1 ? 0 : 255;
             const idx = i * 4;
-            ocrImgData.data[idx] = val; ocrImgData.data[idx+1] = val; ocrImgData.data[idx+2] = val; ocrImgData.data[idx+3] = 255;
+            ocrImgData.data[idx] = val; ocrImgData.data[idx + 1] = val; ocrImgData.data[idx + 2] = val; ocrImgData.data[idx + 3] = 255;
           }
           ocrCtx.putImageData(ocrImgData, 0, 0);
 
@@ -510,23 +511,26 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
             const cleanText = text.toUpperCase().replace(/\s+/g, '').slice(0, 15);
             setResultScore(confidence / 100);
 
+            console.log(`[OCR Result] Text: "${cleanText}", Confidence: ${confidence}`);
+
             let sequenceResult = null;
             const { extractSequenceFeatures, matchSequence } = await import('../lib/visionEngine');
             const rawData = ocrCanvas.getContext('2d').getImageData(0, 0, width, height);
             const { features, comps, bin } = extractSequenceFeatures(rawData, 0, 0);
-            
+
             const tVictory = matchSequence(features, statusTemplatesRef.current.victory || []);
             const tLose = matchSequence(features, statusTemplatesRef.current.lose || []);
             if (tVictory.match) sequenceResult = 'VICTORY'; else if (tLose.match) sequenceResult = 'DEFEAT';
 
             const isVictory = fuzzyIncludes(cleanText, 'VICTORY', 2);
-            const isDefeat = fuzzyIncludes(cleanText, 'DEFEAT', 2) || fuzzyIncludes(cleanText, 'LOSE', 1);
+            const isDefeat = fuzzyIncludes(cleanText, 'DEFEAT', 2);
+            const isLose = fuzzyIncludes(cleanText, 'LOSE', 1);
 
-            if ((sequenceResult || isVictory || isDefeat) && (confidence > 50 || sequenceResult)) {
+            if (sequenceResult || isVictory || isDefeat || (isLose && confidence > 60)) {
               const detectedResult = sequenceResult || (isVictory ? 'VICTORY' : 'DEFEAT');
               setResult(detectedResult); setIsResultLocked(true);
               setOcrLog(`勝敗確定: ${detectedResult} ${sequenceResult ? '(Template)' : ''}`);
-              
+
               const gallery = comps.map(c => getCompDataURL(bin, width, height, c));
               setDebugGallery(gallery);
               const nextState = (curMode === 'ランク' || slotsRef.current.isDiffLocked) ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
@@ -554,7 +558,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
           }
         } else { stablePointsBufferRef.current = []; }
       }
-      
+
       if (showRoiOverlay) {
         ctx.lineWidth = 1;
         Object.entries(ROIS).forEach(([name, roi]) => {
@@ -573,8 +577,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
     try {
       playNotificationSound();
       await initTesseract();
-      const mediaStream = await navigator.mediaDevices.getDisplayMedia({ 
-        video: { cursor: "never", frameRate: { ideal: 10, max: 15 }, width: { ideal: 1280, max: 1920 }, height: { ideal: 720, max: 1080 } }, audio: false 
+      const mediaStream = await navigator.mediaDevices.getDisplayMedia({
+        video: { cursor: "never", frameRate: { ideal: 10, max: 15 }, width: { ideal: 1280, max: 1920 }, height: { ideal: 720, max: 1080 } }, audio: false
       });
       setStream(mediaStream); setIsRecording(true);
       setCurrentState(STATES.DETECTING_TURN); stateRef.current = STATES.DETECTING_TURN;
@@ -626,19 +630,18 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
         ))}
       </div>
       <div ref={stickyRef} className="h-[1px] w-full bg-transparent" /> {/* Physical Sentinel */}
-      <div 
-        className={`aspect-video rounded-xl overflow-hidden relative transition-all duration-300 ${
-          isSticky 
-            ? captureStatus === 'FROZEN' 
+      <div
+        className={`aspect-video rounded-xl overflow-hidden relative transition-all duration-300 ${isSticky
+            ? captureStatus === 'FROZEN'
               ? 'sticky top-4 z-40 bg-black/80 border border-rose-500 shadow-2xl opacity-100 backdrop-blur-md' // Visible if frozen
               : 'sticky top-4 z-0 opacity-0 pointer-events-none border-transparent' // Ghost Mode
             : 'bg-black/80 border border-zinc-700/50 z-10 opacity-100 sticky top-4 shadow-2xl backdrop-blur-md' // Normal Mode
-        }`}
+          }`}
       >
         {stream ? <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-contain" /> : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 text-sm">Launch Capture to Start</div>
         )}
-        
+
         {/* Unified Visibility/Freeze Warning Overlay */}
         {isRecording && captureStatus === 'FROZEN' && (
           <div className="absolute inset-0 z-30 bg-rose-900/60 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
@@ -667,10 +670,10 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
               <button onClick={() => setShowRoiOverlay(!showRoiOverlay)} className="absolute top-2 right-2 p-1.5 bg-zinc-900/80 rounded border border-zinc-700 text-zinc-400">{showRoiOverlay ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}</button>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div 
-                onClick={() => { 
-                  setTurn(t => t === '先' ? '後' : '先'); 
-                  setIsTurnLocked(true); 
+              <div
+                onClick={() => {
+                  setTurn(t => t === '先' ? '後' : '先');
+                  setIsTurnLocked(true);
                   if (currentState === STATES.DETECTING_TURN) {
                     setCurrentState(STATES.IN_MATCH);
                     stateRef.current = STATES.IN_MATCH;
@@ -681,37 +684,34 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
                 <div className="text-[9px] text-zinc-500 uppercase font-bold mb-1 group-hover:text-indigo-400">Turn</div>
                 <div className="text-xl font-black text-indigo-400">{turn ? (turn + '攻') : '--'}</div>
               </div>
-              <div 
-                onClick={() => { 
-                  setResult(r => r === 'VICTORY' ? 'DEFEAT' : 'VICTORY'); 
-                  setIsResultLocked(true); 
+              <div
+                onClick={() => {
+                  setResult(r => r === 'VICTORY' ? 'DEFEAT' : 'VICTORY');
+                  setIsResultLocked(true);
                   const nextState = (mode === 'ランク' || isDiffLocked) ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
                   setCurrentState(nextState);
                   stateRef.current = nextState;
                 }}
-                className={`p-4 rounded-xl border border-zinc-700 bg-zinc-900/50 text-center cursor-pointer transition-colors group ${
-                  result === 'DEFEAT' ? 'hover:border-rose-500' : 'hover:border-emerald-500'
-                }`}
+                className={`p-4 rounded-xl border border-zinc-700 bg-zinc-900/50 text-center cursor-pointer transition-colors group ${result === 'DEFEAT' ? 'hover:border-rose-500' : 'hover:border-emerald-500'
+                  }`}
               >
-                <div className={`text-[9px] uppercase font-bold mb-1 transition-colors ${
-                  result === 'DEFEAT' ? 'text-rose-900/50 group-hover:text-rose-400' : 'text-zinc-500 group-hover:text-emerald-400'
-                }`}>Result</div>
-                <div className={`text-xl font-black ${
-                  result === 'DEFEAT' ? 'text-rose-500' : 'text-emerald-400'
-                }`}>{result || '--'}</div>
+                <div className={`text-[9px] uppercase font-bold mb-1 transition-colors ${result === 'DEFEAT' ? 'text-rose-900/50 group-hover:text-rose-400' : 'text-zinc-500 group-hover:text-emerald-400'
+                  }`}>Result</div>
+                <div className={`text-xl font-black ${result === 'DEFEAT' ? 'text-rose-500' : 'text-emerald-400'
+                  }`}>{result || '--'}</div>
               </div>
               <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 shadow-inner text-center col-span-2 relative">
                 <label className="absolute top-2 left-3 text-[9px] text-zinc-500 uppercase font-bold">Diff / Rating</label>
-                <input 
-                  type="text" 
-                  value={diff} 
-                  onChange={e => { 
+                <input
+                  type="text"
+                  value={diff}
+                  onChange={e => {
                     const val = e.target.value;
-                    setDiff(val); 
+                    setDiff(val);
                     setRatingChange(val);
                     const isLocked = val.trim() !== '';
-                    setIsDiffLocked(isLocked); 
-                    
+                    setIsDiffLocked(isLocked);
+
                     if (isLocked) {
                       if (currentState === STATES.DETECTING_RATING) {
                         setCurrentState(STATES.NEXT_MATCH_STANDBY);
@@ -723,9 +723,9 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
                         stateRef.current = STATES.DETECTING_RATING;
                       }
                     }
-                  }} 
-                  className="w-full bg-transparent text-4xl font-black text-indigo-400 outline-none text-center" 
-                  placeholder="--" 
+                  }}
+                  className="w-full bg-transparent text-4xl font-black text-indigo-400 outline-none text-center"
+                  placeholder="--"
                 />
               </div>
               <div className="flex flex-col gap-2 col-span-2 mt-2">
