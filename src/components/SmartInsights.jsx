@@ -17,22 +17,32 @@ export default function SmartInsights({ records, availableTags }) {
     let enemyCount = 0;
     records.forEach(r => {
       if (!r.memo) return;
-      const tags = r.memo.split(',').map(t => t.trim());
+      const tags = r.memo.split(/[,、，]+/).map(t => t.trim());
       tags.forEach(t => {
-        if (t.startsWith('自：')) selfCount++;
-        else if (t.startsWith('敵：')) enemyCount++;
+        // [+][-] 記法、または従来の 自：/敵： 記法をサポート
+        // プレミは暗黙的に自：[-] とみなす
+        const isSelf = t.includes('自：') || t.includes('プレミ');
+        const isNegative = t.includes('[-] ') || (!t.includes('[+]') && !t.includes('敵：')); // [+] がなければ基本は不利益
+        
+        if (isSelf && isNegative) selfCount++;
+        else if (t.includes('敵：') && isNegative) enemyCount++; // 敵：がついた「不利なこと」
       });
     });
     const totalAccountability = selfCount + enemyCount;
     const selfRatio = totalAccountability > 0 ? (selfCount / totalAccountability) * 100 : 50;
 
     // --- 2. 潜在勝率 (Potential Win Rate) ---
-    // 「自：」系のタグが付いている敗北試合を「勝ち」に変換して勝率を再計算
+    // 「自：」系の不利タグ（[+]を含まないもの）が付いている敗北試合を「勝ち」に変換して勝率を再計算
     const wins = records.filter(r => String(r.result).includes('VIC')).length;
     const lossesWithSelfErr = records.filter(r => {
       const isLoss = !String(r.result).includes('VIC');
-      const hasSelfTag = r.memo && r.memo.split(',').some(t => t.trim().startsWith('自：'));
-      return isLoss && hasSelfTag;
+      if (!isLoss || !r.memo) return false;
+      const tags = r.memo.split(/[,、，]+/).map(t => t.trim());
+      return tags.some(t => {
+        const isSelf = t.includes('自：');
+        const isNegative = !t.includes('[+]'); // [+] が含まれていなければ不利要因とみなす
+        return isSelf && isNegative;
+      });
     }).length;
 
     const potentialWins = wins + lossesWithSelfErr;

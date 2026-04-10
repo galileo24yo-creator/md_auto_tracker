@@ -5,6 +5,7 @@ import { postData } from '../lib/api';
 import DeckSelect from './DeckSelect';
 import FilterSelect from './FilterSelect';
 import SmartInsights from './SmartInsights';
+import FactorAnalysis from './FactorAnalysis';
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6366f1', '#f43f5e', '#06b6d4', '#84cc16', '#f97316', '#a855f7', '#14b8a6'];
 
@@ -91,7 +92,13 @@ const MatchList = memo(({ records, onSelect }) => (
               <span className="font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors uppercase tracking-tight text-xs mr-1 shrink-0">
                 {r.opponentDeck || "UNKNOWN"}
               </span>
-              {r.memo && String(r.memo).split(',').map((tag, idx) => <span key={idx} className="px-1.5 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-[9px] text-indigo-300 font-bold whitespace-nowrap">{String(tag).trim()}</span>)}
+              {r.memo && String(r.memo).split(/[,、，]+/).map((rawTag, idx) => {
+                const tag = rawTag.trim();
+                const isPos = tag.includes('[+]') || tag.includes('［＋］');
+                const isNeg = tag.includes('[-]') || tag.includes('［－］');
+                const colorClass = isPos ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300' : isNeg ? 'bg-rose-500/20 border-rose-500/30 text-rose-300' : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300';
+                return <span key={idx} className={`px-1.5 py-0.5 rounded border ${colorClass} text-[9px] font-bold whitespace-nowrap`}>{tag}</span>;
+              })}
             </div>
             <div className="text-[9px] font-bold uppercase tracking-widest mt-1 flex items-center gap-1">
               <span className="text-zinc-500">MY:</span>
@@ -417,6 +424,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
   const [showSettingsEditor, setShowSettingsEditor] = useState(false);
   const [editingDecks, setEditingDecks] = useState(decks || []);
   const [editingReasons, setEditingReasons] = useState(reasons || []);
+  const [newTagTrait, setNewTagTrait] = useState('negative'); // 'positive' | 'negative'
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
   // モーダルが閉じられたら状態をリセット
@@ -883,13 +891,13 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
       </div>
 
       <div className="flex border-b border-zinc-900 mb-6 px-1 overflow-x-auto no-scrollbar">
-        {['overview', 'insights', 'trends'].map(tab => (
+        {['overview', 'insights', 'trends', 'factors'].map(tab => (
           <button 
             key={tab} 
             onClick={() => setActiveTab(tab)} 
             className={`px-10 py-3 text-[10px] font-black uppercase tracking-widest transition-all border-b-2 whitespace-nowrap ${activeTab === tab ? 'border-indigo-500 text-indigo-400 bg-indigo-500/[0.02]' : 'border-transparent text-zinc-600 hover:text-zinc-400'}`}
           >
-            {tab === 'overview' ? 'Overview' : tab === 'insights' ? 'AI Insights' : 'Trends'}
+            {tab === 'overview' ? 'Overview' : tab === 'insights' ? 'AI Insights' : tab === 'trends' ? 'Trends' : 'Factors'}
           </button>
         ))}
       </div>
@@ -1068,6 +1076,10 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
         </div>
       )}
 
+      {activeTab === 'factors' && (
+        <FactorAnalysis records={filteredRecords} />
+      )}
+
       {selectedMatch && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 animate-in fade-in" onClick={() => { setSelectedMatch(null); setIsEditing(false); }}>
           <div className="w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-[2.5rem] overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
@@ -1110,9 +1122,18 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                   </div>
                   {selectedMatch.memo && (
                     <div className="flex flex-wrap gap-2 justify-center">
-                      {selectedMatch.memo.split(',').map((tag, idx) => (
-                        <span key={idx} className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] text-indigo-400 font-black uppercase tracking-wider">{tag.trim()}</span>
-                      ))}
+                      {selectedMatch.memo.split(/[,、，]+/).map((rawTag, idx) => {
+                        const tag = rawTag.trim();
+                        if (!tag) return null;
+                        const isPos = tag.includes('[+]') || tag.includes('［＋］');
+                        const isNeg = tag.includes('[-]') || tag.includes('［－］');
+                        const colorClass = isPos ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400' : isNeg ? 'bg-rose-500/20 border-rose-500/30 text-rose-400' : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400';
+                        return (
+                          <span key={idx} className={`px-3 py-1 rounded-full border ${colorClass} text-[10px] font-black uppercase tracking-wider`}>
+                            {tag}
+                          </span>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -1147,14 +1168,27 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                {[ { label: 'DECK LIST', list: editingDecks, set: setEditingDecks, id: 'new-deck' }, { label: 'CAUSE TAGS', list: editingReasons, set: setEditingReasons, id: 'new-tag' } ].map(group => (
                  <div key={group.label} className="space-y-6">
                    <div className="flex items-center justify-between"><label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">{group.label}</label><span className="text-[10px] text-zinc-600 font-mono">{group.list.length} Items</span></div>
+                   {group.label === 'CAUSE TAGS' && (
+                     <div className="flex bg-zinc-950 p-1 rounded-xl border border-zinc-800 mb-2">
+                       <button onClick={() => setNewTagTrait('positive')} className={`flex-1 py-1 px-3 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${newTagTrait === 'positive' ? 'bg-emerald-500 text-white' : 'text-zinc-600 hover:text-zinc-400'}`}>有利 [+]</button>
+                       <button onClick={() => setNewTagTrait('negative')} className={`flex-1 py-1 px-3 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${newTagTrait === 'negative' ? 'bg-rose-500 text-white' : 'text-zinc-600 hover:text-zinc-400'}`}>不利 [-]</button>
+                     </div>
+                   )}
                    <div className="flex gap-2">
-                     <input id={group.id} type="text" className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-xs outline-none focus:ring-1 focus:ring-indigo-500" placeholder={`Add ${group.label.toLowerCase()}...`} onKeyDown={e => { if(e.key==='Enter' && e.target.value){ group.set([...group.list, e.target.value]); e.target.value=''; } }} />
-                     <button onClick={() => { const i=document.getElementById(group.id); if(i.value){ group.set([...group.list, i.value]); i.value=''; } }} className="bg-indigo-600 hover:bg-indigo-500 p-3 rounded-xl text-white shadow-lg transition-all active:scale-95"><Plus className="w-5 h-5" /></button>
+                     <input id={group.id} type="text" className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-xs outline-none focus:ring-1 focus:ring-indigo-500" placeholder={`Add ${group.label.toLowerCase()}...`} onKeyDown={e => { if(e.key==='Enter' && e.target.value){ const val = group.label === 'CAUSE TAGS' ? (newTagTrait === 'positive' ? `[+] ${e.target.value}` : `[-] ${e.target.value}`) : e.target.value; group.set([...group.list, val]); e.target.value=''; } }} />
+                     <button onClick={() => { const i=document.getElementById(group.id); if(i.value){ const val = group.label === 'CAUSE TAGS' ? (newTagTrait === 'positive' ? `[+] ${i.value}` : `[-] ${i.value}`) : i.value; group.set([...group.list, val]); i.value=''; } }} className="bg-indigo-600 hover:bg-indigo-500 p-3 rounded-xl text-white shadow-lg transition-all active:scale-95"><Plus className="w-5 h-5" /></button>
                    </div>
                    <div className="bg-zinc-950 rounded-2xl border border-zinc-800 p-3 max-h-56 overflow-y-auto space-y-2 custom-scrollbar shadow-inner">
-                     {group.list.map((item, i) => (
-                       <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-zinc-900 border border-zinc-800 group hover:border-zinc-700 transition-all"><span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition-colors">{item}</span><button onClick={() => group.set(group.list.filter((_, idx) => idx !== i))} className="text-zinc-700 hover:text-rose-500 p-1 rounded-lg hover:bg-rose-500/10 transition-all"><Trash2 className="w-4 h-4" /></button></div>
-                     ))}
+                     {group.list.map((item, i) => {
+                        const isPositive = group.label === 'CAUSE TAGS' && item.startsWith('[+]');
+                        const isNegative = group.label === 'CAUSE TAGS' && (item.startsWith('[-]') || (!item.startsWith('[+]') && !item.startsWith('自：') && !item.startsWith('敵：')));
+                        return (
+                          <div key={i} className={`flex items-center justify-between p-3 rounded-xl bg-zinc-900 border border-zinc-800 group hover:border-zinc-700 transition-all ${isPositive ? 'border-emerald-500/20 bg-emerald-500/5' : isNegative ? 'border-rose-500/20 bg-rose-500/5' : ''}`}>
+                            <span className={`text-[11px] transition-colors ${isPositive ? 'text-emerald-400' : isNegative ? 'text-rose-400' : 'text-zinc-400 group-hover:text-zinc-200'}`}>{item}</span>
+                            <button onClick={() => group.set(group.list.filter((_, idx) => idx !== i))} className="text-zinc-700 hover:text-rose-500 p-1 rounded-lg hover:bg-rose-500/10 transition-all"><Trash2 className="w-4 h-4" /></button>
+                          </div>
+                        );
+                      })}
                    </div>
                  </div>
                ))}

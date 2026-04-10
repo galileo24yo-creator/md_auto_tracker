@@ -135,21 +135,31 @@ export default memo(function DeckSelect({ availableDecks, selectedDecks, onChang
           ${isFocused ? 'border-indigo-500 ring-2 ring-indigo-500/20 bg-zinc-900/50 shadow-lg shadow-indigo-500/5' : 'border-zinc-800 hover:border-zinc-700'}`}
         onClick={() => inputRef.current?.focus()}
       >
-        {selectedDecks.map(deck => (
-          <span 
-            key={deck} 
-            className="flex items-center gap-1.5 bg-indigo-500/10 text-indigo-300 text-xs font-black px-2.5 py-1 rounded-lg border border-indigo-500/20 animate-in zoom-in-95 duration-200"
-          >
-            {deck}
-            <button 
-              type="button" 
-              onClick={(e) => { e.stopPropagation(); handleRemove(deck); }}
-              className="hover:text-white transition-colors p-0.5"
+        {selectedDecks.map(deck => {
+          const isPositive = deck.includes('[+]') || deck.includes('［＋］');
+          const isNegative = deck.includes('[-]') || deck.includes('［－］');
+          const baseColorClass = isPositive 
+            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
+            : isNegative 
+              ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+              : 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20';
+
+          return (
+            <span 
+              key={deck} 
+              className={`flex items-center gap-1.5 text-xs font-black px-2.5 py-1 rounded-lg border animate-in zoom-in-95 duration-200 ${baseColorClass}`}
             >
-              <X className="w-3 h-3" />
-            </button>
-          </span>
-        ))}
+              {deck}
+              <button 
+                type="button" 
+                onClick={(e) => { e.stopPropagation(); handleRemove(deck); }}
+                className="hover:text-white transition-colors p-0.5"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          );
+        })}
         
         <div className="flex-1 flex items-center min-w-[120px]">
           <Search className={`w-4 h-4 mr-2 transition-colors ${isFocused ? 'text-indigo-500' : 'text-zinc-600'}`} />

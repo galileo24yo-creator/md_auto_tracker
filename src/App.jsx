@@ -121,8 +121,21 @@ function App() {
   const displayReasons = useMemo(() => {
     const list = [];
     (data.reasons || []).forEach(r => {
-      list.push(`自：${r}`);
-      list.push(`敵：${r}`);
+      // 符号([+] or [-])と本体を分離
+      const match = r.match(/^(\[[+-]\])\s*(.*)/);
+      
+      if (match) {
+        const trait = match[1];
+        const base = match[2];
+        const invertedTrait = trait === '[+]' ? '[-]' : '[+]';
+
+        list.push(`${trait} 自：${base}`);
+        list.push(`${invertedTrait} 敵：${base}`);
+      } else {
+        // 符号がない場合は従来通り（ただしデフォルト不利扱い）
+        list.push(`自：${r}`);
+        list.push(`敵：${r}`);
+      }
     });
     return list;
   }, [data.reasons]);
