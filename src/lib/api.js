@@ -28,6 +28,11 @@ export function getActiveProfile() {
  * Gets the current GAS URL from the active profile or falls back to the .env value.
  */
 export function getGasUrl() {
+  // Always prioritize URL parameter for OBS/external direct access
+  const query = new URLSearchParams(window.location.search);
+  const paramUrl = query.get('gas_url');
+  if (paramUrl) return paramUrl;
+
   const active = getActiveProfile();
   return active ? active.url : (import.meta.env.VITE_GAS_URL || "");
 }

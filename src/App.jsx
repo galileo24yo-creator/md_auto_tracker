@@ -5,6 +5,7 @@ import { decodeHTMLEntities } from './lib/utils';
 import Dashboard from './components/Dashboard';
 import Recorder from './components/Recorder';
 import SetupGuide from './components/SetupGuide';
+import VisualBoard from './components/VisualBoard';
 import './App.css';
 
 function App() {
@@ -14,6 +15,10 @@ function App() {
   const [error, setError] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showSetupGuide, setShowSetupGuide] = useState(false);
+  
+  // 表示モードの判定 (?view=obs)
+  const query = new URLSearchParams(window.location.search);
+  const isObsMode = query.get('view') === 'obs';
   
   // Profiles State
   const [profiles, setProfiles] = useState(getProfiles());
@@ -139,6 +144,32 @@ function App() {
     });
     return list;
   }, [data.reasons]);
+
+  useEffect(() => {
+    if (isObsMode) {
+      document.body.classList.add('is-obs-mode');
+    } else {
+      document.body.classList.remove('is-obs-mode');
+    }
+    return () => document.body.classList.remove('is-obs-mode');
+  }, [isObsMode]);
+
+  if (isObsMode) {
+    return (
+      <div className="min-h-screen bg-transparent">
+        {loading ? (
+          <div className="h-screen flex items-center justify-center text-zinc-500">
+            <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+          </div>
+        ) : (
+          <VisualBoard 
+            records={data.records} 
+            displayReasons={displayReasons} 
+          />
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen py-10 px-4 md:px-10 text-zinc-200">

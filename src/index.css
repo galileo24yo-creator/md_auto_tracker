@@ -11,4 +11,10 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
+  
+  body.is-obs-mode {
+    background: transparent !important;
+    background-color: transparent !important;
+    min-height: auto;
+  }
 }
