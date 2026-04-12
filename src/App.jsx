@@ -15,6 +15,7 @@ function App() {
   const [error, setError] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showSetupGuide, setShowSetupGuide] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
   
   // 表示モードの判定 (?view=obs)
   const query = new URLSearchParams(window.location.search);
@@ -51,6 +52,7 @@ function App() {
         decks: decodedDecks,
         reasons: decodedReasons
       });
+      setLastUpdated(new Date());
     } else {
       setError(result.error || "Failed to load data from GAS.");
     }
@@ -154,6 +156,21 @@ function App() {
     return () => document.body.classList.remove('is-obs-mode');
   }, [isObsMode]);
 
+  // OBS用の自動更新ポーリング
+  useEffect(() => {
+    if (!isObsMode) return;
+    
+    // URLパラメータから間隔を取得（デフォルト30秒）
+    const intervalSeconds = parseInt(query.get('interval') || '30', 10);
+    const intervalMs = Math.max(intervalSeconds, 5) * 1000; // 最低5秒
+    
+    const timer = setInterval(() => {
+      loadData(true);
+    }, intervalMs);
+    
+    return () => clearInterval(timer);
+  }, [isObsMode]);
+
   if (isObsMode) {
     return (
       <div className="min-h-screen bg-transparent">
@@ -165,6 +182,7 @@ function App() {
           <VisualBoard 
             records={data.records} 
             displayReasons={displayReasons} 
+            lastUpdated={lastUpdated}
           />
         )}
       </div>

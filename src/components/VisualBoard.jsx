@@ -396,7 +396,7 @@ export const MatchupTableWidget = ({ rankings = [] }) => {
 /**
  * メインボード
  */
-export default function VisualBoard({ records }) {
+export default function VisualBoard({ records, lastUpdated }) {
   // OBSモードでは基本的に全てのフィルタリングをオフ（全期間）にするか、
   // URLパラメータでフィルターも制御できるようにすると便利
   const query = useMemo(() => new URLSearchParams(window.location.search), []);
@@ -471,6 +471,11 @@ export default function VisualBoard({ records }) {
         <div className="inline-flex items-center gap-4 px-6 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-[10px] font-black text-zinc-500 uppercase tracking-widest">
           <Activity className="w-3 h-3 text-indigo-500" />
           Live Analytics Engine Active
+          {lastUpdated && (
+            <span className="text-zinc-600 border-l border-white/10 pl-4 ml-2">
+              Sync: {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            </span>
+          )}
           <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,1)]" />
         </div>
       </div>
