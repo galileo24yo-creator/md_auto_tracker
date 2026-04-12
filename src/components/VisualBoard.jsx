@@ -9,11 +9,11 @@ import { useMatchAnalytics, COLORS } from '../hooks/useMatchAnalytics';
 export const WidgetCard = ({ children, title, className = "" }) => {
   const isObs = new URLSearchParams(window.location.search).get('view') === 'obs';
   return (
-    <div className={`relative ${isObs ? 'bg-zinc-950/90' : 'bg-zinc-950/20 backdrop-blur-sm'} border border-white/10 rounded-3xl p-6 shadow-[0_0_40px_rgba(0,0,0,0.3)] overflow-hidden group hover:border-indigo-500/30 transition-all duration-500 ${className}`}>
+    <div className={`relative ${isObs ? 'bg-zinc-950/60' : 'bg-zinc-950/20 backdrop-blur-sm'} border border-white/10 rounded-3xl p-6 shadow-[0_0_40px_rgba(0,0,0,0.3)] overflow-hidden group hover:border-indigo-500/30 transition-all duration-500 ${className}`}>
       {title && (
         <div className="absolute top-4 left-6 flex items-center gap-2 z-10">
           <div className="w-1 h-3 bg-indigo-500 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
-          <span className="text-[12px] font-black text-zinc-300 uppercase tracking-[0.2em]">{title}</span>
+          <span className="text-[12px] font-black text-zinc-100 uppercase tracking-[0.2em]">{title}</span>
         </div>
       )}
       <div className="h-full pt-6">
@@ -31,9 +31,9 @@ const CustomTooltip = ({ active, payload }) => {
     const data = payload[0].payload;
     const isWin = data.result === 'WIN';
     return (
-      <div className="bg-zinc-950/90 backdrop-blur-md border border-white/10 p-3 rounded-xl shadow-2xl">
+      <div className="bg-zinc-950/80 backdrop-blur-md border border-white/10 p-3 rounded-xl shadow-2xl">
         <div className="flex items-center justify-between gap-4 mb-2">
-          <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">#{data.index} • {data.date}</span>
+          <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">#{data.index} • {data.date}</span>
           <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${isWin ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
             {data.result}
           </span>
@@ -146,7 +146,7 @@ export const RecentMatchesWidget = ({ form }) => (
         />
       ))}
     </div>
-    <div className="flex justify-between mt-4 text-[11px] font-black text-zinc-400 uppercase tracking-widest px-4">
+    <div className="flex justify-between mt-4 text-[11px] font-black text-zinc-300 uppercase tracking-widest px-4">
       <span>Older</span>
       <span>Latest</span>
     </div>
@@ -236,22 +236,22 @@ export const TurnStatsWidget = ({ stats }) => (
     <div className="grid grid-cols-2 gap-4 mt-2">
       <div className="col-span-2 bg-white/5 rounded-2xl p-4 flex items-center justify-between border border-white/5">
         <div className="flex flex-col">
-          <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Coin Toss Luck</span>
-          <span className="text-xl font-black text-indigo-400">{stats.fRate}% <span className="text-[10px] text-zinc-500 font-bold uppercase ml-1">First</span></span>
+          <span className="text-[9px] font-black text-zinc-300 uppercase tracking-widest">Coin Toss Luck</span>
+          <span className="text-xl font-black text-indigo-400">{stats.fRate}% <span className="text-[10px] text-zinc-300 font-bold uppercase ml-1">First</span></span>
         </div>
-        <Target className="w-6 h-6 text-zinc-700 opacity-40" />
+        <Target className="w-6 h-6 text-zinc-500 opacity-40" />
       </div>
       
       <div className="bg-emerald-500/5 rounded-2xl p-4 border border-emerald-500/10">
         <div className="text-[9px] font-black text-emerald-500/60 uppercase tracking-widest mb-1">First Turn</div>
         <div className="text-xl font-black text-zinc-100">{stats.fWinRate}%</div>
-        <div className="text-[10px] text-zinc-500 font-bold uppercase mt-1">{stats.fWins} / {stats.fTotal} Wins</div>
+        <div className="text-[10px] text-zinc-300 font-bold uppercase mt-1">{stats.fWins} / {stats.fTotal} Wins</div>
       </div>
 
       <div className="bg-indigo-500/5 rounded-2xl p-4 border border-indigo-500/10">
         <div className="text-[9px] font-black text-indigo-500/60 uppercase tracking-widest mb-1">Second Turn</div>
         <div className="text-xl font-black text-zinc-100">{stats.sWinRate}%</div>
-        <div className="text-[10px] text-zinc-500 font-bold uppercase mt-1">{stats.sWins} / {stats.sTotal} Wins</div>
+        <div className="text-[10px] text-zinc-300 font-bold uppercase mt-1">{stats.sWins} / {stats.sTotal} Wins</div>
       </div>
     </div>
   </WidgetCard>
@@ -299,7 +299,7 @@ export const SummaryBarWidget = ({ stats }) => (
     </div>
     <div className="w-px h-8 bg-white/5" />
     <div className="flex flex-col items-center">
-      <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Win Rate</span>
+      <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest mb-1">Win Rate</span>
       <span className="text-xl font-black text-emerald-400">{stats.winRate}%</span>
     </div>
     <div className="w-px h-8 bg-white/5" />
@@ -327,8 +327,8 @@ export const MyDeckStatsWidget = ({ myDeckStats }) => (
         <div key={i} className="flex flex-col gap-1">
           <div className="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-all">
             <div className="flex flex-col">
-              <span className="text-[11px] font-black text-zinc-200 uppercase tracking-tight truncate max-w-[140px]">{d.name}</span>
-              <span className="text-[9px] text-zinc-500 font-bold uppercase">{d.total} matches</span>
+              <span className="text-[11px] font-black text-zinc-100 uppercase tracking-tight truncate max-w-[140px]">{d.name}</span>
+              <span className="text-[9px] text-zinc-300 font-bold uppercase">{d.total} matches</span>
             </div>
             <div className="text-right">
               <span className={`text-lg font-black tracking-tighter ${d.winRate >= 50 ? 'text-emerald-400' : 'text-zinc-500'}`}>{d.winRate}%</span>
@@ -363,10 +363,10 @@ export const MatchupTableWidget = ({ rankings = [] }) => {
           <div key={i} className="flex flex-col gap-1">
             <div className="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/5">
               <div className="flex items-center gap-3">
-                <span className="text-xs font-black text-zinc-600 w-4">#{i+1}</span>
+                <span className="text-xs font-black text-zinc-400 w-4">#{i+1}</span>
                 <div className="flex flex-col">
-                  <span className="text-[11px] font-black text-zinc-200 uppercase tracking-tight truncate max-w-[160px]">{r.name}</span>
-                  <span className="text-[9px] text-zinc-500 font-bold uppercase">{r.total} matches</span>
+                  <span className="text-[11px] font-black text-zinc-100 uppercase tracking-tight truncate max-w-[160px]">{r.name}</span>
+                  <span className="text-[9px] text-zinc-300 font-bold uppercase">{r.total} matches</span>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -468,7 +468,7 @@ export default function VisualBoard({ records, lastUpdated }) {
       
       {/* 配信向けのインフォメーション */}
       <div className="md:col-span-3 text-center pt-8">
-        <div className="inline-flex items-center gap-4 px-6 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+        <div className="inline-flex items-center gap-4 px-6 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-[10px] font-black text-zinc-300 uppercase tracking-widest">
           <Activity className="w-3 h-3 text-indigo-500" />
           Live Analytics Engine Active
           {lastUpdated && (
