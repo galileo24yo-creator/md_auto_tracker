@@ -38,8 +38,8 @@ const CustomTooltip = ({ active, payload }) => {
             {data.result}
           </span>
         </div>
-        <div className="text-xs font-bold text-zinc-100 mb-1">{data.opponentDeck || 'UNKNOWN'}</div>
-        <div className="text-xl font-black text-indigo-400">Rate: {Math.round(data.rating)}</div>
+        <div className="text-xs font-bold text-zinc-100 mb-1 obs-text-shadow">{data.opponentDeck || 'UNKNOWN'}</div>
+        <div className="text-xl font-black text-indigo-400 obs-text-shadow">Rate: {Math.round(data.rating)}</div>
       </div>
     );
   }
@@ -172,10 +172,12 @@ export const MatchupWinRateWidget = ({ rankings }) => {
           <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
           <XAxis 
             dataKey="name" 
-            stroke="#a1a1aa" 
+            stroke="#f4f4f5" 
             fontSize={11} 
             tickLine={false} 
             axisLine={false} 
+            tick={{ fill: '#f4f4f5', fontSize: 10, fontWeight: '900' }}
+            className="obs-text-shadow"
             interval={0}
             angle={-15}
             textAnchor="end"
@@ -254,21 +256,21 @@ export const TurnStatsWidget = ({ stats }) => (
       <div className="col-span-2 bg-white/5 rounded-2xl p-4 flex items-center justify-between border border-white/5">
         <div className="flex flex-col">
           <span className="text-[9px] font-black text-zinc-300 uppercase tracking-widest">Coin Toss Luck</span>
-          <span className="text-xl font-black text-indigo-400">{stats.fRate}% <span className="text-[10px] text-zinc-300 font-bold uppercase ml-1">First</span></span>
+          <span className="text-xl font-black text-indigo-400 obs-text-shadow">{stats.fRate}% <span className="text-[10px] text-zinc-300 font-bold uppercase ml-1">First</span></span>
         </div>
-        <Target className="w-6 h-6 text-zinc-500 opacity-40" />
+        <Target className="w-6 h-6 text-zinc-500 opacity-40 shadow-sm" style={{ filter: 'drop-shadow(0px 2px 2px rgba(0,0,0,0.5))' }} />
       </div>
       
       <div className="bg-emerald-500/5 rounded-2xl p-4 border border-emerald-500/10">
-        <div className="text-[9px] font-black text-emerald-500/60 uppercase tracking-widest mb-1">First Turn</div>
-        <div className="text-xl font-black text-zinc-100">{stats.fWinRate}%</div>
-        <div className="text-[10px] text-zinc-300 font-bold uppercase mt-1">{stats.fWins} / {stats.fTotal} Wins</div>
+        <div className="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-1 obs-text-shadow">First Turn</div>
+        <div className="text-xl font-black text-zinc-100 obs-text-shadow">{stats.fWinRate}%</div>
+        <div className="text-[10px] text-zinc-300 font-bold uppercase mt-1 obs-text-shadow">{stats.fWins} / {stats.fTotal} Wins</div>
       </div>
 
       <div className="bg-indigo-500/5 rounded-2xl p-4 border border-indigo-500/10">
-        <div className="text-[9px] font-black text-indigo-500/60 uppercase tracking-widest mb-1">Second Turn</div>
-        <div className="text-xl font-black text-zinc-100">{stats.sWinRate}%</div>
-        <div className="text-[10px] text-zinc-300 font-bold uppercase mt-1">{stats.sWins} / {stats.sTotal} Wins</div>
+        <div className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1 obs-text-shadow">Second Turn</div>
+        <div className="text-xl font-black text-zinc-100 obs-text-shadow">{stats.sWinRate}%</div>
+        <div className="text-[10px] text-zinc-300 font-bold uppercase mt-1 obs-text-shadow">{stats.sWins} / {stats.sTotal} Wins</div>
       </div>
     </div>
   </WidgetCard>
@@ -322,7 +324,7 @@ export const SummaryBarWidget = ({ stats }) => (
     <div className="w-px h-8 bg-white/5" />
     <div className="flex flex-col items-center">
       <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest mb-1 obs-text-shadow">Coin Toss</span>
-      <span className="text-xl font-black text-indigo-400 obs-text-shadow">{stats.fRate}% <span className="text-[10px] text-zinc-500 ml-1">1st</span></span>
+      <span className="text-xl font-black text-indigo-400 obs-text-shadow">{stats.fRate}% <span className="text-[10px] text-zinc-200 ml-1">1st</span></span>
     </div>
     <div className="w-px h-8 bg-white/5" />
     <div className="flex flex-col items-center">
@@ -445,7 +447,7 @@ export default function VisualBoard({ records, lastUpdated }) {
     };
   }, [query]);
 
-  const { stats, trendData, tagTrendData, rankings } = useMatchAnalytics(records, filters);
+  const { stats, trendData, tagTrendData, myDeckStats, rankings } = useMatchAnalytics(records, filters);
 
   // ウィジェット単体表示モードの判定
   if (widgetType === 'rating') return <div className="p-4 w-[600px] bg-transparent"><RatingWidget data={trendData} /></div>;
