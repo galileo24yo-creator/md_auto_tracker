@@ -13,7 +13,7 @@ export const WidgetCard = ({ children, title, className = "" }) => {
       {title && (
         <div className="absolute top-4 left-6 flex items-center gap-2 z-10">
           <div className="w-1 h-3 bg-indigo-500 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
-          <span className="text-[12px] font-black text-zinc-100 uppercase tracking-[0.2em]">{title}</span>
+          <span className="text-[12px] font-black text-zinc-100 uppercase tracking-[0.2em] obs-text-shadow">{title}</span>
         </div>
       )}
       <div className="h-full pt-6">
@@ -60,6 +60,8 @@ export const RatingWidget = ({ data }) => (
           fontSize={11} 
           tickLine={false} 
           axisLine={false}
+          tick={{ fill: '#d4d4d8', fontSize: 11, fontWeight: 'bold' }}
+          className="obs-text-shadow"
           minTickGap={30}
           tickFormatter={(idx) => {
             const item = data.find(d => d.index === idx);
@@ -72,7 +74,8 @@ export const RatingWidget = ({ data }) => (
           domain={['auto', 'auto']} 
           axisLine={false} 
           tickLine={false} 
-          tick={{ fill: '#a1a1aa', fontSize: 11, fontWeight: 'bold' }}
+          tick={{ fill: '#d4d4d8', fontSize: 11, fontWeight: 'bold' }}
+          className="obs-text-shadow"
           width={40}
         />
         <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#6366f1', strokeWidth: 1, strokeDasharray: '5 5' }} />
@@ -85,12 +88,15 @@ export const RatingWidget = ({ data }) => (
           activeDot={{ r: 6, fill: '#818cf8', strokeWidth: 0 }}
           animationDuration={2000}
           isAnimationActive={true}
-          filter="url(#glow)"
+          filter="url(#glow) url(#dropShadowChart)"
         />
         <defs>
           <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="3" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+          <filter id="dropShadowChart" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.8" />
           </filter>
         </defs>
       </LineChart>
@@ -105,20 +111,20 @@ export const WinRateWidget = ({ stats }) => (
   <WidgetCard title="Performance" className="aspect-square flex flex-col items-center justify-center text-center">
     <div className="relative flex flex-col items-center justify-center py-4">
       {/* 巨大なパーセンテージ表示 */}
-      <div className="text-7xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+      <div className="text-7xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] obs-text-shadow">
         {Math.round(stats.winRate)}<span className="text-2xl text-indigo-400 ml-1">%</span>
       </div>
-      <div className="text-[14px] font-black text-zinc-400 uppercase tracking-widest mt-2">Win Rate</div>
+      <div className="text-[14px] font-black text-zinc-200 uppercase tracking-widest mt-2 obs-text-shadow">Win Rate</div>
       
       {/* シンプルな戦績表示 */}
       <div className="mt-8 flex gap-8">
         <div className="text-center">
-          <div className="text-2xl font-black text-emerald-400 leading-none">{stats.wins}</div>
-          <div className="text-[11px] font-black text-zinc-400 uppercase mt-1">Wins</div>
+          <div className="text-2xl font-black text-emerald-400 leading-none obs-text-shadow">{stats.wins}</div>
+          <div className="text-[11px] font-black text-zinc-200 uppercase mt-1 obs-text-shadow">Wins</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-black text-rose-500 leading-none">{stats.total - stats.wins}</div>
-          <div className="text-[11px] font-black text-zinc-400 uppercase mt-1">Loss</div>
+          <div className="text-2xl font-black text-rose-500 leading-none obs-text-shadow">{stats.total - stats.wins}</div>
+          <div className="text-[11px] font-black text-zinc-200 uppercase mt-1 obs-text-shadow">Loss</div>
         </div>
       </div>
     </div>
@@ -183,7 +189,12 @@ export const MatchupWinRateWidget = ({ rankings }) => {
             contentStyle={{ backgroundColor: '#09090b', border: '1px solid #18181b', borderRadius: '12px', fontSize: '10px', color: '#fff' }} 
             formatter={(value) => [`${value.toFixed(1)}%`, 'Win Rate']}
           />
-          <Bar dataKey="winRate" radius={[6, 6, 0, 0]} barSize={24}>
+          <defs>
+            <filter id="barShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.8" />
+            </filter>
+          </defs>
+          <Bar dataKey="winRate" radius={[6, 6, 0, 0]} barSize={24} filter="url(#barShadow)">
             {displayData.map((entry, index) => (
               <Cell 
                 key={`cell-${index}`} 
@@ -211,6 +222,11 @@ export const CauseTrendWidget = ({ data }) => (
         <Tooltip 
           contentStyle={{ backgroundColor: '#09090b', border: '1px solid #18181b', borderRadius: '12px', fontSize: '10px', color: '#fff' }} 
         />
+        <defs>
+          <filter id="areaShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.8" />
+          </filter>
+        </defs>
         {data.tags.map((tag, idx) => (
           <Area 
             key={tag} 
@@ -221,6 +237,7 @@ export const CauseTrendWidget = ({ data }) => (
             fill={COLORS[idx % COLORS.length]} 
             fillOpacity={0.6} 
             animationDuration={1500}
+            filter="url(#areaShadow)"
           />
         ))}
       </AreaChart>
@@ -269,14 +286,14 @@ export const StreakWidget = ({ streak }) => {
     <WidgetCard title="Current Streak">
       <div className="flex flex-col items-center justify-center p-6 text-center">
         <div className={`px-8 py-4 rounded-3xl bg-white/5 border ${glowClass} transition-all duration-1000 transform scale-110`}>
-          <div className={`text-6xl font-black tracking-tighter ${colorClass} drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]`}>
+          <div className={`text-6xl font-black tracking-tighter ${colorClass} drop-shadow-[0_0_10px_rgba(0,0,0,0.5)] obs-text-shadow`}>
             {streak.count}
           </div>
-          <div className="text-[11px] font-black text-white/40 uppercase tracking-[0.3em] mt-2 italic">
+          <div className="text-[11px] font-black text-white/40 uppercase tracking-[0.3em] mt-2 italic obs-text-shadow">
             Matches {isWin ? 'Running' : 'Losing'}
           </div>
         </div>
-        <div className={`mt-6 text-lg font-black uppercase tracking-widest flex items-center gap-2 ${colorClass}`}>
+        <div className={`mt-6 text-lg font-black uppercase tracking-widest flex items-center gap-2 ${colorClass} obs-text-shadow`}>
           {isWin ? (
             <><Trophy className="w-5 h-5 shadow-sm" /> Winning Streak</>
           ) : (
@@ -294,23 +311,23 @@ export const StreakWidget = ({ streak }) => {
 export const SummaryBarWidget = ({ stats }) => (
   <div className="bg-zinc-950/40 backdrop-blur-md border-y border-white/10 w-full py-4 flex items-center justify-around px-10 shadow-2xl">
     <div className="flex flex-col items-center">
-      <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Total Matches</span>
-      <span className="text-xl font-black text-zinc-100">{stats.total}</span>
+      <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest mb-1 obs-text-shadow">Total Matches</span>
+      <span className="text-xl font-black text-zinc-100 obs-text-shadow">{stats.total}</span>
     </div>
     <div className="w-px h-8 bg-white/5" />
     <div className="flex flex-col items-center">
-      <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest mb-1">Win Rate</span>
-      <span className="text-xl font-black text-emerald-400">{stats.winRate}%</span>
+      <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest mb-1 obs-text-shadow">Win Rate</span>
+      <span className="text-xl font-black text-emerald-400 obs-text-shadow">{stats.winRate}%</span>
     </div>
     <div className="w-px h-8 bg-white/5" />
     <div className="flex flex-col items-center">
-      <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Coin Toss</span>
-      <span className="text-xl font-black text-indigo-400">{stats.fRate}% <span className="text-[10px] text-zinc-500 ml-1">1st</span></span>
+      <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest mb-1 obs-text-shadow">Coin Toss</span>
+      <span className="text-xl font-black text-indigo-400 obs-text-shadow">{stats.fRate}% <span className="text-[10px] text-zinc-500 ml-1">1st</span></span>
     </div>
     <div className="w-px h-8 bg-white/5" />
     <div className="flex flex-col items-center">
-      <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Streak</span>
-      <span className={`text-xl font-black ${stats.streak.type === 'WIN' ? 'text-emerald-400' : 'text-rose-400'}`}>
+      <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest mb-1 obs-text-shadow">Streak</span>
+      <span className={`text-xl font-black ${stats.streak.type === 'WIN' ? 'text-emerald-400' : 'text-rose-400'} obs-text-shadow`}>
         {stats.streak.count} {stats.streak.type === 'WIN' ? 'W' : 'L'}
       </span>
     </div>
@@ -327,12 +344,12 @@ export const MyDeckStatsWidget = ({ myDeckStats }) => (
         <div key={i} className="flex flex-col gap-1">
           <div className="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-all">
             <div className="flex flex-col">
-              <span className="text-[11px] font-black text-zinc-100 uppercase tracking-tight truncate max-w-[140px]">{d.name}</span>
-              <span className="text-[9px] text-zinc-300 font-bold uppercase">{d.total} matches</span>
+              <span className="text-[11px] font-black text-zinc-100 uppercase tracking-tight truncate max-w-[140px] obs-text-shadow">{d.name}</span>
+              <span className="text-[9px] text-zinc-300 font-bold uppercase obs-text-shadow">{d.total} matches</span>
             </div>
             <div className="text-right">
-              <span className={`text-lg font-black tracking-tighter ${d.winRate >= 50 ? 'text-emerald-400' : 'text-zinc-500'}`}>{d.winRate}%</span>
-              <span className="text-[8px] block text-zinc-500 font-black uppercase -mt-1">Win Rate</span>
+              <span className={`text-lg font-black tracking-tighter ${d.winRate >= 50 ? 'text-emerald-400' : 'text-zinc-500'} obs-text-shadow`}>{d.winRate}%</span>
+              <span className="text-[8px] block text-zinc-500 font-black uppercase -mt-1 obs-text-shadow">Win Rate</span>
             </div>
           </div>
           <div className="h-1.5 w-full bg-zinc-950 rounded-full overflow-hidden border border-white/5 mb-1">
@@ -363,16 +380,16 @@ export const MatchupTableWidget = ({ rankings = [] }) => {
           <div key={i} className="flex flex-col gap-1">
             <div className="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/5">
               <div className="flex items-center gap-3">
-                <span className="text-xs font-black text-zinc-400 w-4">#{i+1}</span>
+                <span className="text-xs font-black text-zinc-400 w-4 obs-text-shadow">#{i+1}</span>
                 <div className="flex flex-col">
-                  <span className="text-[11px] font-black text-zinc-100 uppercase tracking-tight truncate max-w-[160px]">{r.name}</span>
-                  <span className="text-[9px] text-zinc-300 font-bold uppercase">{r.total} matches</span>
+                  <span className="text-[11px] font-black text-zinc-100 uppercase tracking-tight truncate max-w-[160px] obs-text-shadow">{r.name}</span>
+                  <span className="text-[9px] text-zinc-300 font-bold uppercase obs-text-shadow">{r.total} matches</span>
                 </div>
               </div>
               <div className="flex gap-4">
                 <div className="text-right">
-                  <span className={`text-sm font-black ${r.winRate >= 50 ? 'text-emerald-400' : 'text-rose-400'}`}>{r.winRate}%</span>
-                  <span className="text-[8px] block text-zinc-500 font-black uppercase -mt-1">WR</span>
+                  <span className={`text-sm font-black ${r.winRate >= 50 ? 'text-emerald-400' : 'text-rose-400'} obs-text-shadow`}>{r.winRate}%</span>
+                  <span className="text-[8px] block text-zinc-500 font-black uppercase -mt-1 obs-text-shadow">WR</span>
                 </div>
               </div>
             </div>
@@ -472,7 +489,7 @@ export default function VisualBoard({ records, lastUpdated }) {
           <Activity className="w-3 h-3 text-indigo-500" />
           Live Analytics Engine Active
           {lastUpdated && (
-            <span className="text-zinc-600 border-l border-white/10 pl-4 ml-2">
+            <span className="text-zinc-100 border-l border-white/10 pl-4 ml-2 obs-text-shadow">
               Sync: {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </span>
           )}
