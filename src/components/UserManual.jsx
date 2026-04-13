@@ -3,7 +3,7 @@ import {
   X, HelpCircle, Monitor, Eye, EyeOff, Activity, 
   Gamepad2, Zap, Settings, Info, Keyboard, 
   AlertTriangle, CheckCircle2, ChevronRight,
-  ExternalLink, MousePointer2, Play
+  ExternalLink, MousePointer2, Play, TrendingUp, Trophy
 } from 'lucide-react';
 
 const ManualSection = ({ icon: Icon, title, children, defaultOpen = false }) => {
