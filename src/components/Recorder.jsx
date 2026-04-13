@@ -574,6 +574,12 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
     currentAnalyzeRef.current = captureAndAnalyze;
   }, [captureAndAnalyze]);
 
+  const stopRecording = useCallback(() => {
+    if (stream) { stream.getTracks().forEach(t => t.stop()); setStream(null); }
+    setIsRecording(false);
+    if (ocrWorkerRef.current) ocrWorkerRef.current.postMessage({ action: 'stop' });
+  }, [stream]);
+
   const startCapture = useCallback(async () => {
     try {
       playNotificationSound();
@@ -596,12 +602,6 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
       setOcrLog("キャプチャ失敗"); 
     }
   }, [stopRecording]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const stopRecording = useCallback(() => {
-    if (stream) { stream.getTracks().forEach(t => t.stop()); setStream(null); }
-    setIsRecording(false);
-    if (ocrWorkerRef.current) ocrWorkerRef.current.postMessage({ action: 'stop' });
-  }, [stream]);
 
   const togglePip = async () => {
     try {
