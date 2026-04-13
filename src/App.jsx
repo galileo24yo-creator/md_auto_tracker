@@ -5,6 +5,7 @@ import { decodeHTMLEntities } from './lib/utils';
 import Dashboard from './components/Dashboard';
 import Recorder from './components/Recorder';
 import SetupGuide from './components/SetupGuide';
+import UserManual from './components/UserManual';
 import VisualBoard from './components/VisualBoard';
 import './App.css';
 
@@ -15,6 +16,7 @@ function App() {
   const [error, setError] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showSetupGuide, setShowSetupGuide] = useState(false);
+  const [showUserManual, setShowUserManual] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   
   // 表示モードの判定 (?view=obs)
@@ -208,6 +210,14 @@ function App() {
         
         <div className="flex items-center gap-3">
           <button 
+            onClick={() => setShowUserManual(true)}
+            className="p-2 rounded-lg border bg-zinc-800/50 border-zinc-700 text-zinc-400 hover:text-white hover:border-indigo-500/50 transition"
+            title="User Manual"
+          >
+            <HelpCircle className="w-5 h-5" />
+          </button>
+
+          <button 
             onClick={() => setShowSettings(!showSettings)}
             className={`p-2 rounded-lg border transition ${showSettings ? "bg-indigo-500/20 border-indigo-500 text-indigo-400" : "bg-zinc-800/50 border-zinc-700 text-zinc-400 hover:text-white"}`}
             title="Settings"
@@ -330,6 +340,7 @@ function App() {
             availableDecks={data.decks} 
             availableTags={displayReasons} 
             onRecorded={() => loadData(true)} 
+            onOpenManual={() => setShowUserManual(true)}
           />
         </div>
 
@@ -376,6 +387,17 @@ function App() {
       {/* Setup Guide Modal */}
       {showSetupGuide && (
         <SetupGuide onClose={() => setShowSetupGuide(false)} />
+      )}
+
+      {/* User Manual Modal */}
+      {showUserManual && (
+        <UserManual 
+          onClose={() => setShowUserManual(false)} 
+          onOpenSetup={() => {
+            setShowUserManual(false);
+            setShowSetupGuide(true);
+          }} 
+        />
       )}
     </div>
   );

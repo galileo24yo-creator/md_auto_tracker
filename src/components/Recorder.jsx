@@ -49,7 +49,7 @@ const OcrStatus = React.memo(({ log }) => (
   </span>
 ));
 
-export default function Recorder({ availableDecks, availableTags, onRecorded }) {
+export default function Recorder({ availableDecks, availableTags, onRecorded, onOpenManual }) {
   const [stream, setStream] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -653,6 +653,15 @@ export default function Recorder({ availableDecks, availableTags, onRecorded }) 
               画面が隠れているか、タブが非アクティブな可能性があります。<br />
               プレビューが見える位置に戻してください。
             </p>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenManual();
+              }}
+              className="mt-4 px-4 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-[10px] font-bold text-white transition-all flex items-center gap-2"
+            >
+              <HelpCircle className="w-3.5 h-3.5" /> 解決方法を確認する
+            </button>
           </div>
         )}
 
