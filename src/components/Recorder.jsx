@@ -1,10 +1,14 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { MonitorUp, Square, Save, Loader2, Trophy, Activity, Lock, LockOpen, Eye, EyeOff, Monitor, RotateCcw, PlayCircle } from 'lucide-react';
+import { MonitorUp, Square, Save, Loader2, Trophy, Activity, Lock, LockOpen, Eye, EyeOff, Monitor, RotateCcw, PlayCircle, HelpCircle } from 'lucide-react';
 import DeckSelect from './DeckSelect';
 import { postData } from '../lib/api';
 import { fuzzyIncludes } from '../lib/utils';
 import { createWorker } from 'tesseract.js';
-import { ROIS, getROIData, STATES, detectRating, normalizeContent, drawBinarizedToCanvas, createBinarizedCanvas } from '../lib/visionEngine';
+import { 
+  ROIS, getROIData, STATES, detectRating, normalizeContent, 
+  drawBinarizedToCanvas, createBinarizedCanvas, 
+  extractSequenceFeatures, matchSequence, multiThresholdDetectRating 
+} from '../lib/visionEngine';
 
 // ==========================================
 // Sound Effects (Web Audio API)
@@ -171,7 +175,6 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
       lose: '/templates/lose.png'
     };
 
-    const { extractSequenceFeatures } = await import('../lib/visionEngine');
     const templates = {};
 
     for (const [key, url] of Object.entries(urls)) {
@@ -514,7 +517,6 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
             console.log(`[OCR Result] Text: "${cleanText}", Confidence: ${confidence}`);
 
             let sequenceResult = null;
-            const { extractSequenceFeatures, matchSequence } = await import('../lib/visionEngine');
             const rawData = ocrCanvas.getContext('2d').getImageData(0, 0, width, height);
             const { features, comps, bin } = extractSequenceFeatures(rawData, 0, 0);
 
@@ -543,7 +545,6 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
       else if (currentState === STATES.DETECTING_RATING && !slotsRef.current.isDiffLocked) {
         const ratingRoi = curMode === 'DC' ? ROIS.DC_POINTS : ROIS.RATING;
         const id = getROIData(ctx, v, ratingRoi, 300, 120);
-        const { multiThresholdDetectRating } = await import('../lib/visionEngine');
         const multiRes = multiThresholdDetectRating(id);
         const detected = multiRes.result;
         if (detected && detected.length >= 4) {
@@ -573,25 +574,34 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
     currentAnalyzeRef.current = captureAndAnalyze;
   }, [captureAndAnalyze]);
 
-  const startCapture = async () => {
+  const startCapture = useCallback(async () => {
     try {
       playNotificationSound();
       await initTesseract();
       const mediaStream = await navigator.mediaDevices.getDisplayMedia({
         video: { cursor: "never", frameRate: { ideal: 10, max: 15 }, width: { ideal: 1280, max: 1920 }, height: { ideal: 720, max: 1080 } }, audio: false
       });
+      
+      // Reset freeze timer to prevent immediate crash due to stale timestamp
+      lastUpdateRef.current = Date.now();
+      setIsFrozen(false);
+      isFrozenRef.current = false;
+      
       setStream(mediaStream); setIsRecording(true);
       setCurrentState(STATES.DETECTING_TURN); stateRef.current = STATES.DETECTING_TURN;
       mediaStream.getVideoTracks()[0].onended = () => stopRecording();
       if (ocrWorkerRef.current) ocrWorkerRef.current.postMessage({ action: 'start' });
-    } catch (err) { setOcrLog("キャプチャ失敗"); }
-  };
+    } catch (err) { 
+      console.error(err);
+      setOcrLog("キャプチャ失敗"); 
+    }
+  }, [stopRecording]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const stopRecording = () => {
+  const stopRecording = useCallback(() => {
     if (stream) { stream.getTracks().forEach(t => t.stop()); setStream(null); }
     setIsRecording(false);
     if (ocrWorkerRef.current) ocrWorkerRef.current.postMessage({ action: 'stop' });
-  };
+  }, [stream]);
 
   const togglePip = async () => {
     try {
