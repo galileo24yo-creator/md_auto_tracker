@@ -8,7 +8,11 @@ export const ROIS = {
   TURN: { x: 0.35, y: 0.63, w: 0.30, h: 0.08 },    // あなたが先攻/後攻です (縦横にタイト)
   RESULT: { x: 0.10, y: 0.35, w: 0.80, h: 0.30 }, // Wide version for better stability
   RATING: { x: 0.57, y: 0.52, w: 0.14, h: 0.08 },   // Rating Result Value (以前の正常値に復元)
-  DC_POINTS: { x: 0.60, y: 0.58, w: 0.15, h: 0.08 } // DC Points (2nd STAGE リザルト画面の最終DP位置に調整済)
+  DC_POINTS: { x: 0.60, y: 0.58, w: 0.15, h: 0.08 }, // DC Points (2nd STAGE リザルト画面の最終DP位置に調整済)
+  CARD_RUBY: { x: 0.015, y: 0.130, w: 0.170, h: 0.015 }, // ルビの縦幅を半分にして下寄せ
+  CARD_NAME: { x: 0.015, y: 0.145, w: 0.170, h: 0.035 }, // 境界をわずかに下へ (+0.005)
+  CARD_VISUAL: { x: 0.015, y: 0.200, w: 0.170, h: 0.150 }, // 比較用：名前エリアを避け、イラストエリアで判定
+  CARD_COLOR_INDICATOR: { x: 0.160, y: 0.330, w: 0.015, h: 0.080 } // 30px分(-0.03)上へ
 };
 
 export const DIGIT_TEMPLATES = {
@@ -42,20 +46,38 @@ export const calculateSSD = (buf1, buf2) => {
 /**
  * Extracts and processes an ROI from a video/canvas source.
  */
+export const getGameAreaBox = (videoWidth, videoHeight) => {
+  const targetRatio = 16 / 9;
+  const currentRatio = videoWidth / videoHeight;
+  let bx = 0, by = 0, bw = videoWidth, bh = videoHeight;
+
+  if (currentRatio < targetRatio - 0.01) {
+    // 縦長（タイトルバー混入等）なら幅を限界とし、高さを削って下揃え
+    bw = videoWidth;
+    bh = Math.floor(videoWidth / targetRatio);
+    by = videoHeight - bh; // 下揃え（タイトルバーは上にある）
+  } else if (currentRatio > targetRatio + 0.01) {
+    // 横長（左右黒帯等）なら高さを限界とし、幅を削って中央揃え
+    bh = videoHeight;
+    bw = Math.floor(videoHeight * targetRatio);
+    bx = Math.floor((videoWidth - bw) / 2);
+  }
+  return { bx, by, bw, bh };
+};
+
 export const getROIData = (ctx, videoEl, roi, targetW, targetH) => {
-  const vw = videoEl.videoWidth;
-  const vh = videoEl.videoHeight;
+  const { bx, by, bw, bh } = getGameAreaBox(videoEl.videoWidth, videoEl.videoHeight);
 
   // Create a temporary canvas if needed, or use the provided ctx
-  const rx = vw * roi.x;
-  const ry = vh * roi.y;
-  const rw = vw * roi.w;
-  const rh = vh * roi.h;
+  const rx = bx + bw * roi.x;
+  const ry = by + bh * roi.y;
+  const rw = bw * roi.w;
+  const rh = bh * roi.h;
 
   const tmpCanvas = document.createElement('canvas');
   tmpCanvas.width = targetW;
   tmpCanvas.height = targetH;
-  const tctx = tmpCanvas.getContext('2d');
+  const tctx = tmpCanvas.getContext('2d', { willReadFrequently: true });
 
   tctx.drawImage(videoEl, rx, ry, rw, rh, 0, 0, targetW, targetH);
   return tctx.getImageData(0, 0, targetW, targetH);
@@ -118,7 +140,7 @@ export const drawBinarizedToCanvas = (bin, canvasCtx, w = 128, h = 32) => {
 export const createBinarizedCanvas = (bin, w = 128, h = 32, invert = true) => {
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
-  const ctx = c.getContext('2d');
+  const ctx = c.getContext('2d', { willReadFrequently: true });
   const imgData = ctx.createImageData(w, h);
   for (let i = 0; i < bin.length; i++) {
     const val = bin[i] === 1 ? (invert ? 0 : 255) : (invert ? 255 : 0);
@@ -191,7 +213,7 @@ export const normalizeContent = (sourceCanvasOrVideo, sx, sy, sw, sh, IGNORED_W,
   if (!_tmpCanvas) _tmpCanvas = document.createElement('canvas');
   if (_tmpCanvas.width !== psw) _tmpCanvas.width = psw;
   if (_tmpCanvas.height !== psh) _tmpCanvas.height = psh;
-  const ctx = _tmpCanvas.getContext('2d');
+  const ctx = _tmpCanvas.getContext('2d', { willReadFrequently: true });
   
   if (angle !== 0) {
     ctx.clearRect(0, 0, psw, psh);
@@ -279,7 +301,7 @@ export const normalizeContent = (sourceCanvasOrVideo, sx, sy, sw, sh, IGNORED_W,
   if (!_finalCanvas) _finalCanvas = document.createElement('canvas');
   if (_finalCanvas.width !== targetWidth) _finalCanvas.width = targetWidth;
   if (_finalCanvas.height !== targetHeight) _finalCanvas.height = targetHeight;
-  const fctx = _finalCanvas.getContext('2d');
+  const fctx = _finalCanvas.getContext('2d', { willReadFrequently: true });
 
   fctx.drawImage(_tmpCanvas, minX, minY, boxW, boxH, 0, 0, targetWidth, targetHeight);
 
@@ -509,7 +531,7 @@ export const extractSequenceFeatures = (imageData, threshold = 0, angle = 0) => 
   
   const tmpCanvas = document.createElement('canvas');
   tmpCanvas.width = pw; tmpCanvas.height = ph;
-  const tctx = tmpCanvas.getContext('2d');
+  const tctx = tmpCanvas.getContext('2d', { willReadFrequently: true });
 
   if (angle !== 0) {
     tctx.save();
@@ -517,7 +539,7 @@ export const extractSequenceFeatures = (imageData, threshold = 0, angle = 0) => 
     tctx.rotate((angle * Math.PI) / 180);
     const off = document.createElement('canvas');
     off.width = w; off.height = h;
-    off.getContext('2d').putImageData(imageData, 0, 0);
+    off.getContext('2d', { willReadFrequently: true }).putImageData(imageData, 0, 0);
     tctx.drawImage(off, -w / 2, -h / 2);
     tctx.restore();
     processedImageData = tctx.getImageData(0, 0, pw, ph);
@@ -656,6 +678,49 @@ export const multiThresholdDetectRating = (roiImageData) => {
   // Return the result with the lowest average error among the winners
   const bestDetail = details.filter(d => d.result === bestValue).sort((a, b) => a.avgError - b.avgError)[0];
   return { ...bestDetail, votes: maxVotes };
+};
+
+/**
+ * Detects whether the card belongs to the player (blue) or opponent (red) based on pixel sampling.
+ */
+export const detectCardColor = (roiImageData) => {
+  const data = roiImageData.data;
+  let bluePoints = 0;
+  let redPoints = 0;
+  let totalValid = 0;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    
+    // Ignore dark pixels/neutral background
+    if (r < 30 && b < 30 && g < 30) continue;
+    
+    totalValid++;
+    // Red threshold (敵の赤光は暗めに出る報告があったため、明るさや色差の条件をさらに緩和)
+    if (r > 60 && (r - b) > 15 && (r - g) > 10) {
+      redPoints++;
+    }
+    // Blue threshold (同上)
+    else if (b > 60 && (b - r) > 15 && (b - g) > 10) {
+      bluePoints++;
+    }
+  }
+
+  if (totalValid === 0) return { side: 'NONE', log: '有効なピクセルなし' };
+  
+  // Requirement: Minimum amount of colored pixels to avoid false positives
+  // 横幅を細くしたことで総ピクセルから拾える色が減ったため、基準をさらに引き下げる（最低2ピクセル以上で通過）
+  const minThreshold = Math.max(2, (roiImageData.width * roiImageData.height) * 0.003); 
+  
+  if (bluePoints > redPoints && bluePoints >= minThreshold) {
+    return { side: 'BLUE', log: `味方 (B:${bluePoints})` };
+  } else if (redPoints > bluePoints && redPoints >= minThreshold) {
+    return { side: 'RED', log: `相手 (R:${redPoints})` };
+  }
+
+  return { side: 'NONE', log: `未検出 (満たず - R:${redPoints}, B:${bluePoints}, 閾値:${Math.floor(minThreshold)})` };
 };
 
 /**

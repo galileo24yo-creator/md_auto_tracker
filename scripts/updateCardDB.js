@@ -1,0 +1,121 @@
+import fs from 'fs';
+import path from 'path';
+
+const BASE_URL = 'https://db.ygoprodeck.com/api/v7/cardinfo.php';
+const JA_URL = 'https://db.ygoprodeck.com/api/v7/cardinfo.php?language=ja';
+const OUTPUT_FILE = path.join(process.cwd(), 'public', 'card_db.json');
+const MANUAL_FILE = path.join(process.cwd(), 'public', 'manual_cards.json');
+
+// 全角を半角に変換するなどの正規化処理
+function normalizeText(text) {
+  if (!text) return '';
+  return text
+    .replace(/[！-～]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0)) // 全角英数記号 -> 半角
+    .replace(/－/g, '-') // 全角ハイフン -> 半角
+    .replace(/　/g, ' ') // 全角スペース -> 半角
+    .replace(/\s+/g, '') // 全てのスペースを除去（検索用）
+    .trim();
+}
+
+const ARCHETYPE_MAP = {
+  'K9': 'Ｋ９（ケーナイン）',
+  'Blackwing': 'ＢＦ（ブラックフェザー）',
+  'Blue-Eyes': '青眼',
+  'Red-Eyes': '真紅眼',
+  'Dark Magician': 'ブラック・マジシャン',
+  'Adamancipator': 'アダマシア',
+  'Destiny HERO': 'Ｄ－ＨＥＲＯ',
+  'Elemental HERO': 'Ｅ・ＨＥＲＯ',
+  'Evil HERO': 'Ｅ－ＨＥＲＯ',
+  'Masked HERO': 'Ｍ・ＨＥＲＯ',
+  'Evil★Twin': 'イビルツイン',
+  'Live☆Twin': 'ライブツイン',
+  'Sky Striker': '閃刀姫',
+  'Tearlaments': 'ティアラメンツ',
+  'Kashtira': 'クシャトリラ',
+  'Floowandereeze': 'ふわんだりぃず',
+  'Labrynth': 'ラビュリンス',
+  'Snake-Eye': 'スネークアイ',
+  'Purrely': 'ピュアリィ',
+  'Mikanko': '御巫',
+  'Rescue-ACE': 'Ｒ－ＡＣＥ',
+  'Tenpyai Dragon': '天盃龍',
+  'Voiceless Voice': '粛声'
+};
+
+async function updateDB() {
+  console.log('🔄 Updating database with hybrid merge (All + Japanese)...');
+  
+  try {
+    // Phase 1: Fetch All Cards (Foundation)
+    console.log('Fetching all cards (English context)...');
+    const baseResponse = await fetch(BASE_URL);
+    if (!baseResponse.ok) throw new Error(`Base API error: ${baseResponse.status}`);
+    const baseData = await baseResponse.json();
+    
+    // IDをキーにしたマップを作成
+    const cardMap = new Map();
+    baseData.data.forEach(card => {
+      cardMap.set(card.id, {
+        id: card.id,
+        name: card.name, // 初期値は英語名
+        archetype: card.archetype || ''
+      });
+    });
+    console.log(`- Loaded ${cardMap.size} base cards.`);
+
+    // Phase 2: Fetch Japanese Names
+    console.log('Fetching Japanese names...');
+    const jaResponse = await fetch(JA_URL);
+    if (!jaResponse.ok) {
+        console.warn('⚠️ Japanese API failed, using English names as fallback.');
+    } else {
+        const jaData = await jaResponse.json();
+        jaData.data.forEach(card => {
+            if (cardMap.has(card.id)) {
+                const existing = cardMap.get(card.id);
+                existing.name = card.name; // 日本語名で上書き
+                // テーマ名も日本語があればここで置換（APIが対応していれば）
+            }
+        });
+        console.log(`- Patched Japanese names for ${jaData.data.length} cards.`);
+    }
+
+    // Final Mapping & Normalization
+    const finalCards = Array.from(cardMap.values()).map(card => ({
+      ...card,
+      normalizedName: normalizeText(card.name),
+      archetype: ARCHETYPE_MAP[card.archetype] || card.archetype
+    }));
+
+    // Phase 3: Manual Overrides
+    if (fs.existsSync(MANUAL_FILE)) {
+      console.log('Merging manual card data...');
+      const manualData = JSON.parse(fs.readFileSync(MANUAL_FILE, 'utf8'));
+      manualData.forEach(mCard => {
+         // マニアルデータは常に最優先
+         const idx = finalCards.findIndex(c => c.id === mCard.id);
+         const processedMCard = {
+             ...mCard,
+             normalizedName: normalizeText(mCard.name),
+             archetype: ARCHETYPE_MAP[mCard.archetype] || mCard.archetype
+         };
+         if (idx !== -1) {
+             finalCards[idx] = processedMCard;
+         } else {
+             finalCards.push(processedMCard);
+         }
+      });
+      console.log(`- Merged ${manualData.length} manual entry/entries.`);
+    }
+
+    fs.writeFileSync(OUTPUT_FILE, JSON.stringify(finalCards));
+    console.log(`✅ Successfully generated card_db.json with ${finalCards.length} cards!`);
+    
+  } catch (err) {
+    console.error('❌ Failed to update card database:', err);
+    process.exit(1);
+  }
+}
+
+updateDB();

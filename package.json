@@ -7,11 +7,13 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "update-db": "node scripts/updateCardDB.js"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
+    "fuse.js": "^7.3.0",
     "html-to-image": "^1.11.13",
     "lucide-react": "^1.6.0",
     "react": "^19.2.4",
