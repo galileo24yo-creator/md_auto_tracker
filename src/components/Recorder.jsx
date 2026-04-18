@@ -117,6 +117,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
 
   // Focus tracking for performance
   const [isInputActive, setIsInputActive] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
   const inputActiveRef = useRef(false);
   useEffect(() => { inputActiveRef.current = isInputActive; }, [isInputActive]);
 
@@ -168,7 +169,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
         fuseRef.current = new Fuse(data, {
           keys: ['normalizedName'], 
           includeScore: true,
-          threshold: 0.2, 
+          threshold: 0.25, 
           distance: 100,
           ignoreLocation: true
         });
@@ -310,7 +311,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
     if (isRecording && ocrWorkerRef.current) {
       const curState = stateRef.current;
       let interval = 500;
-      if (curState === STATES.IN_MATCH) interval = 800;
+      if (curState === STATES.IN_MATCH) interval = 500; 
       ocrWorkerRef.current.postMessage({ action: 'start', interval });
       try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -324,7 +325,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
         const loop = (now, metadata) => {
           if (!recordingRef.current) return;
           const curTime = Date.now();
-          const targetInterval = stateRef.current === STATES.IN_MATCH ? 800 : 500;
+          const targetInterval = 500;
           if (curTime - lastAnalyzeTimeRef.current >= targetInterval && isBusyRef.current === false) {
             // タブが隠れているか、要素が見えていない場合は、さらに認識頻度を落とす
             if (!isTabVisible || !isElementVisible) {
@@ -488,7 +489,9 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
 
   const captureAndAnalyze = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current || videoRef.current.readyState < 2) return;
-    const v = videoRef.current, c = canvasRef.current, ctx = c.getContext('2d', { willReadFrequently: true });
+    setIsScanning(true);
+    try {
+      const v = videoRef.current, c = canvasRef.current, ctx = c.getContext('2d', { willReadFrequently: true });
     const rawVw = v.videoWidth, rawVh = v.videoHeight;
     const { bx, by, bw, bh } = getGameAreaBox(rawVw, rawVh);
     const { isTurnLocked: tLock, isResultLocked: rLock, mode: curMode } = slotsRef.current;
@@ -577,14 +580,14 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
             let whitePixels = 0; for (let i = 0; i < nBin.length; i++) { if (nBin[i] === 1) whitePixels++; }
             const whiteRatio = whitePixels / nBin.length;
             if (whiteRatio < 0.01 || whiteRatio > 0.40) {
-              // console.log(`[Card Detect] 文字密度エラー (${(whiteRatio * 100).toFixed(1)}%)`);
+              addLog(`[密度] OCRスキップ (${(whiteRatio * 100).toFixed(1)}%)`, 'debug');
             } else {
               const curGray = toGrayscale(getROIData(ctx, v, ROIS.CARD_VISUAL, 100, 100));
               if (prevGrayRef.current && prevGrayRef.current.length === curGray.length) {
                 const ssd = calculateSSD(curGray, prevGrayRef.current);
                 if (ssd > 600) {
                   cardVotesRef.current = {}; detectionAttemptsRef.current = 0; detectionWindowRef.current = []; lastFrameCardNameRef.current = '';
-                  addLog('🔄 表示カードの切り替わりを検知', 'info');
+                  addLog('🔄 カードの切り替わりを検知 (SSD)', 'info');
                 }
               }
               prevGrayRef.current = curGray;
@@ -607,9 +610,10 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
                   const cleanText = normalizeCardName(rawText);
                   
                   if (cleanText.length < 3) {
-                    // console.log(`[OCR Ignore] Too short: "${cleanText}"`);
+                    addLog(`[OCR短] スキップ: "${cleanText}"`, 'debug');
                     return;
                   }
+                  addLog(`[OCR生] 解析結果: "${cleanText}"`, 'debug');
 
                   if (cleanText.length >= 2) {
                     detectionAttemptsRef.current++;
@@ -618,24 +622,23 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
                       if (results && results.length > 0) {
                         const bestMatch = results[0].item;
                         const matchScore = results[0].score || 0;
-                        if (matchScore < 0.2) {
+                        if (matchScore < 0.25) {
                             const name = bestMatch.name;
                             const vMap = cardVotesRef.current;
-                            let currentWinner = '';
-                            let maxVotesSoFar = 0;
+                            
                             // 名前が前回判定時と明確に異なる場合は即座に履歴をリセット
-                            if (lastFrameCardNameRef.current && lastFrameCardNameRef.current !== name && matchScore < 0.2) {
+                            if (lastFrameCardNameRef.current && lastFrameCardNameRef.current !== name && matchScore < 0.15) {
                               cardVotesRef.current = { [name]: { count: 1, archetype: bestMatch.archetype } };
                               detectionAttemptsRef.current = 1; detectionWindowRef.current = []; lastFrameCardNameRef.current = name;
-                              console.log(`[Switch Detect] Name change detected: ${lastFrameCardNameRef.current} -> ${name}`);
+                              console.log(`[Switch Detect] Quick switch: ${name}`);
                             } else {
                               if (!vMap[name]) vMap[name] = { count: 0, archetype: bestMatch.archetype };
                               vMap[name].count++; lastFrameCardNameRef.current = name;
                             }
 
                             const window = detectionWindowRef.current;
-                            window.push({ name, archetype: bestMatch.archetype, side: colorRes.side });
-                            if (window.length > 5) window.shift();
+                            window.push({ name, archetype: bestMatch.archetype, side: colorRes.side, score: matchScore });
+                            if (window.length > 3) window.shift(); // 5 -> 3 に短縮
                             
                             const counts = {}; window.forEach(item => { counts[item.name] = (counts[item.name] || 0) + 1; });
                             let topWindowCard = name; let maxWinVotes = 0;
@@ -650,22 +653,19 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
                               votes: maxWinVotes
                             });
                             
-                            console.log(`[Stable Monitor] Window winner: ${topWindowCard} (${maxWinVotes}/${window.length}) | Side: ${winnerData.side}`);
-
-                            if (maxWinVotes >= 2) {
+                            // 確定条件: (3枚中2枚以上) または (1枚でも非常に高スコア 0.1未満)
+                            const isHighlyConfident = matchScore < 0.1;
+                            if (maxWinVotes >= 2 || isHighlyConfident) {
                                const isAlreadyDetected = detectedCardsRef.current.some(c => c.name === topWindowCard && c.side === winnerData.side);
                                if (!isAlreadyDetected) {
                                  const newCard = { name: topWindowCard, archetype: winnerData.archetype, side: winnerData.side, timestamp: Date.now() };
-                                 detectedCardsRef.current.push(newCard); // Refを同期
-                                 setDetectedCards([...detectedCardsRef.current]); // Stateを同期
-                                 
-                                 // 副作用（ログ出力）をここで確実に実行
-                                 addLog(`カード検知: ${topWindowCard} (${winnerData.side === 'BLUE' ? '味方' : '相手'})`, winnerData.side === 'BLUE' ? 'info' : 'warning');
-                                 console.log(`[Log Add] Adding card to history: ${topWindowCard} (${winnerData.side})`);
+                                 detectedCardsRef.current.push(newCard);
+                                 setDetectedCards([...detectedCardsRef.current]);
+                                 addLog(`${isHighlyConfident ? '⚡ 直感検知' : '🔍 確定'}: ${topWindowCard} (${winnerData.side === 'BLUE' ? '味方' : '相手'})`, winnerData.side === 'BLUE' ? 'info' : 'warning');
                                }
                             }
                         } else {
-                          // console.log(`[Fuse Low Score] ${cleanText} (Score: ${matchScore.toFixed(3)})`);
+                          addLog(`[低信頼] 無視: ${bestMatch.name} (Score: ${matchScore.toFixed(3)})`, 'debug');
                         }
                       }
                     }
@@ -734,6 +734,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
         });
       }
     } catch (err) { console.error(err); }
+    } finally { setIsScanning(false); }
   }, [currentState, showRoiOverlay, saveMatch, addLog]);
 
   useEffect(() => { currentAnalyzeRef.current = captureAndAnalyze; }, [captureAndAnalyze]);
@@ -793,6 +794,20 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
             : 'bg-black/80 border border-zinc-700/50 z-10 opacity-100 sticky top-4 shadow-2xl backdrop-blur-md' // Normal Mode
           }`}
       >
+        {isRecording && (
+          <div className="absolute top-4 left-4 z-[45] flex items-center gap-2">
+            {isScanning ? (
+              <div className="flex items-center gap-1.5 bg-indigo-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg shadow-indigo-500/40 animate-pulse uppercase tracking-wider">
+                <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />
+                Scanning
+              </div>
+            ) : (
+              <div className="bg-zinc-900/80 text-zinc-500 text-[10px] font-bold px-2 py-0.5 rounded-full border border-zinc-700 uppercase tracking-widest">
+                Standby
+              </div>
+            )}
+          </div>
+        )}
         {stream ? <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-contain" /> : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 text-sm">Launch Capture to Start</div>
         )}
@@ -848,7 +863,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
             <h4 className="text-zinc-500 mb-2 uppercase font-black text-[9px] flex items-center gap-2"><Activity className="w-3 h-3" /> Activity Log</h4>
             <div className="space-y-1">
               {ocrLogs.map((log, i) => (
-                <div key={i} className={`flex items-start gap-2 ${log.type === 'error' ? 'text-rose-400' : log.type === 'success' ? 'text-emerald-400' : log.type === 'warning' ? 'text-amber-400' : 'text-zinc-300'}`}>
+                <div key={i} className={`flex items-start gap-2 ${log.type === 'error' ? 'text-rose-400' : log.type === 'success' ? 'text-emerald-400' : log.type === 'warning' ? 'text-amber-400' : log.type === 'debug' ? 'text-zinc-500' : 'text-zinc-300'}`}>
                   <span className="text-zinc-600 shrink-0">[{log.time}]</span>
                   <span>{log.msg}</span>
                 </div>
