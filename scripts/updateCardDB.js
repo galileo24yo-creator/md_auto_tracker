@@ -13,6 +13,12 @@ function normalizeText(text) {
     .replace(/[！-～]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0)) // 全角英数記号 -> 半角
     .replace(/－/g, '-') // 全角ハイフン -> 半角
     .replace(/　/g, ' ') // 全角スペース -> 半角
+    // ギリシャ文字の誤読対策 (OCRが読みやすいアルファベット等に寄せる)
+    .replace(/α/g, 'a')
+    .replace(/β/g, 'b')
+    .replace(/γ/g, 'y') // ガンマは y や v に誤読されやすいため
+    .replace(/δ/g, 'd')
+    .replace(/ε/g, 'e')
     .replace(/\s+/g, '') // 全てのスペースを除去（検索用）
     .trim();
 }

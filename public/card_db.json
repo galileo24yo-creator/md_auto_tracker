@@ -1629,13 +1629,13 @@
     "id": 42023223,
     "name": "電磁石の戦士α",
     "archetype": "マグネット・ウォリアー",
-    "normalizedName": "電磁石の戦士α"
+    "normalizedName": "電磁石の戦士a"
   },
   {
     "id": 99785935,
     "name": "磁石の戦士α",
     "archetype": "Magnet Warrior",
-    "normalizedName": "磁石の戦士α"
+    "normalizedName": "磁石の戦士a"
   },
   {
     "id": 73304257,
@@ -6855,13 +6855,13 @@
     "id": 79418928,
     "name": "電磁石の戦士β",
     "archetype": "マグネット・ウォリアー",
-    "normalizedName": "電磁石の戦士β"
+    "normalizedName": "電磁石の戦士b"
   },
   {
     "id": 39256679,
     "name": "磁石の戦士β",
     "archetype": "Magnet Warrior",
-    "normalizedName": "磁石の戦士β"
+    "normalizedName": "磁石の戦士b"
   },
   {
     "id": 84079032,
@@ -18021,7 +18021,7 @@
     "id": 12262393,
     "name": "磁石の戦士δ",
     "archetype": "マグネット・ウォリアー",
-    "normalizedName": "磁石の戦士δ"
+    "normalizedName": "磁石の戦士d"
   },
   {
     "id": 12079734,
@@ -21957,7 +21957,7 @@
     "id": 97148796,
     "name": "竜輝巧－バンα",
     "archetype": "Drytron",
-    "normalizedName": "竜輝巧-バンα"
+    "normalizedName": "竜輝巧-バンa"
   },
   {
     "id": 57970721,
@@ -21969,13 +21969,13 @@
     "id": 33543890,
     "name": "竜輝巧－ラスβ",
     "archetype": "Drytron",
-    "normalizedName": "竜輝巧-ラスβ"
+    "normalizedName": "竜輝巧-ラスb"
   },
   {
     "id": 22420202,
     "name": "竜輝巧－ルタδ",
     "archetype": "Drytron",
-    "normalizedName": "竜輝巧-ルタδ"
+    "normalizedName": "竜輝巧-ルタd"
   },
   {
     "id": 21576077,
@@ -21993,7 +21993,7 @@
     "id": 60037599,
     "name": "竜輝巧－エルγ",
     "archetype": "Drytron",
-    "normalizedName": "竜輝巧-エルγ"
+    "normalizedName": "竜輝巧-エルy"
   },
   {
     "id": 56863746,
@@ -22023,7 +22023,7 @@
     "id": 1174075,
     "name": "竜輝巧－ファフμβ’",
     "archetype": "Drytron",
-    "normalizedName": "竜輝巧-ファフμβ’"
+    "normalizedName": "竜輝巧-ファフμb’"
   },
   {
     "id": 94187078,
@@ -24315,7 +24315,7 @@
     "id": 52566270,
     "name": "磁石の戦士ε",
     "archetype": "Magnet Warrior",
-    "normalizedName": "磁石の戦士ε"
+    "normalizedName": "磁石の戦士e"
   },
   {
     "id": 98049934,
@@ -26061,7 +26061,7 @@
     "id": 86170989,
     "name": "ファルシオンβ",
     "archetype": "",
-    "normalizedName": "ファルシオンβ"
+    "normalizedName": "ファルシオンb"
   },
   {
     "id": 93023136,
@@ -29841,13 +29841,13 @@
     "id": 15502037,
     "name": "電磁石の戦士γ",
     "archetype": "マグネット・ウォリアー",
-    "normalizedName": "電磁石の戦士γ"
+    "normalizedName": "電磁石の戦士y"
   },
   {
     "id": 11549357,
     "name": "磁石の戦士γ",
     "archetype": "Magnet Warrior",
-    "normalizedName": "磁石の戦士γ"
+    "normalizedName": "磁石の戦士y"
   },
   {
     "id": 85709845,
@@ -58773,31 +58773,31 @@
     "id": 75425043,
     "name": "PSYフレームギア・α",
     "archetype": "PSY-Frame",
-    "normalizedName": "PSYフレームギア・α"
+    "normalizedName": "PSYフレームギア・a"
   },
   {
     "id": 2810642,
     "name": "PSYフレームギア・β",
     "archetype": "PSY-Frame",
-    "normalizedName": "PSYフレームギア・β"
+    "normalizedName": "PSYフレームギア・b"
   },
   {
     "id": 74203495,
     "name": "PSYフレームギア・δ",
     "archetype": "PSY-Frame",
-    "normalizedName": "PSYフレームギア・δ"
+    "normalizedName": "PSYフレームギア・d"
   },
   {
     "id": 1697104,
     "name": "PSYフレームギア・ε",
     "archetype": "PSY-Frame",
-    "normalizedName": "PSYフレームギア・ε"
+    "normalizedName": "PSYフレームギア・e"
   },
   {
     "id": 38814750,
     "name": "PSYフレームギア・γ",
     "archetype": "PSY-Frame",
-    "normalizedName": "PSYフレームギア・γ"
+    "normalizedName": "PSYフレームギア・y"
   },
   {
     "id": 8802510,

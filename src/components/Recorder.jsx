@@ -22,6 +22,12 @@ function normalizeCardName(text) {
     .replace(/[！-～]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0)) // 全角英数記号 -> 半角
     .replace(/－/g, '-') // 全角ハイフン -> 半角
     .replace(/　/g, ' ') // 全角スペース -> 半角
+    // ギリシャ文字の誤読対策 (DB側の正規化名と一致させる)
+    .replace(/α/g, 'a')
+    .replace(/β/g, 'b')
+    .replace(/γ/g, 'y')
+    .replace(/δ/g, 'd')
+    .replace(/ε/g, 'e')
     .replace(/\s+/g, '') // 全てのスペースを除去（検索用）
     .trim();
 }
