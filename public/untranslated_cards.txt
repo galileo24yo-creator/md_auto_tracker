@@ -50,7 +50,6 @@
 101305018: The Phantom Knights of Decayed Cloak
 101305019: The Phantom Knights of Doomed Solleret
 101305020: S-Force Signus
-101305021: Melffy Rabbys
 101305022: Phara, the Goddess of the Beginning
 101305023: Astrolasma Urania
 101305024: Magical King of the Swamp
@@ -416,6 +415,7 @@
 2339825: T.G. Close
 23446369: Eye of Illusion
 23512906: Gold Pride - Leon
+23599634: Artmage Pact -Awakening-
 23611122: Sudden Thunder Swamp
 23617756: Exxod Fires of Rage
 23623653: Spiritual Beast Tamer Lara

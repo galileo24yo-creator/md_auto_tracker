@@ -4579,87 +4579,87 @@
   },
   {
     "id": 74733322,
-    "name": "神芸学都アルトメギア",
-    "archetype": "アルトメギア",
-    "normalizedName": "神芸学都アルトメギア"
+    "name": "神芸学都－アルトメギア",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "神芸学都-アルトメギア"
   },
   {
     "id": 27184601,
-    "name": "アルトメギア・ディアクトラス",
-    "archetype": "アルトメギア",
-    "normalizedName": "アルトメギア・ディアクトラス"
+    "name": "神芸獄徒 ディアクトロス",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "神芸獄徒ディアクトロス"
   },
   {
     "id": 34541940,
-    "name": "アルトメギア・フィンメル",
-    "archetype": "アルトメギア",
-    "normalizedName": "アルトメギア・フィンメル"
+    "name": "神芸学徒 ファインメルト",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "神芸学徒ファインメルト"
   },
   {
     "id": 60946049,
-    "name": "アルトメギア・グラフレア",
-    "archetype": "アルトメギア",
-    "normalizedName": "アルトメギア・グラフレア"
+    "name": "神芸学徒 グラフレア",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "神芸学徒グラフレア"
   },
   {
     "id": 44654994,
-    "name": "アルトメギア・インパスト",
-    "archetype": "アルトメギア",
-    "normalizedName": "アルトメギア・インパスト"
+    "name": "アルトメギア・インパスト－奪還－",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "アルトメギア・インパスト-奪還-"
   },
   {
     "id": 97434754,
-    "name": "アルトメギア・リテラ",
-    "archetype": "アルトメギア",
-    "normalizedName": "アルトメギア・リテラ"
+    "name": "神芸なる知恵の乙女",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "神芸なる知恵の乙女"
   },
   {
     "id": 37517035,
-    "name": "アルトメギア・傑作",
-    "archetype": "アルトメギア",
-    "normalizedName": "アルトメギア・傑作"
+    "name": "アルトメギア・マスターワーク－継承－",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "アルトメギア・マスターワーク-継承-"
   },
   {
     "id": 21720439,
-    "name": "アルトメギア・ムーブメント",
-    "archetype": "アルトメギア",
-    "normalizedName": "アルトメギア・ムーブメント"
+    "name": "アルトメギア・ムーヴメント－血統－",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "アルトメギア・ムーヴメント-血統-"
   },
   {
     "id": 74631897,
-    "name": "アルトメギア・ノンフィニート",
-    "archetype": "アルトメギア",
-    "normalizedName": "アルトメギア・ノンフィニート"
+    "name": "アルトメギア・メセナ－覚醒－",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "アルトメギア・メセナ-覚醒-"
   },
   {
     "id": 23599634,
-    "name": "アルトメギア・盟約",
-    "archetype": "アルトメギア",
-    "normalizedName": "アルトメギア・盟約"
+    "name": "Artmage Pact -Awakening-",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "ArtmagePact-Awakening-"
   },
   {
     "id": 17719582,
-    "name": "アルトメギア・ペリペテイア",
-    "archetype": "アルトメギア",
-    "normalizedName": "アルトメギア・ペリペテイア"
+    "name": "アルトメギア・ペリペティア－激動－",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "アルトメギア・ペリペティア-激動-"
   },
   {
     "id": 23829452,
     "name": "アルトメギアの獄神獣",
-    "archetype": "アルトメギア",
+    "archetype": "神芸（アルトメギア）",
     "normalizedName": "アルトメギアの獄神獣"
   },
   {
     "id": 1122030,
-    "name": "アルトメギア・ヴァンダリズム",
-    "archetype": "アルトメギア",
-    "normalizedName": "アルトメギア・ヴァンダリズム"
+    "name": "アルトメギア・ヴァンダリズム－襲撃－",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "アルトメギア・ヴァンダリズム-襲撃-"
   },
   {
     "id": 74011784,
-    "name": "アルトメギア・ヴァーニッシュ",
-    "archetype": "アルトメギア",
-    "normalizedName": "アルトメギア・ヴァーニッシュ"
+    "name": "アルトメギア・バーニッシュ－改変－",
+    "archetype": "神芸（アルトメギア）",
+    "normalizedName": "アルトメギア・バーニッシュ-改変-"
   },
   {
     "id": 21223277,
@@ -5311,21 +5311,21 @@
   },
   {
     "id": 39491690,
+    "name": "アザミナ・アーフェス",
+    "archetype": "アザミナ",
+    "normalizedName": "アザミナ・アーフェス"
+  },
+  {
+    "id": 20934683,
     "name": "アザミナ・オフェイレーテス",
     "archetype": "アザミナ",
     "normalizedName": "アザミナ・オフェイレーテス"
   },
   {
-    "id": 20934683,
-    "name": "アザミナ・デリバランス",
-    "archetype": "アザミナ",
-    "normalizedName": "アザミナ・デリバランス"
-  },
-  {
     "id": 42201897,
-    "name": "アザミナ・ソル・エレボス",
+    "name": "アザミナ・ハマルティア",
     "archetype": "アザミナ",
-    "normalizedName": "アザミナ・ソル・エレボス"
+    "normalizedName": "アザミナ・ハマルティア"
   },
   {
     "id": 46396218,
@@ -17659,9 +17659,9 @@
   },
   {
     "id": 101305055,
-    "name": "獄神領域－ヴィライア",
-    "archetype": "獄神",
-    "normalizedName": "獄神領域-ヴィライア"
+    "name": "絶境なる獄神域－ヴィライア",
+    "archetype": "獄神（パワー・パトロン）",
+    "normalizedName": "絶境なる獄神域-ヴィライア"
   },
   {
     "id": 75527221,
@@ -18769,9 +18769,9 @@
   },
   {
     "id": 14307929,
-    "name": "白き森の妖魔ディアベル",
+    "name": "白き森の聖徒リゼット",
     "archetype": "白き森",
-    "normalizedName": "白き森の妖魔ディアベル"
+    "normalizedName": "白き森の聖徒リゼット"
   },
   {
     "id": 72270339,
@@ -20395,69 +20395,69 @@
   },
   {
     "id": 31010081,
-    "name": "ＤｏｏｍＺ ＢＲＥＡＫ ディアクトラス",
-    "archetype": "ドゥームズ",
-    "normalizedName": "DoomZBREAKディアクトラス"
+    "name": "終刻獄徒 ディアクトロス",
+    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "normalizedName": "終刻獄徒ディアクトロス"
   },
   {
     "id": 38007649,
-    "name": "ＤｏｏｍＺ ＣＨＡＮＧＥ",
-    "archetype": "ドゥームズ",
-    "normalizedName": "DoomZCHANGE"
+    "name": "終刻変転",
+    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "normalizedName": "終刻変転"
   },
   {
     "id": 84054556,
-    "name": "ＤｏｏｍＺ ＣＯＭＭＡＮＤ アドラステイア",
-    "archetype": "ドゥームズ",
-    "normalizedName": "DoomZCOMMANDアドラステイア"
+    "name": "終刻反転『Ａ.Ｄ.Ｒ.Ａ.Ｓ.Ｔ.Ｅ.Ｉ.Ａ.』",
+    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "normalizedName": "終刻反転『A.D.R.A.S.T.E.I.A.』"
   },
   {
     "id": 68831625,
-    "name": "ＤｏｏｍＺ ＣＯＭＭＡＮＤ ドゥームドラグ",
-    "archetype": "ドゥームズ",
-    "normalizedName": "DoomZCOMMANDドゥームドラグ"
+    "name": "終刻起動『Ｄ.Ｏ.Ｏ.Ｍ.Ｄ.Ｕ.Ｒ.Ｇ.』",
+    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "normalizedName": "終刻起動『D.O.O.M.D.U.R.G.』"
   },
   {
     "id": 80320877,
-    "name": "ＤｏｏｍＺ ＤＥＳＴＲＵＣＴＩＯＮ",
-    "archetype": "ドゥームズ",
-    "normalizedName": "DoomZDESTRUCTION"
+    "name": "終刻決壊",
+    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "normalizedName": "終刻決壊"
   },
   {
     "id": 32442017,
-    "name": "ＤｏｏｍＺ ＲＡＩＤＥＲＳ",
-    "archetype": "ドゥームズ",
-    "normalizedName": "DoomZRAIDERS"
+    "name": "終刻撃針",
+    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "normalizedName": "終刻撃針"
   },
   {
     "id": 28877382,
-    "name": "ＤｏｏｍＺ Ｖ ５ アマルテ",
-    "archetype": "ドゥームズ",
-    "normalizedName": "DoomZV5アマルテ"
+    "name": "終刻竜機Ｖ－アマルテ",
+    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "normalizedName": "終刻竜機V-アマルテ"
   },
   {
     "id": 54265980,
-    "name": "ＤｏｏｍＺ ＶＩＩ ７ エララ",
-    "archetype": "ドゥームズ",
-    "normalizedName": "DoomZVII7エララ"
+    "name": "終刻竜機ＶＩＩ－エララ",
+    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "normalizedName": "終刻竜機VII-エララ"
   },
   {
     "id": 95626382,
-    "name": "ＤｏｏｍＺ ＸＩＩ ＥＮＤ ドラスティウス",
-    "archetype": "ドゥームズ",
-    "normalizedName": "DoomZXIIENDドラスティウス"
+    "name": "終獄龍機ＸＩＩ－ドラストリウス",
+    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "normalizedName": "終獄龍機XII-ドラストリウス"
   },
   {
     "id": 92472273,
-    "name": "ＤｏｏｍＺ ＸＩＩ ＺＥＲＯ ドラスティア",
-    "archetype": "ドゥームズ",
-    "normalizedName": "DoomZXIIZEROドラスティア"
+    "name": "終刻竜機ＸＩＩ－ドラスティア",
+    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "normalizedName": "終刻竜機XII-ドラスティア"
   },
   {
     "id": 65848113,
-    "name": "ＤｏｏｍＺ ＸＩＩＩ ＯＶＥＲ グラフラリオ",
-    "archetype": "ドゥームズ",
-    "normalizedName": "DoomZXIIIOVERグラフラリオ"
+    "name": "終刻竜機ＸＩＩＩ－グラフレイオ",
+    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "normalizedName": "終刻竜機XIII-グラフレイオ"
   },
   {
     "id": 53855410,
@@ -23695,69 +23695,69 @@
   },
   {
     "id": 85976588,
-    "name": "耀聖の風詩フォルトゥーナ",
-    "archetype": "エルフェンノーツ",
-    "normalizedName": "耀聖の風詩フォルトゥーナ"
+    "name": "耀聖の月詩フォルトナ",
+    "archetype": "耀聖（エルフェンノーツ）",
+    "normalizedName": "耀聖の月詩フォルトナ"
   },
   {
     "id": 13597785,
-    "name": "耀聖の風詩ルキナ",
-    "archetype": "エルフェンノーツ",
-    "normalizedName": "耀聖の風詩ルキナ"
+    "name": "耀聖の花詩ルキナ",
+    "archetype": "耀聖（エルフェンノーツ）",
+    "normalizedName": "耀聖の花詩ルキナ"
   },
   {
     "id": 12375297,
-    "name": "耀聖の獄神獣",
-    "archetype": "エルフェンノーツ",
-    "normalizedName": "耀聖の獄神獣"
+    "name": "燿ける聖詩の獄神精",
+    "archetype": "耀聖（エルフェンノーツ）",
+    "normalizedName": "燿ける聖詩の獄神精"
   },
   {
     "id": 56651978,
     "name": "耀聖の風詩レギナ",
-    "archetype": "エルフェンノーツ",
+    "archetype": "耀聖（エルフェンノーツ）",
     "normalizedName": "耀聖の風詩レギナ"
   },
   {
     "id": 42302563,
-    "name": "耀聖の風詩ストレリチア",
-    "archetype": "エルフェンノーツ",
-    "normalizedName": "耀聖の風詩ストレリチア"
+    "name": "獄花の大耀聖ストリチア",
+    "archetype": "耀聖（エルフェンノーツ）",
+    "normalizedName": "獄花の大耀聖ストリチア"
   },
   {
     "id": 59581480,
-    "name": "耀聖の風詩ティニア",
-    "archetype": "エルフェンノーツ",
-    "normalizedName": "耀聖の風詩ティニア"
+    "name": "耀聖の波詩ディーナ",
+    "archetype": "耀聖（エルフェンノーツ）",
+    "normalizedName": "耀聖の波詩ディーナ"
   },
   {
     "id": 90880453,
-    "name": "耀聖の風詩－助けて",
-    "archetype": "エルフェンノーツ",
-    "normalizedName": "耀聖の風詩-助けて"
+    "name": "エルフェンノーツ～再邂のテルチェット～",
+    "archetype": "耀聖（エルフェンノーツ）",
+    "normalizedName": "エルフェンノーツ~再邂のテルチェット~"
   },
   {
     "id": 50590801,
-    "name": "耀聖の風詩－信頼の勲章",
-    "archetype": "エルフェンノーツ",
-    "normalizedName": "耀聖の風詩-信頼の勲章"
+    "name": "エルフェンノーツ～託選のアリスティア～",
+    "archetype": "耀聖（エルフェンノーツ）",
+    "normalizedName": "エルフェンノーツ~託選のアリスティア~"
   },
   {
     "id": 101305072,
-    "name": "耀聖の風詩－継承の詩片",
-    "archetype": "エルフェンノーツ",
-    "normalizedName": "耀聖の風詩-継承の詩片"
+    "name": "エルフェンノーツ～継唱のクウォートレイン～",
+    "archetype": "耀聖（エルフェンノーツ）",
+    "normalizedName": "エルフェンノーツ~継唱のクウォートレイン~"
   },
   {
     "id": 24092792,
-    "name": "耀聖の風詩－狂乱の狂詩曲",
-    "archetype": "エルフェンノーツ",
-    "normalizedName": "耀聖の風詩-狂乱の狂詩曲"
+    "name": "エルフェンノーツ～狂奏のラプソディア～",
+    "archetype": "耀聖（エルフェンノーツ）",
+    "normalizedName": "エルフェンノーツ~狂奏のラプソディア~"
   },
   {
     "id": 64491754,
-    "name": "耀聖の風詩－おかえり",
-    "archetype": "エルフェンノーツ",
-    "normalizedName": "耀聖の風詩-おかえり"
+    "name": "エルフェンノーツ～廻郷のパラレリズム～",
+    "archetype": "耀聖（エルフェンノーツ）",
+    "normalizedName": "エルフェンノーツ~廻郷のパラレリズム~"
   },
   {
     "id": 73872164,
@@ -23791,9 +23791,9 @@
   },
   {
     "id": 38648860,
-    "name": "白き森のリゼット",
+    "name": "白き森の妖魔（アザミナ）リゼット",
     "archetype": "白き森",
-    "normalizedName": "白き森のリゼット"
+    "normalizedName": "白き森の妖魔(アザミナ)リゼット"
   },
   {
     "id": 48017189,
@@ -39373,9 +39373,9 @@
   },
   {
     "id": 101305035,
-    "name": "耀聖の風詩－６月の誇り",
-    "archetype": "エルフェンノーツ",
-    "normalizedName": "耀聖の風詩-6月の誇り"
+    "name": "誇り高き耀聖の詩－エルフェンノーツ",
+    "archetype": "耀聖（エルフェンノーツ）",
+    "normalizedName": "誇り高き耀聖の詩-エルフェンノーツ"
   },
   {
     "id": 73490417,
@@ -39566,14 +39566,14 @@
   {
     "id": 5914858,
     "name": "調獄神ジュノーラ",
-    "archetype": "獄神",
+    "archetype": "獄神（パワー・パトロン）",
     "normalizedName": "調獄神ジュノーラ"
   },
   {
     "id": 68231287,
-    "name": "壊獄神ジュピター",
-    "archetype": "獄神",
-    "normalizedName": "壊獄神ジュピター"
+    "name": "壊獄神ユピテル",
+    "archetype": "獄神（パワー・パトロン）",
+    "normalizedName": "壊獄神ユピテル"
   },
   {
     "id": 59546797,
@@ -47521,9 +47521,9 @@
   },
   {
     "id": 101305021,
-    "name": "Melffy Rabbys",
-    "archetype": "Melffy",
-    "normalizedName": "MelffyRabbys"
+    "name": "創満聖徒エリュシクトーン",
+    "archetype": "アザミナ",
+    "normalizedName": "創満聖徒エリュシクトーン"
   },
   {
     "id": 76981308,
@@ -51656,7 +51656,7 @@
   {
     "id": 53589300,
     "name": "創獄神ネルヴァ",
-    "archetype": "獄神",
+    "archetype": "獄神（パワー・パトロン）",
     "normalizedName": "創獄神ネルヴァ"
   },
   {
@@ -52507,9 +52507,9 @@
   },
   {
     "id": 51669847,
-    "name": "獄神領域－ヴィドリア",
-    "archetype": "獄神",
-    "normalizedName": "獄神領域-ヴィドリア"
+    "name": "絶無なる獄神界－ヴィードリア",
+    "archetype": "獄神（パワー・パトロン）",
+    "normalizedName": "絶無なる獄神界-ヴィードリア"
   },
   {
     "id": 10666000,
@@ -57643,38 +57643,38 @@
   },
   {
     "id": 81650695,
-    "name": "ドゥームズの獄神獣",
-    "archetype": "ドゥームズ",
-    "normalizedName": "ドゥームズの獄神獣"
+    "name": "獄神機Ｄｏｏｍ－Ｚ",
+    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "normalizedName": "獄神機Doom-Z"
   },
   {
     "id": 101305039,
     "name": "獄神の使者",
-    "archetype": "獄神",
+    "archetype": "獄神（パワー・パトロン）",
     "normalizedName": "獄神の使者"
   },
   {
     "id": 17473466,
-    "name": "獄神影獸－ネルヴェド",
-    "archetype": "獄神",
-    "normalizedName": "獄神影獸-ネルヴェド"
+    "name": "獄神影獣－ネルヴェド",
+    "archetype": "獄神（パワー・パトロン）",
+    "normalizedName": "獄神影獣-ネルヴェド"
   },
   {
     "id": 43871165,
     "name": "獄神影機－ゼグレド",
-    "archetype": "獄神",
+    "archetype": "獄神（パワー・パトロン）",
     "normalizedName": "獄神影機-ゼグレド"
   },
   {
     "id": 10266279,
     "name": "獄神影精－ジュノルド",
-    "archetype": "獄神",
+    "archetype": "獄神（パワー・パトロン）",
     "normalizedName": "獄神影精-ジュノルド"
   },
   {
     "id": 101305071,
     "name": "獄神影－終末の影",
-    "archetype": "獄神",
+    "archetype": "獄神（パワー・パトロン）",
     "normalizedName": "獄神影-終末の影"
   },
   {
@@ -60757,9 +60757,9 @@
   },
   {
     "id": 77313225,
-    "name": "白き森の魔性ルシエラ",
+    "name": "白き森の禍魔リシエラ",
     "archetype": "白き森",
-    "normalizedName": "白き森の魔性ルシエラ"
+    "normalizedName": "白き森の禍魔リシエラ"
   },
   {
     "id": 58695102,
@@ -79783,9 +79783,9 @@
   },
   {
     "id": 25661743,
-    "name": "獄神門－テルミナス",
-    "archetype": "獄神",
-    "normalizedName": "獄神門-テルミナス"
+    "name": "絶解なる獄神門－テルミナス",
+    "archetype": "獄神（パワー・パトロン）",
+    "normalizedName": "絶解なる獄神門-テルミナス"
   },
   {
     "id": 101305047,
@@ -81116,7 +81116,7 @@
   {
     "id": 70488851,
     "name": "混絶獄神ヴィードリウム",
-    "archetype": "獄神",
+    "archetype": "獄神（パワー・パトロン）",
     "normalizedName": "混絶獄神ヴィードリウム"
   },
   {

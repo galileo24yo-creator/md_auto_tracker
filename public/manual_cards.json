@@ -1045,26 +1045,6 @@
     "archetype": "Azamina"
   },
   {
-    "id": 73391962,
-    "name": "告死聖徒ルシエラーゴ",
-    "archetype": "Azamina"
-  },
-  {
-    "id": 46174776,
-    "name": "殺戮聖徒レジーナ",
-    "archetype": "Azamina"
-  },
-  {
-    "id": 39491690,
-    "name": "アザミナ・オフェイレーテス",
-    "archetype": "Azamina"
-  },
-  {
-    "id": 20934683,
-    "name": "アザミナ・デリバランス",
-    "archetype": "Azamina"
-  },
-  {
     "id": 87126721,
     "name": "アザミナ・ハマルティア",
     "archetype": "Azamina"
@@ -1075,11 +1055,6 @@
     "archetype": "White Forest"
   },
   {
-    "id": 38648860,
-    "name": "白き森のリゼット",
-    "archetype": "White Forest"
-  },
-  {
     "id": 98385955,
     "name": "白き森のシルヴィ",
     "archetype": "White Forest"
@@ -1087,16 +1062,6 @@
   {
     "id": 24779554,
     "name": "白き森の聖徒ルシア",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 14307929,
-    "name": "白き森の妖魔ディアベル",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 77313225,
-    "name": "白き森の魔性ルシエラ",
     "archetype": "White Forest"
   },
   {
@@ -1225,11 +1190,6 @@
     "archetype": "Azamina"
   },
   {
-    "id": 25592142,
-    "name": "白き森のアステーリャ",
-    "archetype": "White Forest"
-  },
-  {
     "id": 3496543,
     "name": "白き森の罪宝",
     "archetype": "White Forest"
@@ -1240,18 +1200,8 @@
     "archetype": "White Forest"
   },
   {
-    "id": 46396218,
-    "name": "背信聖徒シルヴィア",
-    "archetype": "Azamina"
-  },
-  {
     "id": 5800323,
     "name": "白き森の妖魔",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 61980241,
-    "name": "白き森のリゼット",
     "archetype": "White Forest"
   },
   {
@@ -1265,68 +1215,88 @@
     "archetype": "White Forest"
   },
   {
-    "id": 9785661,
-    "name": "飢渇聖徒エリュシクトーン",
-    "archetype": "Azamina"
+    "id": 11688916,
+    "name": "ドレミコード・プリモア",
+    "archetype": "Solfachord"
   },
   {
-    "id": 42201897,
-    "name": "アザミナ・ソル・エレボス",
-    "archetype": "Azamina"
+    "id": 84521924,
+    "name": "グランドレミコード・クーリア",
+    "archetype": "Solfachord"
+  },
+  {
+    "id": 93481594,
+    "name": "ドレミコード・ハピネス",
+    "archetype": "Solfachord"
+  },
+  {
+    "id": 84693918,
+    "name": "ドレミコード・ソルフェージア",
+    "archetype": "Solfachord"
+  },
+  {
+    "id": 56510115,
+    "name": "ドレミコード・シンフォニー",
+    "archetype": "Solfachord"
   },
   {
     "id": 74733322,
-    "name": "神芸学都アルトメギア",
+    "name": "神芸学都－アルトメギア",
     "archetype": "Artmage"
   },
   {
     "id": 27184601,
-    "name": "アルトメギア・ディアクトラス",
+    "name": "神芸獄徒 ディアクトロス",
     "archetype": "Artmage"
   },
   {
     "id": 34541940,
-    "name": "アルトメギア・フィンメル",
+    "name": "神芸学徒 ファインメルト",
     "archetype": "Artmage"
   },
   {
     "id": 60946049,
-    "name": "アルトメギア・グラフレア",
-    "archetype": "Artmage"
-  },
-  {
-    "id": 44654994,
-    "name": "アルトメギア・インパスト",
+    "name": "神芸学徒 グラフレア",
     "archetype": "Artmage"
   },
   {
     "id": 97434754,
-    "name": "アルトメギア・リテラ",
+    "name": "神芸なる知恵の乙女",
     "archetype": "Artmage"
   },
   {
-    "id": 37517035,
-    "name": "アルトメギア・傑作",
+    "id": 44654994,
+    "name": "アルトメギア・インパスト－奪還－",
     "archetype": "Artmage"
   },
   {
     "id": 21720439,
-    "name": "アルトメギア・ムーブメント",
+    "name": "アルトメギア・ムーヴメント－血統－",
+    "archetype": "Artmage"
+  },
+  {
+    "id": 37517035,
+    "name": "アルトメギア・マスターワーク－継承－",
     "archetype": "Artmage"
   },
   {
     "id": 74631897,
-    "name": "アルトメギア・ノンフィニート",
+    "name": "アルトメギア・メセナ－覚醒－",
     "archetype": "Artmage"
   },
   {
-    "id": 23599634,
-    "name": "アルトメギア・盟約",
+    "id": 1122030,
+    "name": "アルトメギア・ヴァンダリズム－襲撃－",
+    "archetype": "Artmage"
+  },
+  {
+    "id": 74011784,
+    "name": "アルトメギア・バーニッシュ－改変－",
     "archetype": "Artmage"
   },
   {
     "id": 17719582,
-    "name": "アルトメギア・ペリペテイア",
+    "name": "アルトメギア・ペリペティア－激動－",
     "archetype": "Artmage"
   },
   {
@@ -1335,89 +1305,64 @@
     "archetype": "Artmage"
   },
   {
-    "id": 1122030,
-    "name": "アルトメギア・ヴァンダリズム",
-    "archetype": "Artmage"
-  },
-  {
-    "id": 74011784,
-    "name": "アルトメギア・ヴァーニッシュ",
-    "archetype": "Artmage"
-  },
-  {
     "id": 31010081,
-    "name": "ＤｏｏｍＺ ＢＲＥＡＫ ディアクトラス",
+    "name": "終刻獄徒 ディアクトロス",
     "archetype": "DoomZ"
   },
   {
     "id": 38007649,
-    "name": "ＤｏｏｍＺ ＣＨＡＮＧＥ",
+    "name": "終刻変転",
     "archetype": "DoomZ"
   },
   {
     "id": 84054556,
-    "name": "ＤｏｏｍＺ ＣＯＭＭＡＮＤ アドラステイア",
+    "name": "終刻反転『Ａ.Ｄ.Ｒ.Ａ.Ｓ.Ｔ.Ｅ.Ｉ.Ａ.』",
     "archetype": "DoomZ"
   },
   {
     "id": 68831625,
-    "name": "ＤｏｏｍＺ ＣＯＭＭＡＮＤ ドゥームドラグ",
+    "name": "終刻起動『Ｄ.Ｏ.Ｏ.Ｍ.Ｄ.Ｕ.Ｒ.Ｇ.』",
     "archetype": "DoomZ"
   },
   {
     "id": 80320877,
-    "name": "ＤｏｏｍＺ ＤＥＳＴＲＵＣＴＩＯＮ",
+    "name": "終刻決壊",
     "archetype": "DoomZ"
   },
   {
     "id": 32442017,
-    "name": "ＤｏｏｍＺ ＲＡＩＤＥＲＳ",
+    "name": "終刻撃針",
     "archetype": "DoomZ"
   },
   {
     "id": 28877382,
-    "name": "ＤｏｏｍＺ Ｖ ５ アマルテ",
+    "name": "終刻竜機Ｖ－アマルテ",
     "archetype": "DoomZ"
   },
   {
     "id": 54265980,
-    "name": "ＤｏｏｍＺ ＶＩＩ ７ エララ",
+    "name": "終刻竜機ＶＩＩ－エララ",
     "archetype": "DoomZ"
   },
   {
     "id": 95626382,
-    "name": "ＤｏｏｍＺ ＸＩＩ ＥＮＤ ドラスティウス",
+    "name": "終獄龍機ＸＩＩ－ドラストリウス",
     "archetype": "DoomZ"
   },
   {
     "id": 92472273,
-    "name": "ＤｏｏｍＺ ＸＩＩ ＺＥＲＯ ドラスティア",
+    "name": "終刻竜機ＸＩＩ－ドラスティア",
     "archetype": "DoomZ"
   },
   {
     "id": 65848113,
-    "name": "ＤｏｏｍＺ ＸＩＩＩ ＯＶＥＲ グラフラリオ",
+    "name": "終刻竜機ＸＩＩＩ－グラフレイオ",
     "archetype": "DoomZ"
   },
   {
     "id": 81650695,
-    "name": "ドゥームズの獄神獣",
+    "name": "獄神機Ｄｏｏｍ－Ｚ",
     "archetype": "DoomZ"
-  },
-  {
-    "id": 85976588,
-    "name": "耀聖の風詩フォルトゥーナ",
-    "archetype": "Elfnote"
-  },
-  {
-    "id": 13597785,
-    "name": "耀聖の風詩ルキナ",
-    "archetype": "Elfnote"
-  },
-  {
-    "id": 12375297,
-    "name": "耀聖の獄神獣",
-    "archetype": "Elfnote"
   },
   {
     "id": 56651978,
@@ -1425,48 +1370,68 @@
     "archetype": "Elfnote"
   },
   {
-    "id": 42302563,
-    "name": "耀聖の風詩ストレリチア",
+    "id": 85976588,
+    "name": "耀聖の月詩フォルトナ",
+    "archetype": "Elfnote"
+  },
+  {
+    "id": 13597785,
+    "name": "耀聖の花詩ルキナ",
     "archetype": "Elfnote"
   },
   {
     "id": 59581480,
-    "name": "耀聖の風詩ティニア",
+    "name": "耀聖の波詩ディーナ",
     "archetype": "Elfnote"
   },
   {
-    "id": 90880453,
-    "name": "耀聖の風詩－助けて",
-    "archetype": "Elfnote"
-  },
-  {
-    "id": 50590801,
-    "name": "耀聖の風詩－信頼の勲章",
-    "archetype": "Elfnote"
-  },
-  {
-    "id": 101305072,
-    "name": "耀聖の風詩－継承の詩片",
-    "archetype": "Elfnote"
-  },
-  {
-    "id": 24092792,
-    "name": "耀聖の風詩－狂乱の狂詩曲",
-    "archetype": "Elfnote"
-  },
-  {
-    "id": 64491754,
-    "name": "耀聖の風詩－おかえり",
+    "id": 42302563,
+    "name": "獄花の大耀聖ストリチア",
     "archetype": "Elfnote"
   },
   {
     "id": 101305035,
-    "name": "耀聖の風詩－６月の誇り",
+    "name": "誇り高き耀聖の詩－エルフェンノーツ",
+    "archetype": "Elfnote"
+  },
+  {
+    "id": 64491754,
+    "name": "エルフェンノーツ～廻郷のパラレリズム～",
+    "archetype": "Elfnote"
+  },
+  {
+    "id": 90880453,
+    "name": "エルフェンノーツ～再邂のテルチェット～",
+    "archetype": "Elfnote"
+  },
+  {
+    "id": 24092792,
+    "name": "エルフェンノーツ～狂奏のラプソディア～",
+    "archetype": "Elfnote"
+  },
+  {
+    "id": 101305072,
+    "name": "エルフェンノーツ～継唱のクウォートレイン～",
+    "archetype": "Elfnote"
+  },
+  {
+    "id": 50590801,
+    "name": "エルフェンノーツ～託選のアリスティア～",
+    "archetype": "Elfnote"
+  },
+  {
+    "id": 12375297,
+    "name": "燿ける聖詩の獄神精",
     "archetype": "Elfnote"
   },
   {
     "id": 70488851,
     "name": "混絶獄神ヴィードリウム",
+    "archetype": "Power Patron"
+  },
+  {
+    "id": 53589300,
+    "name": "創獄神ネルヴァ",
     "archetype": "Power Patron"
   },
   {
@@ -1476,37 +1441,12 @@
   },
   {
     "id": 68231287,
-    "name": "壊獄神ジュピター",
-    "archetype": "Power Patron"
-  },
-  {
-    "id": 53589300,
-    "name": "創獄神ネルヴァ",
-    "archetype": "Power Patron"
-  },
-  {
-    "id": 51669847,
-    "name": "獄神領域－ヴィドリア",
-    "archetype": "Power Patron"
-  },
-  {
-    "id": 101305055,
-    "name": "獄神領域－ヴィライア",
-    "archetype": "Power Patron"
-  },
-  {
-    "id": 101305039,
-    "name": "獄神の使者",
+    "name": "壊獄神ユピテル",
     "archetype": "Power Patron"
   },
   {
     "id": 17473466,
-    "name": "獄神影獸－ネルヴェド",
-    "archetype": "Power Patron"
-  },
-  {
-    "id": 43871165,
-    "name": "獄神影機－ゼグレド",
+    "name": "獄神影獣－ネルヴェド",
     "archetype": "Power Patron"
   },
   {
@@ -1515,22 +1455,98 @@
     "archetype": "Power Patron"
   },
   {
+    "id": 43871165,
+    "name": "獄神影機－ゼグレド",
+    "archetype": "Power Patron"
+  },
+  {
+    "id": 25661743,
+    "name": "絶解なる獄神門－テルミナス",
+    "archetype": "Power Patron"
+  },
+  {
+    "id": 51669847,
+    "name": "絶無なる獄神界－ヴィードリア",
+    "archetype": "Power Patron"
+  },
+  {
+    "id": 101305055,
+    "name": "絶境なる獄神域－ヴィライア",
+    "archetype": "Power Patron"
+  },
+  {
+    "id": 101305039,
+    "name": "獄神の使者",
+    "archetype": "Power Patron"
+  },
+  {
     "id": 101305071,
     "name": "獄神影－終末の影",
     "archetype": "Power Patron"
   },
   {
-    "id": 25661743,
-    "name": "獄神門－テルミナス",
-    "archetype": "Power Patron"
+    "id": 61980241,
+    "name": "白き森のリゼット",
+    "archetype": "White Forest"
   },
   {
-    "id": 11688916,
-    "name": "ドレミコード・プリモア",
-    "archetype": "Solfachord"
+    "id": 25592142,
+    "name": "白き森のアステーリャ",
+    "archetype": "White Forest"
   },
-  { "id": 84521924, "name": "グランドレミコード・クーリア", "archetype": "Solfachord" },
-  { "id": 93481594, "name": "ドレミコード・ハピネス", "archetype": "Solfachord" },
-  { "id": 84693918, "name": "ドレミコード・ソルフェージア", "archetype": "Solfachord" },
-  { "id": 56510115, "name": "ドレミコード・シンフォニー", "archetype": "Solfachord" }
+  {
+    "id": 14307929,
+    "name": "白き森の聖徒リゼット",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 38648860,
+    "name": "白き森の妖魔（アザミナ）リゼット",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 77313225,
+    "name": "白き森の禍魔リシエラ",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 9785661,
+    "name": "飢渇聖徒エリュシクトーン",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 39491690,
+    "name": "アザミナ・アーフェス",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 73391962,
+    "name": "告死聖徒ルシエラーゴ",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 46396218,
+    "name": "背信聖徒シルヴィア",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 46174776,
+    "name": "殺戮聖徒レジーナ",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 101305021,
+    "name": "創満聖徒エリュシクトーン",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 20934683,
+    "name": "アザミナ・オフェイレーテス",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 42201897,
+    "name": "アザミナ・ハマルティア",
+    "archetype": "Azamina"
+  }
 ]
