@@ -458,6 +458,28 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
     } catch (err) { console.error("Save failed:", err); } finally { setIsProcessing(false); }
   }, [mode, turn, result, diff, myDecks, oppDecks, selectedTags, lastRating, onRecorded, resetSlots, isProcessing, addLog]);
 
+  const handleCardClick = useCallback((card) => {
+    if (!card.archetype) return;
+    
+    // Normalize and translate archetype
+    const translateTheme = (t) => themeMapRef.current[t] || t;
+    const theme = normalizeTheme(translateTheme(card.archetype));
+    
+    if (card.side === 'BLUE') {
+      if (!isMyDeckLocked) {
+        setMyDecks(prev => prev.includes(theme) ? prev : [...prev, theme]);
+        addLog(`テーマ追加: ${theme} (味方)`, 'success');
+        playNotificationSound('restore');
+      }
+    } else {
+      if (!isOpponentDeckLocked) {
+        setOppDecks(prev => prev.includes(theme) ? prev : [...prev, theme]);
+        addLog(`テーマ追加: ${theme} (相手)`, 'success');
+        playNotificationSound('restore');
+      }
+    }
+  }, [isMyDeckLocked, isOpponentDeckLocked, addLog]);
+
   const captureAndAnalyze = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current || videoRef.current.readyState < 2) return;
     const v = videoRef.current, c = canvasRef.current, ctx = c.getContext('2d', { willReadFrequently: true });
@@ -845,7 +867,14 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
               <div className="text-[10px] uppercase font-black text-indigo-400 mb-2 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]" /> Your Cards</div>
               <div className="flex flex-col gap-1.5 max-h-60 overflow-y-auto pr-1">
                 {detectedCards.filter(c => c.side === 'BLUE').map((c, i) => (
-                  <div key={i} className="bg-indigo-900/10 border border-indigo-500/20 p-2.5 rounded-lg flex flex-col gap-0.5"><span className="text-zinc-100 text-[11px] font-bold truncate">{c.name}</span>{c.archetype && <span className="text-indigo-400/60 text-[8px] font-bold">{c.archetype}</span>}</div>
+                  <div 
+                    key={i} 
+                    onClick={() => handleCardClick(c)}
+                    className={`bg-indigo-900/10 border border-indigo-500/20 p-2.5 rounded-lg flex flex-col gap-0.5 transition-all duration-200 ${c.archetype ? 'cursor-pointer hover:bg-indigo-900/40 active:scale-95' : ''}`}
+                  >
+                    <span className="text-zinc-100 text-[11px] font-bold truncate">{c.name}</span>
+                    {c.archetype && <span className="text-indigo-400/60 text-[8px] font-bold uppercase tracking-tighter">{c.archetype}</span>}
+                  </div>
                 ))}
               </div>
             </div>
@@ -853,7 +882,14 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
               <div className="text-[10px] uppercase font-black text-rose-400 mb-2 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]" /> Opponent's Cards</div>
               <div className="flex flex-col gap-1.5 max-h-60 overflow-y-auto pr-1">
                 {detectedCards.filter(c => c.side === 'RED').map((c, i) => (
-                  <div key={i} className="bg-rose-900/10 border border-rose-500/20 p-2.5 rounded-lg flex flex-col gap-0.5 text-right"><span className="text-zinc-100 text-[11px] font-bold truncate">{c.name}</span>{c.archetype && <span className="text-rose-400/60 text-[8px] font-bold">{c.archetype}</span>}</div>
+                  <div 
+                    key={i} 
+                    onClick={() => handleCardClick(c)}
+                    className={`bg-rose-900/10 border border-rose-500/20 p-2.5 rounded-lg flex flex-col gap-0.5 text-right transition-all duration-200 ${c.archetype ? 'cursor-pointer hover:bg-rose-900/40 active:scale-95' : ''}`}
+                  >
+                    <span className="text-zinc-100 text-[11px] font-bold truncate">{c.name}</span>
+                    {c.archetype && <span className="text-rose-400/60 text-[8px] font-bold uppercase tracking-tighter">{c.archetype}</span>}
+                  </div>
                 ))}
               </div>
             </div>
