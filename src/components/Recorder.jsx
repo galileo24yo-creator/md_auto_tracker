@@ -563,7 +563,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
           const colorRes = detectCardColor(colorData);
 
           if (colorRes.side !== lastDetectedSideRef.current) {
-             cardVotesRef.current = {}; detectionAttemptsRef.current = 0; lastDetectedSideRef.current = colorRes.side;
+             cardVotesRef.current = {}; detectionAttemptsRef.current = 0; detectionWindowRef.current = []; lastDetectedSideRef.current = colorRes.side;
           }
           if (colorRes.side !== 'NONE') {
             const nameRoi = ROIS.CARD_NAME;
@@ -576,8 +576,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
               const curGray = toGrayscale(getROIData(ctx, v, ROIS.CARD_VISUAL, 100, 100));
               if (prevGrayRef.current && prevGrayRef.current.length === curGray.length) {
                 const ssd = calculateSSD(curGray, prevGrayRef.current);
-                if (ssd > 80) {
-                  cardVotesRef.current = {}; detectionAttemptsRef.current = 0; lastFrameCardNameRef.current = '';
+                if (ssd > 600) {
+                  cardVotesRef.current = {}; detectionAttemptsRef.current = 0; detectionWindowRef.current = []; lastFrameCardNameRef.current = '';
                   addLog('🔄 表示カードの切り替わりを検知', 'info');
                 }
               }
