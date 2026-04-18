@@ -23215,9 +23215,9 @@
   },
   {
     "id": 100456007,
-    "name": "Elemental HERO Clay Guardian",
+    "name": "Ｅ･ＨＥＲＯ クレイ・ガーディアン",
     "archetype": "Ｅ・ＨＥＲＯ",
-    "normalizedName": "ElementalHEROClayGuardian"
+    "normalizedName": "E･HEROクレイ・ガーディアン"
   },
   {
     "id": 84327329,
@@ -23275,9 +23275,9 @@
   },
   {
     "id": 93347961,
-    "name": "Elemental HERO Flame Wingman - Infernal Rage",
+    "name": "Ｅ・ＨＥＲＯ フレイム・ウィングマン－フレイ・シュート",
     "archetype": "Ｅ・ＨＥＲＯ",
-    "normalizedName": "ElementalHEROFlameWingman-InfernalRage"
+    "normalizedName": "E・HEROフレイム・ウィングマン-フレイ・シュート"
   },
   {
     "id": 81566151,
@@ -23569,9 +23569,9 @@
   },
   {
     "id": 19222426,
-    "name": "Elemental HERO Thunder Giant - Voltic Thunder",
+    "name": "Ｅ・ＨＥＲＯ サンダー・ジャイアント",
     "archetype": "Ｅ・ＨＥＲＯ",
-    "normalizedName": "ElementalHEROThunderGiant-VolticThunder"
+    "normalizedName": "E・HEROサンダー・ジャイアント"
   },
   {
     "id": 9327502,
@@ -24691,15 +24691,15 @@
   },
   {
     "id": 86282581,
-    "name": "Evil HERO Darkest Knight",
+    "name": "Ｅ－ＨＥＲＯ ダーク・ナイト",
     "archetype": "Ｅ－ＨＥＲＯ",
-    "normalizedName": "EvilHERODarkestKnight"
+    "normalizedName": "E-HEROダーク・ナイト"
   },
   {
     "id": 30583090,
-    "name": "Evil HERO Dead-End Prison",
+    "name": "ダーク・プリズム",
     "archetype": "Ｅ－ＨＥＲＯ",
-    "normalizedName": "EvilHERODead-EndPrison"
+    "normalizedName": "ダーク・プリズム"
   },
   {
     "id": 95943058,
@@ -24715,9 +24715,9 @@
   },
   {
     "id": 76978105,
-    "name": "Evil HERO Infernal Rider",
+    "name": "Ｅ－ＨＥＲＯ ヘル・ライダー",
     "archetype": "Ｅ－ＨＥＲＯ",
-    "normalizedName": "EvilHEROInfernalRider"
+    "normalizedName": "E-HEROヘル・ライダー"
   },
   {
     "id": 50282757,
@@ -24733,9 +24733,9 @@
   },
   {
     "id": 59893882,
-    "name": "Evil HERO Inferno Wing - Backfire",
+    "name": "Ｅ－ＨＥＲＯ インフェルノ・ウィング－ヘル・バックラッシュ",
     "archetype": "Ｅ－ＨＥＲＯ",
-    "normalizedName": "EvilHEROInfernoWing-Backfire"
+    "normalizedName": "E-HEROインフェルノ・ウィング-ヘル・バックラッシュ"
   },
   {
     "id": 21947653,
@@ -24763,9 +24763,9 @@
   },
   {
     "id": 13708888,
-    "name": "Evil HERO Neos Lord",
+    "name": "Ｅ－ＨＥＲＯ ネオス・ロード",
     "archetype": "Ｅ－ＨＥＲＯ",
-    "normalizedName": "EvilHERONeosLord"
+    "normalizedName": "E-HEROネオス・ロード"
   },
   {
     "id": 45659520,
@@ -24775,15 +24775,15 @@
   },
   {
     "id": 3598351,
-    "name": "Evil HERO Toxic Bubble",
+    "name": "Ｅ－ＨＥＲＯ トキシック・バブル",
     "archetype": "Ｅ－ＨＥＲＯ",
-    "normalizedName": "EvilHEROToxicBubble"
+    "normalizedName": "E-HEROトキシック・バブル"
   },
   {
     "id": 35095329,
-    "name": "Evil HERO Vicious Claws",
+    "name": "ヴィシャス・クロー",
     "archetype": "Ｅ－ＨＥＲＯ",
-    "normalizedName": "EvilHEROViciousClaws"
+    "normalizedName": "ヴィシャス・クロー"
   },
   {
     "id": 13293158,
@@ -26275,15 +26275,15 @@
   },
   {
     "id": 13243124,
-    "name": "Favorite HERO Flame Wingman",
+    "name": "フェイバリット・ヒーロー",
     "archetype": "Ｅ・ＨＥＲＯ",
-    "normalizedName": "FavoriteHEROFlameWingman"
+    "normalizedName": "フェイバリット・ヒーロー"
   },
   {
     "id": 87758525,
-    "name": "Favorite HERO Shining Flare Wingman",
+    "name": "フェイバリット・シャイニング・フレア・ウィングマン",
     "archetype": "Ｅ・ＨＥＲＯ",
-    "normalizedName": "FavoriteHEROShiningFlareWingman"
+    "normalizedName": "フェイバリット・シャイニング・フレア・ウィングマン"
   },
   {
     "id": 34193084,
@@ -35791,9 +35791,9 @@
   },
   {
     "id": 300302049,
-    "name": "HERO World",
+    "name": "ＨＥＲＯの世界",
     "archetype": "HERO",
-    "normalizedName": "HEROWorld"
+    "normalizedName": "HEROの世界"
   },
   {
     "id": 76442616,
@@ -35803,9 +35803,9 @@
   },
   {
     "id": 33995387,
-    "name": "Hero's Rule 1: Five Freedoms",
-    "archetype": "Rose",
-    "normalizedName": "Hero'sRule1:FiveFreedoms"
+    "name": "ＨＥＲＯのルール１ －ファイブ・フリーダムス",
+    "archetype": "HERO",
+    "normalizedName": "HEROのルール1-ファイブ・フリーダムス"
   },
   {
     "id": 85854214,
@@ -35815,9 +35815,9 @@
   },
   {
     "id": 300302050,
-    "name": "HEROES UNITE - FUSION!!",
+    "name": "ヒーローズ・ユナイト－フィフス！！",
     "archetype": "HERO",
-    "normalizedName": "HEROESUNITE-FUSION!!"
+    "normalizedName": "ヒーローズ・ユナイト-フィフス!!"
   },
   {
     "id": 21924381,
@@ -46393,9 +46393,9 @@
   },
   {
     "id": 85672957,
-    "name": "Masked HERO Atomic",
-    "archetype": "HERO",
-    "normalizedName": "MaskedHEROAtomic"
+    "name": "Ｍ・ＨＥＲＯ アトミック",
+    "archetype": "Ｍ・ＨＥＲＯ",
+    "normalizedName": "M・HEROアトミック"
   },
   {
     "id": 89870349,
@@ -46423,21 +46423,21 @@
   },
   {
     "id": 10808715,
-    "name": "Masked HERO Dusk Crow",
-    "archetype": "HERO",
-    "normalizedName": "MaskedHERODuskCrow"
+    "name": "Ｍ・ＨＥＲＯ ダスク・クロウ",
+    "archetype": "Ｍ・ＨＥＲＯ",
+    "normalizedName": "M・HEROダスク・クロウ"
   },
   {
     "id": 66206748,
-    "name": "Masked HERO Fountain",
+    "name": "Ｍ・ＨＥＲＯ ファウンテン",
     "archetype": "Ｍ・ＨＥＲＯ",
-    "normalizedName": "MaskedHEROFountain"
+    "normalizedName": "M・HEROファウンテン"
   },
   {
     "id": 58288218,
-    "name": "Masked HERO Furnace",
-    "archetype": "HERO",
-    "normalizedName": "MaskedHEROFurnace"
+    "name": "Ｍ・ＨＥＲＯ ファナース",
+    "archetype": "Ｍ・ＨＥＲＯ",
+    "normalizedName": "M・HEROファナース"
   },
   {
     "id": 58147549,
@@ -48913,9 +48913,9 @@
   },
   {
     "id": 30875635,
-    "name": "Miracle Ejector",
-    "archetype": "HERO",
-    "normalizedName": "MiracleEjector"
+    "name": "ミラクル・エクスクルーダー",
+    "archetype": "Ｅ・ＨＥＲＯ",
+    "normalizedName": "ミラクル・エクスクルーダー"
   },
   {
     "id": 44887817,

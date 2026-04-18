@@ -20,7 +20,6 @@
 100456004: Plasma Warrior Eitom
 100456005: White Knight Lord
 100456006: Invincible Demise Lord
-100456007: Elemental HERO Clay Guardian
 100456008: Doll Hammer
 100456009: Quick Summon
 100456010: D - Burst
@@ -126,7 +125,6 @@
 10796448: Ace★Spades Speculation
 10804018: Saffira, Divine Dragon of the Voiceless Voice
 10807219: Newbee!
-10808715: Masked HERO Dusk Crow
 10859908: Holograh
 10949074: Anotherverse Stratios
 11024707: Flipping Feline
@@ -192,7 +190,6 @@
 13193642: Dark Plant
 13203964: Perfectron Hydradrive Dragon
 13204145: Mimighoul Maker
-13243124: Favorite HERO Flame Wingman
 13289758: Gaia Stream, the Graceful Force
 13298352: Yaguramaru the Armor Ninja
 13379114: Archfiend's Fervor
@@ -201,7 +198,6 @@
 13510157: Hound of the Tistina
 13536607: V-LAN Token
 13567610: Carnot the Eternal Machine
-13708888: Evil HERO Neos Lord
 13744068: Berserk Archfiend
 13836592: Behemoth the King of a Hundred Battles
 13927359: Raidraptor - Glorious Bright
@@ -318,7 +314,6 @@
 19093698: Moissa Wight
 19144622: Fairy Tail - Matchlille
 19181420: Mementotlan Twin Dragon
-19222426: Elemental HERO Thunder Giant - Voltic Thunder
 19299793: Red Lotus King, Flame Crime
 19304410: Tri-Brigade Springans Kitt
 19316241: Galaxy War Drake
@@ -675,8 +670,6 @@
 300302046: Chemistry in Motion
 300302047: Chillin' Outback
 300302048: Elements of Thunder, Water, and Wind
-300302049: HERO World
-300302050: HEROES UNITE - FUSION!!
 300302051: Power Bond (Skill Card)
 300302052: Small Roid Big City
 300302053: Spell of Mask (Skill Card)
@@ -724,14 +717,12 @@
 30453613: Awakening of Veidos
 3048768: Angello Vaalmonica
 3055018: Obsidim, the Ashened City
-30583090: Evil HERO Dead-End Prison
 30676200: Hero of the Ashened City
 30698243: Red Hypernova Dragon
 30748475: Destructive Daruma Karma Cannon
 30761649: Barian Untopia
 30765615: Ringowurm, the Dragon Guarding the Hundred Apples
 3084730: Bio-Insect Armor
-30875635: Miracle Ejector
 30913809: Light Force
 30964246: Argostars - Giantslaying
 30989084: Aromalilith Rosemary
@@ -816,7 +807,6 @@
 33878931: Togex
 33925864: Kashtira Big Bang
 33955120: Rage Rose Witch
-33995387: Hero's Rule 1: Five Freedoms
 34001672: Goblin Biker Big Gabonga
 34034150: Mother Spider Splitter
 34041788: Endymion Empire
@@ -848,7 +838,6 @@
 35026117: Labyrinth Heavy Tank
 35035985: Embers of the Ashened
 35057188: Battlewasp - Grand Partisan the Revolution
-35095329: Evil HERO Vicious Claws
 35098357: Witchcrafter Confusion Confession
 35103106: Evolzar Lars
 35151572: Shaman of the Ashened City
@@ -870,7 +859,6 @@
 35834119: Fish Lamp
 35886170: Gogogo Goblindbergh
 3594985: Majespecter Draco - Ryu
-3598351: Evil HERO Toxic Bubble
 35989913: Endless Bond
 3606209: One Who Hunts Souls
 36151751: Arma Knight
@@ -1404,7 +1392,6 @@
 58143852: Nightmare Apprentice
 58201062: Spectral, Dragon Ruler of Flickers
 58205203: Mariamne Paradox, the True Dracophoenix Knight
-58288218: Masked HERO Furnace
 58288565: Butterfly Fish
 5829717: Dark Magician the Knight of Dragon Magic
 58354899: Vulcarrion the Rotting Phoenix
@@ -1439,7 +1426,6 @@
 59712426: Arcana Force XV - The Fiend
 59805313: Volcanic Rimfire
 59829423: Lord of the Missing Barrows
-59893882: Evil HERO Inferno Wing - Backfire
 59900655: Gold Pride - Nytro Head
 59901153: Phalaenop Sisters
 5993144: Swallow's Cowrie
@@ -1611,7 +1597,6 @@
 66122213: Infernal Strike Fighter
 66150724: PenduLuMoon
 66156348: Saga of the Dragon Emperor
-66206748: Masked HERO Fountain
 66236707: Gordian Slicer
 66328392: Deception of the Sinful Spoils
 6636319: Evil★Twin Ki-sikil Deal
@@ -1867,7 +1852,6 @@
 76823930: Ultimeat Offering
 76840111: Soul of the Supreme Celestial King
 76948970: Mitsurugi no Miko, Wousu
-76978105: Evil HERO Infernal Rider
 77066768: Card Scanner
 77124096: Dark Contact
 77189532: Rokket Coder
@@ -2077,7 +2061,6 @@
 85520170: Scrap-Iron Sacred Statue
 85586937: WAKE CUP! Earl
 85640370: Tip of the Tinying Tongue
-85672957: Masked HERO Atomic
 85687952: Theia, the Primal Being
 85698115: Terrors of the Afterroot
 85747929: Galaxy Photon Dragon
@@ -2091,7 +2074,6 @@
 86111442: Sentinel of the Tistina
 8617563: Raidraptor - Brave Strix
 86239173: Horned Saurus
-86282581: Evil HERO Darkest Knight
 86304179: Tempura of Fortune - EBI
 86310763: Radiance of the Voiceless Voice
 86346363: Time Reloader
@@ -2121,7 +2103,6 @@
 87676171: Tistina, the Divinity that Defies Darkness
 87750925: Disguise, the Copycat Hero
 8775395: Evil Eyes Unleashed
-87758525: Favorite HERO Shining Flare Wingman
 87778106: Recette de Poisson (Fish Recipe)
 8778267: Penetration Fusion
 87804747: Ultimate Great Insect
@@ -2275,7 +2256,6 @@
 93224849: Phantasmal Martyr Token
 93294363: Ib'al-Hecahands
 93317313: D/D Defense Soldier
-93347961: Elemental HERO Flame Wingman - Infernal Rage
 93413793: Ukanomitsune-no-Tamayura
 93454062: Naturia Mole Cricket
 93509766: Kyoro Ryu-Ge Kaiva

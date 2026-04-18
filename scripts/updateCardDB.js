@@ -144,7 +144,7 @@ async function updateDB() {
       manualData.forEach(mCard => {
         manualIds.add(Number(mCard.id));
         // マニアルデータは常に最優先
-        const idx = finalCards.findIndex(c => c.id === mCard.id);
+        const idx = finalCards.findIndex(c => Number(c.id) === Number(mCard.id));
         const processedMCard = {
           ...mCard,
           normalizedName: normalizeText(mCard.name),

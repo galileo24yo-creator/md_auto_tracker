@@ -1553,5 +1553,105 @@
     "id": 62995268,
     "name": "白き森のわざわいなり",
     "archetype": "White Forest"
+  },
+  {
+    "id": 30875635,
+    "name": "ミラクル・エクスクルーダー",
+    "archetype": "Elemental HERO"
+  },
+  {
+    "id": 13708888,
+    "name": "Ｅ－ＨＥＲＯ ネオス・ロード",
+    "archetype": "Evil HERO"
+  },
+  {
+    "id": 76978105,
+    "name": "Ｅ－ＨＥＲＯ ヘル・ライダー",
+    "archetype": "Evil HERO"
+  },
+  {
+    "id": 86282581,
+    "name": "Ｅ－ＨＥＲＯ ダーク・ナイト",
+    "archetype": "Evil HERO"
+  },
+  {
+    "id": 59893882,
+    "name": "Ｅ－ＨＥＲＯ インフェルノ・ウィング－ヘル・バックラッシュ",
+    "archetype": "Evil HERO"
+  },
+  {
+    "id": 3598351,
+    "name": "Ｅ－ＨＥＲＯ トキシック・バブル",
+    "archetype": "Evil HERO"
+  },
+  {
+    "id": 30583090,
+    "name": "ダーク・プリズム",
+    "archetype": "Evil HERO"
+  },
+  {
+    "id": 93347961,
+    "name": "Ｅ・ＨＥＲＯ フレイム・ウィングマン－フレイ・シュート",
+    "archetype": "Elemental HERO"
+  },
+  {
+    "id": 35095329,
+    "name": "ヴィシャス・クロー",
+    "archetype": "Evil HERO"
+  },
+  {
+    "id": 33995387,
+    "name": "ＨＥＲＯのルール１ －ファイブ・フリーダムス",
+    "archetype": "HERO"
+  },
+  {
+    "id": 10808715,
+    "name": "Ｍ・ＨＥＲＯ ダスク・クロウ",
+    "archetype": "Masked HERO"
+  },
+  {
+    "id": 58288218,
+    "name": "Ｍ・ＨＥＲＯ ファナース",
+    "archetype": "Masked HERO"
+  },
+  {
+    "id": 66206748,
+    "name": "Ｍ・ＨＥＲＯ ファウンテン",
+    "archetype": "Masked HERO"
+  },
+  {
+    "id": 85672957,
+    "name": "Ｍ・ＨＥＲＯ アトミック",
+    "archetype": "Masked HERO"
+  },
+  {
+    "id": 100456007,
+    "name": "Ｅ･ＨＥＲＯ クレイ・ガーディアン",
+    "archetype": "Elemental HERO"
+  },
+  {
+    "id": 13243124,
+    "name": "フェイバリット・ヒーロー",
+    "archetype": "Elemental HERO"
+  },
+  {
+    "id": 87758525,
+    "name": "フェイバリット・シャイニング・フレア・ウィングマン",
+    "archetype": "Elemental HERO"
+  },
+  {
+    "id": 19222426,
+    "name": "Ｅ・ＨＥＲＯ サンダー・ジャイアント",
+    "archetype": "Elemental HERO"
+  },
+  {
+    "id": 300302049,
+    "name": "ＨＥＲＯの世界",
+    "archetype": "HERO"
+  },
+  {
+    "id": 300302050,
+    "name": "ヒーローズ・ユナイト－フィフス！！",
+    "archetype": "HERO"
   }
 ]
