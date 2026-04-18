@@ -617,10 +617,11 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
                             const vMap = cardVotesRef.current;
                             let currentWinner = '';
                             let maxVotesSoFar = 0;
-                            Object.entries(vMap).forEach(([k, v]) => { if (v.count > maxVotesSoFar) { maxVotesSoFar = v.count; currentWinner = k; } });
-                            if (currentWinner && currentWinner !== name && matchScore < 0.2) {
+                            // 名前が前回判定時と明確に異なる場合は即座に履歴をリセット
+                            if (lastFrameCardNameRef.current && lastFrameCardNameRef.current !== name && matchScore < 0.2) {
                               cardVotesRef.current = { [name]: { count: 1, archetype: bestMatch.archetype } };
                               detectionAttemptsRef.current = 1; detectionWindowRef.current = []; lastFrameCardNameRef.current = name;
+                              console.log(`[Switch Detect] Name change detected: ${lastFrameCardNameRef.current} -> ${name}`);
                             } else {
                               if (!vMap[name]) vMap[name] = { count: 0, archetype: bestMatch.archetype };
                               vMap[name].count++; lastFrameCardNameRef.current = name;
@@ -692,7 +693,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
             const tVictory = matchSequence(features, statusTemplatesRef.current.victory || []);
             const tLose = matchSequence(features, statusTemplatesRef.current.lose || []);
             let sequenceResult = tVictory.match ? 'VICTORY' : (tLose.match ? 'LOSE' : null);
-            const isVictory = fuzzyIncludes(cleanText, 'VICTORY', 2);
+            const isVictory = confidence > 75 && fuzzyIncludes(cleanText, 'VICTORY', 2);
             const isLose = confidence > 75 && fuzzyIncludes(cleanText, 'LOSE', 1);
             if (sequenceResult || isVictory || isLose) {
               const detectedResult = sequenceResult || (isVictory ? 'VICTORY' : 'LOSE');
