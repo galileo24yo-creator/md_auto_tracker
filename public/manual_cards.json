@@ -988,5 +988,235 @@
     "id": 53130232,
     "name": "究極竜魔導師",
     "archetype": "Blue-Eyes"
+  },
+  {
+    "id": 18451126,
+    "name": "黒魔女ディアベルスター",
+    "archetype": "Diabellstar"
+  },
+  {
+    "id": 93424696,
+    "name": "“罪宝狩りの悪魔”",
+    "archetype": "Sinful Spoils"
+  },
+  {
+    "id": 75231776,
+    "name": "原罪宝－スネークアイ",
+    "archetype": "Sinful Spoils"
+  },
+  {
+    "id": 52410714,
+    "name": "反逆の罪宝－スネークアイ",
+    "archetype": "Sinful Spoils"
+  },
+  {
+    "id": 24719232,
+    "name": "裏切りの罪宝－シルウィア",
+    "archetype": "Sinful Spoils"
+  },
+  {
+    "id": 53130232,
+    "name": "死の罪宝－ルシエラ",
+    "archetype": "Sinful Spoils"
+  },
+  {
+    "id": 15302730,
+    "name": "微睡の罪宝－モーリアン",
+    "archetype": "Sinful Spoils"
+  },
+  {
+    "id": 80927702,
+    "name": "罪宝の欺き",
+    "archetype": "Sinful Spoils"
+  },
+  {
+    "id": 40927517,
+    "name": "廻る罪宝",
+    "archetype": "Sinful Spoils"
+  },
+  {
+    "id": 17749468,
+    "name": "聖なる薊花",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 46396218,
+    "name": "背信聖徒シルヴィア",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 37039750,
+    "name": "告死聖徒ルシエラ",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 43896501,
+    "name": "殺戮聖徒レジーナ",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 39491690,
+    "name": "アザミナ・オフェイレーテス",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 20934683,
+    "name": "アザミナ・デリバランス",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 87126721,
+    "name": "アザミナ・ハマルティア",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 25592142,
+    "name": "白き森のアステーリャ",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 61980241,
+    "name": "白き森のリゼット",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 38641150,
+    "name": "白き森のシルヴィ",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 12410714,
+    "name": "白き森の聖徒ルシア",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 14307929,
+    "name": "白き森の妖魔ディアベル",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 75306404,
+    "name": "白き森の魔性ルシエラ",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 61980242,
+    "name": "白き森の魔狼シルウィア",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 72126721,
+    "name": "白き森のいいつたえ",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 35778533,
+    "name": "白き森のわざわいなり",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 8379983,
+    "name": "月光金獅子",
+    "archetype": "Lunalight"
+  },
+  {
+    "id": 35763582,
+    "name": "月光銀狗",
+    "archetype": "Lunalight"
+  },
+  {
+    "id": 2344618,
+    "name": "月光舞踏会",
+    "archetype": "Lunalight"
+  },
+  {
+    "id": 11403212,
+    "name": "ティアラメンツ・キトカロス",
+    "archetype": "Tearlaments"
+  },
+  {
+    "id": 84330567,
+    "name": "ティアラメンツ・ルルカロス",
+    "archetype": "Tearlaments"
+  },
+  {
+    "id": 15935398,
+    "name": "ティアラメンツ・シェイレーン",
+    "archetype": "Tearlaments"
+  },
+  {
+    "id": 63784405,
+    "name": "ティアラメンツ・レイノハート",
+    "archetype": "Tearlaments"
+  },
+  {
+    "id": 92746535,
+    "name": "ティアラメンツ・ハフニス",
+    "archetype": "Tearlaments"
+  },
+  {
+    "id": 71203546,
+    "name": "ティアラメンツ・メイルゥ",
+    "archetype": "Tearlaments"
+  },
+  {
+    "id": 40927517,
+    "name": "ティアラメンツ・カレイドハート",
+    "archetype": "Tearlaments"
+  },
+  {
+    "id": 52410714,
+    "name": "壱世壊＝ペルレイノ",
+    "archetype": "Tearlaments"
+  },
+  {
+    "id": 32909498,
+    "name": "クシャトリラ・フェンリル",
+    "archetype": "Kashtira"
+  },
+  {
+    "id": 54701958,
+    "name": "クシャトリラ・ユニコーン",
+    "archetype": "Kashtira"
+  },
+  {
+    "id": 31149212,
+    "name": "クシャトリラ・ライズハート",
+    "archetype": "Kashtira"
+  },
+  {
+    "id": 48626373,
+    "name": "クシャトリラ・アライズハート",
+    "archetype": "Kashtira"
+  },
+  {
+    "id": 73542331,
+    "name": "クシャトリラ・シャングリラ",
+    "archetype": "Kashtira"
+  },
+  {
+    "id": 15302730,
+    "name": "六世壊＝パライゾス",
+    "archetype": "Kashtira"
+  },
+  {
+    "id": 51831560,
+    "name": "ジェムナイト・ネピリム",
+    "archetype": "Gem-Knight"
+  },
+  {
+    "id": 24220368,
+    "name": "散輝融合",
+    "archetype": "Gem-Knight"
+  },
+  {
+    "id": 88225269,
+    "name": "ジェムナイト・ヴォイドルーツ",
+    "archetype": "Gem-Knight"
+  },
+  {
+    "id": 75306404,
+    "name": "ジェムナイト・クォーツ",
+    "archetype": "Gem-Knight"
   }
 ]

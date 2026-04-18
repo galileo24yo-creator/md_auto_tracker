@@ -356,7 +356,7 @@
   {
     "id": 71422989,
     "name": "吸光融合",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "吸光融合"
   },
   {
@@ -4921,9 +4921,9 @@
   },
   {
     "id": 25592142,
-    "name": "Astellar of the White Forest",
-    "archetype": "White Forest",
-    "normalizedName": "AstellaroftheWhiteForest"
+    "name": "白き森のアステーリャ",
+    "archetype": "白き森",
+    "normalizedName": "白き森のアステーリャ"
   },
   {
     "id": 69170403,
@@ -5305,50 +5305,50 @@
   },
   {
     "id": 17749468,
-    "name": "Azamina",
-    "archetype": "Azamina",
-    "normalizedName": "Azamina"
+    "name": "聖なる薊花",
+    "archetype": "アザミナ",
+    "normalizedName": "聖なる薊花"
   },
   {
     "id": 39491690,
-    "name": "Azamina Aphes",
-    "archetype": "Azamina",
-    "normalizedName": "AzaminaAphes"
+    "name": "アザミナ・オフェイレーテス",
+    "archetype": "アザミナ",
+    "normalizedName": "アザミナ・オフェイレーテス"
   },
   {
     "id": 20934683,
-    "name": "Azamina Debtors",
-    "archetype": "Azamina",
-    "normalizedName": "AzaminaDebtors"
+    "name": "アザミナ・デリバランス",
+    "archetype": "アザミナ",
+    "normalizedName": "アザミナ・デリバランス"
   },
   {
     "id": 42201897,
     "name": "Azamina Determination",
-    "archetype": "Azamina",
+    "archetype": "アザミナ",
     "normalizedName": "AzaminaDetermination"
   },
   {
     "id": 46396218,
-    "name": "Azamina Ilia Silvia",
-    "archetype": "Azamina",
-    "normalizedName": "AzaminaIliaSilvia"
+    "name": "背信聖徒シルヴィア",
+    "archetype": "アザミナ",
+    "normalizedName": "背信聖徒シルヴィア"
   },
   {
     "id": 46174776,
     "name": "Azamina Moa Regina",
-    "archetype": "Azamina",
+    "archetype": "アザミナ",
     "normalizedName": "AzaminaMoaRegina"
   },
   {
     "id": 73391962,
     "name": "Azamina Mu Rcielago",
-    "archetype": "Azamina",
+    "archetype": "アザミナ",
     "normalizedName": "AzaminaMuRcielago"
   },
   {
     "id": 9785661,
     "name": "Azamina Sol Erysichthon",
-    "archetype": "Azamina",
+    "archetype": "アザミナ",
     "normalizedName": "AzaminaSolErysichthon"
   },
   {
@@ -6877,9 +6877,9 @@
   },
   {
     "id": 35778533,
-    "name": "Beware the White Forest",
-    "archetype": "White Forest",
-    "normalizedName": "BewaretheWhiteForest"
+    "name": "白き森のわざわいなり",
+    "archetype": "白き森",
+    "normalizedName": "白き森のわざわいなり"
   },
   {
     "id": 22125101,
@@ -9164,19 +9164,19 @@
   {
     "id": 7394770,
     "name": "ブリリアント・フュージョン",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ブリリアント・フュージョン"
   },
   {
     "id": 61011438,
     "name": "ブリリアント・ローズ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ブリリアント・ローズ"
   },
   {
     "id": 3105404,
     "name": "ブリリアント・スパーク",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ブリリアント・スパーク"
   },
   {
@@ -13964,7 +13964,7 @@
   {
     "id": 79531196,
     "name": "クリスタル・ローズ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "クリスタル・ローズ"
   },
   {
@@ -17702,7 +17702,7 @@
   {
     "id": 66328392,
     "name": "Deception of the Sinful Spoils",
-    "archetype": "Sinful Spoils",
+    "archetype": "罪宝",
     "normalizedName": "DeceptionoftheSinfulSpoils"
   },
   {
@@ -18769,14 +18769,14 @@
   },
   {
     "id": 14307929,
-    "name": "Diabell, Queen of the White Forest",
-    "archetype": "White Forest",
-    "normalizedName": "Diabell,QueenoftheWhiteForest"
+    "name": "白き森の妖魔ディアベル",
+    "archetype": "白き森",
+    "normalizedName": "白き森の妖魔ディアベル"
   },
   {
     "id": 72270339,
     "name": "Diabellstar the Black Witch",
-    "archetype": "Diabellstar",
+    "archetype": "ディアベルスター",
     "normalizedName": "DiabellstartheBlackWitch"
   },
   {
@@ -23785,14 +23785,14 @@
   },
   {
     "id": 61980241,
-    "name": "Elzette of the White Forest",
-    "archetype": "White Forest",
-    "normalizedName": "ElzetteoftheWhiteForest"
+    "name": "白き森のリゼット",
+    "archetype": "白き森",
+    "normalizedName": "白き森のリゼット"
   },
   {
     "id": 38648860,
     "name": "Elzette, Azamina of the White Forest",
-    "archetype": "Azamina",
+    "archetype": "アザミナ",
     "normalizedName": "Elzette,AzaminaoftheWhiteForest"
   },
   {
@@ -28484,7 +28484,7 @@
   {
     "id": 72029628,
     "name": "廃石融合",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "廃石融合"
   },
   {
@@ -30284,223 +30284,223 @@
   {
     "id": 27004302,
     "name": "ジェムレシス",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムレシス"
   },
   {
     "id": 19019586,
     "name": "ジェムエレファント",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムエレファント"
   },
   {
     "id": 41777,
     "name": "ジェム・エンハンス",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェム・エンハンス"
   },
   {
     "id": 90019393,
     "name": "ジェムナイト・アレキサンド",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・アレキサンド"
   },
   {
     "id": 72056560,
     "name": "ジェムナイト・アンバー",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・アンバー"
   },
   {
     "id": 71616908,
     "name": "ジェムナイト・アメジス",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・アメジス"
   },
   {
     "id": 13108445,
     "name": "ジェムナイト・アクアマリナ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・アクアマリナ"
   },
   {
     "id": 67985943,
     "name": "ジェムナイト・マディラ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・マディラ"
   },
   {
     "id": 76908448,
     "name": "ジェムナイト・クリスタ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・クリスタ"
   },
   {
     "id": 24220368,
-    "name": "Gem-Knight Dispersion",
-    "archetype": "Gem-",
-    "normalizedName": "Gem-KnightDispersion"
+    "name": "散輝融合",
+    "archetype": "ジェムナイト",
+    "normalizedName": "散輝融合"
   },
   {
     "id": 69243722,
     "name": "ジェムナイト・エメラル",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・エメラル"
   },
   {
     "id": 1264319,
     "name": "ジェムナイト・フュージョン",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・フュージョン"
   },
   {
     "id": 91731841,
     "name": "ジェムナイト・ガネット",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・ガネット"
   },
   {
     "id": 88225269,
-    "name": "Gem-Knight Hollowcore",
-    "archetype": "Gem-",
-    "normalizedName": "Gem-KnightHollowcore"
+    "name": "ジェムナイト・ホロウコア",
+    "archetype": "ジェムナイト",
+    "normalizedName": "ジェムナイト・ホロウコア"
   },
   {
     "id": 45662855,
     "name": "ジェムナイト・アイオーラ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・アイオーラ"
   },
   {
     "id": 19355597,
     "name": "ジェムナイトレディ・ブリリアント・ダイヤ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイトレディ・ブリリアント・ダイヤ"
   },
   {
     "id": 47611119,
     "name": "ジェムナイトレディ・ラピスラズリ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイトレディ・ラピスラズリ"
   },
   {
     "id": 55610199,
     "name": "ジェムナイトレディ・ローズ・ダイヤ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイトレディ・ローズ・ダイヤ"
   },
   {
     "id": 99645428,
     "name": "ジェムナイト・ラピス",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・ラピス"
   },
   {
     "id": 81846636,
     "name": "ジェムナイト・ラズリー",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・ラズリー"
   },
   {
     "id": 39512984,
     "name": "ジェムナイトマスター・ダイヤ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイトマスター・ダイヤ"
   },
   {
     "id": 25342956,
     "name": "Gem-Knight Master Diamond Dispersion",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "Gem-KnightMasterDiamondDispersion"
   },
   {
     "id": 51831560,
-    "name": "Gem-Knight Nepyrim",
-    "archetype": "Gem-",
-    "normalizedName": "Gem-KnightNepyrim"
+    "name": "ジェムナイト・ネピリム",
+    "archetype": "ジェムナイト",
+    "normalizedName": "ジェムナイト・ネピリム"
   },
   {
     "id": 19163116,
     "name": "ジェムナイト・オブシディア",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・オブシディア"
   },
   {
     "id": 71594310,
     "name": "ジェムナイト・パール",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・パール"
   },
   {
     "id": 24484270,
     "name": "ジェムナイト・ファントムルーツ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・ファントムルーツ"
   },
   {
     "id": 93379652,
     "name": "ジェムナイト・プリズムオーラ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・プリズムオーラ"
   },
   {
     "id": 35622739,
     "name": "ジェムナイト・クォーツ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・クォーツ"
   },
   {
     "id": 76614340,
     "name": "ジェムナイト・ルビーズ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・ルビーズ"
   },
   {
     "id": 27126980,
     "name": "ジェムナイト・サフィア",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・サフィア"
   },
   {
     "id": 43114901,
     "name": "ジェムナイト・サニクス",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・サニクス"
   },
   {
     "id": 3113836,
     "name": "ジェムナイト・セラフィ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・セラフィ"
   },
   {
     "id": 49597193,
     "name": "ジェムナイト・パーズ",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・パーズ"
   },
   {
     "id": 54620698,
     "name": "ジェムナイト・ルマリン",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・ルマリン"
   },
   {
     "id": 8692301,
     "name": "ジェムナイト・ジルコニア",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト・ジルコニア"
   },
   {
     "id": 53408006,
     "name": "ジェム・マーチャント",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェム・マーチャント"
   },
   {
     "id": 64734090,
     "name": "ジェムタートル",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "ジェムタートル"
   },
   {
@@ -34448,7 +34448,7 @@
   {
     "id": 88695895,
     "name": "Guilt of the Sinful Spoils",
-    "archetype": "Sinful Spoils",
+    "archetype": "罪宝",
     "normalizedName": "GuiltoftheSinfulSpoils"
   },
   {
@@ -40303,9 +40303,9 @@
   },
   {
     "id": 48626373,
-    "name": "Kashtira Arise-Heart",
-    "archetype": "Heart",
-    "normalizedName": "KashtiraArise-Heart"
+    "name": "クシャトリラ・アライズハート",
+    "archetype": "クシャトリラ",
+    "normalizedName": "クシャトリラ・アライズハート"
   },
   {
     "id": 33925864,
@@ -40321,9 +40321,9 @@
   },
   {
     "id": 32909498,
-    "name": "Kashtira Fenrir",
+    "name": "クシャトリラ・フェンリル",
     "archetype": "クシャトリラ",
-    "normalizedName": "KashtiraFenrir"
+    "normalizedName": "クシャトリラ・フェンリル"
   },
   {
     "id": 94392192,
@@ -40345,15 +40345,15 @@
   },
   {
     "id": 31149212,
-    "name": "Kashtira Riseheart",
+    "name": "クシャトリラ・ライズハート",
     "archetype": "クシャトリラ",
-    "normalizedName": "KashtiraRiseheart"
+    "normalizedName": "クシャトリラ・ライズハート"
   },
   {
     "id": 73542331,
-    "name": "Kashtira Shangri-Ira",
+    "name": "クシャトリラ・シャングリラ",
     "archetype": "クシャトリラ",
-    "normalizedName": "KashtiraShangri-Ira"
+    "normalizedName": "クシャトリラ・シャングリラ"
   },
   {
     "id": 68304193,
@@ -43664,7 +43664,7 @@
   {
     "id": 48444114,
     "name": "月光香",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光香"
   },
   {
@@ -43676,133 +43676,133 @@
   {
     "id": 11317977,
     "name": "月光黒羊",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光黒羊"
   },
   {
     "id": 11439455,
     "name": "月光蒼猫",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光蒼猫"
   },
   {
     "id": 51777272,
     "name": "月光舞猫姫",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光舞猫姫"
   },
   {
     "id": 94919024,
     "name": "月光紅狐",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光紅狐"
   },
   {
     "id": 14152693,
     "name": "月光翠鳥",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光翠鳥"
   },
   {
     "id": 87931906,
     "name": "月光融合",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光融合"
   },
   {
     "id": 8379983,
-    "name": "Lunalight Gold Leo",
-    "archetype": "Lunalight",
-    "normalizedName": "LunalightGoldLeo"
+    "name": "月光金獅子",
+    "archetype": "月光（ムーンライト）",
+    "normalizedName": "月光金獅子"
   },
   {
     "id": 35618217,
     "name": "月光彩雛",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光彩雛"
   },
   {
     "id": 24550676,
     "name": "月光舞獅子姫",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光舞獅子姫"
   },
   {
     "id": 54701958,
-    "name": "Lunalight Liger Dancer",
-    "archetype": "Lunalight",
-    "normalizedName": "LunalightLigerDancer"
+    "name": "クシャトリラ・ユニコーン",
+    "archetype": "クシャトリラ",
+    "normalizedName": "クシャトリラ・ユニコーン"
   },
   {
     "id": 2344618,
-    "name": "Lunalight Masquerade",
-    "archetype": "Lunalight",
-    "normalizedName": "LunalightMasquerade"
+    "name": "月光舞踏会",
+    "archetype": "月光（ムーンライト）",
+    "normalizedName": "月光舞踏会"
   },
   {
     "id": 97165977,
     "name": "月光舞豹姫",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光舞豹姫"
   },
   {
     "id": 81196066,
     "name": "Lunalight Perfume Dancer",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "LunalightPerfumeDancer"
   },
   {
     "id": 48427163,
     "name": "月光紫蝶",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光紫蝶"
   },
   {
     "id": 11193246,
     "name": "月光輪廻舞踊",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光輪廻舞踊"
   },
   {
     "id": 88753594,
     "name": "月光舞剣虎姫",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光舞剣虎姫"
   },
   {
     "id": 13935001,
     "name": "月光小夜曲舞踊",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光小夜曲舞踊"
   },
   {
     "id": 35763582,
-    "name": "Lunalight Silver Hound",
-    "archetype": "Lunalight",
-    "normalizedName": "LunalightSilverHound"
+    "name": "月光銀狗",
+    "archetype": "月光（ムーンライト）",
+    "normalizedName": "月光銀狗"
   },
   {
     "id": 83190280,
     "name": "月光虎",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光虎"
   },
   {
     "id": 84812868,
     "name": "月光白兎",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光白兎"
   },
   {
     "id": 47705572,
     "name": "月光狼",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光狼"
   },
   {
     "id": 50546208,
     "name": "月光黄鼬",
-    "archetype": "Lunalight",
+    "archetype": "月光（ムーンライト）",
     "normalizedName": "月光黄鼬"
   },
   {
@@ -43831,9 +43831,9 @@
   },
   {
     "id": 92746535,
-    "name": "竜剣士ラスターP",
-    "archetype": "Dracoslayer",
-    "normalizedName": "竜剣士ラスターP"
+    "name": "ティアラメンツ・ハフニス",
+    "archetype": "ティアラメンツ",
+    "normalizedName": "ティアラメンツ・ハフニス"
   },
   {
     "id": 84385264,
@@ -50161,9 +50161,9 @@
   },
   {
     "id": 87126721,
-    "name": "マルチャミー・ニャルス",
-    "archetype": "",
-    "normalizedName": "マルチャミー・ニャルス"
+    "name": "アザミナ・ハマルティア",
+    "archetype": "アザミナ",
+    "normalizedName": "アザミナ・ハマルティア"
   },
   {
     "id": 84192580,
@@ -55310,7 +55310,7 @@
   {
     "id": 39261576,
     "name": "パーティカル・フュージョン",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "パーティカル・フュージョン"
   },
   {
@@ -57404,7 +57404,7 @@
   {
     "id": 5800323,
     "name": "Poplar of the White Forest",
-    "archetype": "White Forest",
+    "archetype": "白き森",
     "normalizedName": "PoplaroftheWhiteForest"
   },
   {
@@ -59288,7 +59288,7 @@
   {
     "id": 55824220,
     "name": "輝石融合",
-    "archetype": "Gem-",
+    "archetype": "ジェムナイト",
     "normalizedName": "輝石融合"
   },
   {
@@ -59426,7 +59426,7 @@
   {
     "id": 65033975,
     "name": "Queen Azamina",
-    "archetype": "Azamina",
+    "archetype": "アザミナ",
     "normalizedName": "QueenAzamina"
   },
   {
@@ -60758,7 +60758,7 @@
   {
     "id": 77313225,
     "name": "Rciela, Sinister Soul of the White Forest",
-    "archetype": "White Forest",
+    "archetype": "白き森",
     "normalizedName": "Rciela,SinisterSouloftheWhiteForest"
   },
   {
@@ -63458,7 +63458,7 @@
   {
     "id": 24779554,
     "name": "Rucia of the White Forest",
-    "archetype": "White Forest",
+    "archetype": "白き森",
     "normalizedName": "RuciaoftheWhiteForest"
   },
   {
@@ -64106,7 +64106,7 @@
   {
     "id": 85065943,
     "name": "Saint Azamina",
-    "archetype": "Azamina",
+    "archetype": "アザミナ",
     "normalizedName": "SaintAzamina"
   },
   {
@@ -64976,7 +64976,7 @@
   {
     "id": 93723936,
     "name": "Scourge of the White Forest",
-    "archetype": "White Forest",
+    "archetype": "白き森",
     "normalizedName": "ScourgeoftheWhiteForest"
   },
   {
@@ -67022,7 +67022,7 @@
   {
     "id": 41924516,
     "name": "Silvera, Wolf Tamer of the White Forest",
-    "archetype": "White Forest",
+    "archetype": "白き森",
     "normalizedName": "Silvera,WolfTameroftheWhiteForest"
   },
   {
@@ -67040,7 +67040,7 @@
   {
     "id": 98385955,
     "name": "Silvy of the White Forest",
-    "archetype": "White Forest",
+    "archetype": "白き森",
     "normalizedName": "SilvyoftheWhiteForest"
   },
   {
@@ -67148,25 +67148,25 @@
   {
     "id": 2006591,
     "name": "Sinful Spoils Awakening",
-    "archetype": "Sinful Spoils",
+    "archetype": "罪宝",
     "normalizedName": "SinfulSpoilsAwakening"
   },
   {
     "id": 38511382,
     "name": "Sinful Spoils of Betrayal - Silvera",
-    "archetype": "Sinful Spoils",
+    "archetype": "罪宝",
     "normalizedName": "SinfulSpoilsofBetrayal-Silvera"
   },
   {
     "id": 16240772,
     "name": "Sinful Spoils of Doom - Rciela",
-    "archetype": "Sinful Spoils",
+    "archetype": "罪宝",
     "normalizedName": "SinfulSpoilsofDoom-Rciela"
   },
   {
     "id": 53329234,
     "name": "Sinful Spoils of Slumber - Morrian",
-    "archetype": "Sinful Spoils",
+    "archetype": "罪宝",
     "normalizedName": "SinfulSpoilsofSlumber-Morrian"
   },
   {
@@ -67178,25 +67178,25 @@
   {
     "id": 3496543,
     "name": "Sinful Spoils of the White Forest",
-    "archetype": "Sinful Spoils",
+    "archetype": "罪宝",
     "normalizedName": "SinfulSpoilsoftheWhiteForest"
   },
   {
     "id": 90386276,
     "name": "Sinful Spoils Sanctification",
-    "archetype": "Sinful Spoils",
+    "archetype": "罪宝",
     "normalizedName": "SinfulSpoilsSanctification"
   },
   {
     "id": 67457739,
     "name": "Sinful Spoils Struggle",
-    "archetype": "Sinful Spoils",
+    "archetype": "罪宝",
     "normalizedName": "SinfulSpoilsStruggle"
   },
   {
     "id": 26334139,
     "name": "Sinful Spoils Subdual",
-    "archetype": "Sinful Spoils",
+    "archetype": "罪宝",
     "normalizedName": "SinfulSpoilsSubdual"
   },
   {
@@ -72506,7 +72506,7 @@
   {
     "id": 62173132,
     "name": "Susurrus of the Sinful Spoils",
-    "archetype": "Sinful Spoils",
+    "archetype": "罪宝",
     "normalizedName": "SusurrusoftheSinfulSpoils"
   },
   {
@@ -73586,7 +73586,7 @@
   {
     "id": 99289828,
     "name": "Tales of the White Forest",
-    "archetype": "White Forest",
+    "archetype": "白き森",
     "normalizedName": "TalesoftheWhiteForest"
   },
   {
@@ -73795,9 +73795,9 @@
   },
   {
     "id": 84330567,
-    "name": "Tearlaments Rulkallos",
+    "name": "ティアラメンツ・ルルカロス",
     "archetype": "ティアラメンツ",
-    "normalizedName": "TearlamentsRulkallos"
+    "normalizedName": "ティアラメンツ・ルルカロス"
   },
   {
     "id": 572850,
@@ -74984,7 +74984,7 @@
   {
     "id": 94845588,
     "name": "The Hallowed Azamina",
-    "archetype": "Azamina",
+    "archetype": "アザミナ",
     "normalizedName": "TheHallowedAzamina"
   },
   {
@@ -82064,7 +82064,7 @@
   {
     "id": 80845034,
     "name": "WANTED: Seeker of Sinful Spoils",
-    "archetype": "Sinful Spoils",
+    "archetype": "罪宝",
     "normalizedName": "WANTED:SeekerofSinfulSpoils"
   },
   {
@@ -83456,7 +83456,7 @@
   {
     "id": 4398189,
     "name": "Witch of the White Forest",
-    "archetype": "White Forest",
+    "archetype": "白き森",
     "normalizedName": "WitchoftheWhiteForest"
   },
   {
@@ -83648,7 +83648,7 @@
   {
     "id": 62995268,
     "name": "Woes of the White Forest",
-    "archetype": "White Forest",
+    "archetype": "白き森",
     "normalizedName": "WoesoftheWhiteForest"
   },
   {
@@ -86113,9 +86113,9 @@
   },
   {
     "id": 18451126,
-    "name": "青き眼の精霊",
-    "archetype": "青眼",
-    "normalizedName": "青き眼の精霊"
+    "name": "黒魔女ディアベルスター",
+    "archetype": "ディアベルスター",
+    "normalizedName": "黒魔女ディアベルスター"
   },
   {
     "id": 59725130,
@@ -86125,32 +86125,116 @@
   },
   {
     "id": 52410714,
-    "name": "白き乙女",
-    "archetype": "青眼",
-    "normalizedName": "白き乙女"
+    "name": "壱世壊＝ペルレイノ",
+    "archetype": "ティアラメンツ",
+    "normalizedName": "壱世壊=ペルレイノ"
   },
   {
     "id": 93424696,
-    "name": "地平に輝く白龍",
-    "archetype": "青眼",
-    "normalizedName": "地平に輝く白龍"
+    "name": "“罪宝狩りの悪魔”",
+    "archetype": "罪宝",
+    "normalizedName": "“罪宝狩りの悪魔”"
   },
   {
     "id": 75231776,
-    "name": "青き眼の祈り",
-    "archetype": "青眼",
-    "normalizedName": "青き眼の祈り"
+    "name": "原罪宝－スネークアイ",
+    "archetype": "罪宝",
+    "normalizedName": "原罪宝-スネークアイ"
   },
   {
     "id": 24719232,
-    "name": "青き眼の導き",
-    "archetype": "青眼",
-    "normalizedName": "青き眼の導き"
+    "name": "裏切りの罪宝－シルウィア",
+    "archetype": "罪宝",
+    "normalizedName": "裏切りの罪宝-シルウィア"
   },
   {
     "id": 53130232,
-    "name": "究極竜魔導師",
-    "archetype": "青眼",
-    "normalizedName": "究極竜魔導師"
+    "name": "死の罪宝－ルシエラ",
+    "archetype": "罪宝",
+    "normalizedName": "死の罪宝-ルシエラ"
+  },
+  {
+    "id": 15302730,
+    "name": "六世壊＝パライゾス",
+    "archetype": "クシャトリラ",
+    "normalizedName": "六世壊=パライゾス"
+  },
+  {
+    "id": 80927702,
+    "name": "罪宝の欺き",
+    "archetype": "罪宝",
+    "normalizedName": "罪宝の欺き"
+  },
+  {
+    "id": 40927517,
+    "name": "ティアラメンツ・カレイドハート",
+    "archetype": "ティアラメンツ",
+    "normalizedName": "ティアラメンツ・カレイドハート"
+  },
+  {
+    "id": 37039750,
+    "name": "告死聖徒ルシエラ",
+    "archetype": "アザミナ",
+    "normalizedName": "告死聖徒ルシエラ"
+  },
+  {
+    "id": 43896501,
+    "name": "殺戮聖徒レジーナ",
+    "archetype": "アザミナ",
+    "normalizedName": "殺戮聖徒レジーナ"
+  },
+  {
+    "id": 38641150,
+    "name": "白き森のシルヴィ",
+    "archetype": "白き森",
+    "normalizedName": "白き森のシルヴィ"
+  },
+  {
+    "id": 12410714,
+    "name": "白き森の聖徒ルシア",
+    "archetype": "白き森",
+    "normalizedName": "白き森の聖徒ルシア"
+  },
+  {
+    "id": 75306404,
+    "name": "ジェムナイト・クォーツ",
+    "archetype": "ジェムナイト",
+    "normalizedName": "ジェムナイト・クォーツ"
+  },
+  {
+    "id": 61980242,
+    "name": "白き森の魔狼シルウィア",
+    "archetype": "白き森",
+    "normalizedName": "白き森の魔狼シルウィア"
+  },
+  {
+    "id": 72126721,
+    "name": "白き森のいいつたえ",
+    "archetype": "白き森",
+    "normalizedName": "白き森のいいつたえ"
+  },
+  {
+    "id": 11403212,
+    "name": "ティアラメンツ・キトカロス",
+    "archetype": "ティアラメンツ",
+    "normalizedName": "ティアラメンツ・キトカロス"
+  },
+  {
+    "id": 15935398,
+    "name": "ティアラメンツ・シェイレーン",
+    "archetype": "ティアラメンツ",
+    "normalizedName": "ティアラメンツ・シェイレーン"
+  },
+  {
+    "id": 63784405,
+    "name": "ティアラメンツ・レイノハート",
+    "archetype": "ティアラメンツ",
+    "normalizedName": "ティアラメンツ・レイノハート"
+  },
+  {
+    "id": 71203546,
+    "name": "ティアラメンツ・メイルゥ",
+    "archetype": "ティアラメンツ",
+    "normalizedName": "ティアラメンツ・メイルゥ"
   }
 ]

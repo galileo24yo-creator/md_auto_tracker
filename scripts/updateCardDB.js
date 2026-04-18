@@ -74,7 +74,15 @@ const ARCHETYPE_MAP = {
   'Chimera': 'キマイラ',
   'Springans': 'スプリガンズ',
   'Spright': 'スプライト',
-  'Therion': 'セリオンズ'
+  'Therion': 'セリオンズ',
+  'Sinful Spoils': '罪宝',
+  'Diabellstar': 'ディアベルスター',
+  'Snake-Eye': 'スネークアイ',
+  'Azamina': 'アザミナ',
+  'White Forest': '白き森',
+  'Lunalight': '月光（ムーンライト）',
+  'Gem-Knight': 'ジェムナイト',
+  'Gem-': 'ジェムナイト'
 };
 
 async function updateDB() {
@@ -100,11 +108,12 @@ async function updateDB() {
 
     // Phase 2: Fetch Japanese Names
     console.log('Fetching Japanese names...');
+    let jaData = null;
     const jaResponse = await fetch(JA_URL);
     if (!jaResponse.ok) {
       console.warn('⚠️ Japanese API failed, using English names as fallback.');
     } else {
-      const jaData = await jaResponse.json();
+      jaData = await jaResponse.json();
       jaData.data.forEach(card => {
         if (cardMap.has(card.id)) {
           const existing = cardMap.get(card.id);
@@ -121,6 +130,15 @@ async function updateDB() {
       normalizedName: normalizeText(card.name),
       archetype: ARCHETYPE_MAP[card.archetype] || card.archetype
     }));
+
+    // Detect untranslated cards
+    const jaIds = jaData ? new Set(jaData.data.map(c => c.id)) : new Set();
+    const untranslated = Array.from(cardMap.values())
+      .filter(card => !jaIds.has(card.id))
+      .map(card => `${card.id}: ${card.name}`)
+      .join('\n');
+    fs.writeFileSync(path.join(process.cwd(), 'public', 'untranslated_cards.txt'), untranslated);
+    console.log(`- Generated untranslated_cards.txt with ${untranslated.split('\n').length} entries.`);
 
     // Phase 3: Manual Overrides
     if (fs.existsSync(MANUAL_FILE)) {
