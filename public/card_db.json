@@ -5305,9 +5305,9 @@
   },
   {
     "id": 17749468,
-    "name": "聖なる薊花",
+    "name": "贖罪神女",
     "archetype": "アザミナ",
-    "normalizedName": "聖なる薊花"
+    "normalizedName": "贖罪神女"
   },
   {
     "id": 39491690,
@@ -5323,9 +5323,9 @@
   },
   {
     "id": 42201897,
-    "name": "Azamina Determination",
+    "name": "アザミナ・ソル・エレボス",
     "archetype": "アザミナ",
-    "normalizedName": "AzaminaDetermination"
+    "normalizedName": "アザミナ・ソル・エレボス"
   },
   {
     "id": 46396218,
@@ -5335,21 +5335,21 @@
   },
   {
     "id": 46174776,
-    "name": "Azamina Moa Regina",
+    "name": "殺戮聖徒レジーナ",
     "archetype": "アザミナ",
-    "normalizedName": "AzaminaMoaRegina"
+    "normalizedName": "殺戮聖徒レジーナ"
   },
   {
     "id": 73391962,
-    "name": "Azamina Mu Rcielago",
+    "name": "告死聖徒ルシエラーゴ",
     "archetype": "アザミナ",
-    "normalizedName": "AzaminaMuRcielago"
+    "normalizedName": "告死聖徒ルシエラーゴ"
   },
   {
     "id": 9785661,
-    "name": "Azamina Sol Erysichthon",
+    "name": "飢渇聖徒エリュシクトーン",
     "archetype": "アザミナ",
-    "normalizedName": "AzaminaSolErysichthon"
+    "normalizedName": "飢渇聖徒エリュシクトーン"
   },
   {
     "id": 75081613,
@@ -6877,9 +6877,9 @@
   },
   {
     "id": 35778533,
-    "name": "白き森のわざわいなり",
+    "name": "白き森にはいるべからず",
     "archetype": "白き森",
-    "normalizedName": "白き森のわざわいなり"
+    "normalizedName": "白き森にはいるべからず"
   },
   {
     "id": 22125101,
@@ -23791,9 +23791,9 @@
   },
   {
     "id": 38648860,
-    "name": "Elzette, Azamina of the White Forest",
-    "archetype": "アザミナ",
-    "normalizedName": "Elzette,AzaminaoftheWhiteForest"
+    "name": "白き森のリゼット",
+    "archetype": "白き森",
+    "normalizedName": "白き森のリゼット"
   },
   {
     "id": 48017189,
@@ -57403,9 +57403,9 @@
   },
   {
     "id": 5800323,
-    "name": "Poplar of the White Forest",
+    "name": "白き森の妖魔",
     "archetype": "白き森",
-    "normalizedName": "PoplaroftheWhiteForest"
+    "normalizedName": "白き森の妖魔"
   },
   {
     "id": 61840587,
@@ -59425,9 +59425,9 @@
   },
   {
     "id": 65033975,
-    "name": "Queen Azamina",
+    "name": "アザミナの妖魔",
     "archetype": "アザミナ",
-    "normalizedName": "QueenAzamina"
+    "normalizedName": "アザミナの妖魔"
   },
   {
     "id": 73081602,
@@ -60757,9 +60757,9 @@
   },
   {
     "id": 77313225,
-    "name": "Rciela, Sinister Soul of the White Forest",
+    "name": "白き森の魔性ルシエラ",
     "archetype": "白き森",
-    "normalizedName": "Rciela,SinisterSouloftheWhiteForest"
+    "normalizedName": "白き森の魔性ルシエラ"
   },
   {
     "id": 58695102,
@@ -63457,9 +63457,9 @@
   },
   {
     "id": 24779554,
-    "name": "Rucia of the White Forest",
+    "name": "白き森の聖徒ルシア",
     "archetype": "白き森",
-    "normalizedName": "RuciaoftheWhiteForest"
+    "normalizedName": "白き森の聖徒ルシア"
   },
   {
     "id": 40139997,
@@ -64105,9 +64105,9 @@
   },
   {
     "id": 85065943,
-    "name": "Saint Azamina",
+    "name": "背信聖徒シルヴィア",
     "archetype": "アザミナ",
-    "normalizedName": "SaintAzamina"
+    "normalizedName": "背信聖徒シルヴィア"
   },
   {
     "id": 15130912,
@@ -64975,9 +64975,9 @@
   },
   {
     "id": 93723936,
-    "name": "Scourge of the White Forest",
+    "name": "白き森のあくま",
     "archetype": "白き森",
-    "normalizedName": "ScourgeoftheWhiteForest"
+    "normalizedName": "白き森のあくま"
   },
   {
     "id": 75078585,
@@ -67021,9 +67021,9 @@
   },
   {
     "id": 41924516,
-    "name": "Silvera, Wolf Tamer of the White Forest",
+    "name": "白き森の魔狼シルウィア",
     "archetype": "白き森",
-    "normalizedName": "Silvera,WolfTameroftheWhiteForest"
+    "normalizedName": "白き森の魔狼シルウィア"
   },
   {
     "id": 32476603,
@@ -67039,9 +67039,9 @@
   },
   {
     "id": 98385955,
-    "name": "Silvy of the White Forest",
+    "name": "白き森のシルヴィ",
     "archetype": "白き森",
-    "normalizedName": "SilvyoftheWhiteForest"
+    "normalizedName": "白き森のシルヴィ"
   },
   {
     "id": 67218327,
@@ -67177,9 +67177,9 @@
   },
   {
     "id": 3496543,
-    "name": "Sinful Spoils of the White Forest",
-    "archetype": "罪宝",
-    "normalizedName": "SinfulSpoilsoftheWhiteForest"
+    "name": "白き森の罪宝",
+    "archetype": "白き森",
+    "normalizedName": "白き森の罪宝"
   },
   {
     "id": 90386276,
@@ -73585,9 +73585,9 @@
   },
   {
     "id": 99289828,
-    "name": "Tales of the White Forest",
+    "name": "白き森のいいつたえ",
     "archetype": "白き森",
-    "normalizedName": "TalesoftheWhiteForest"
+    "normalizedName": "白き森のいいつたえ"
   },
   {
     "id": 71983925,
@@ -74983,9 +74983,9 @@
   },
   {
     "id": 94845588,
-    "name": "The Hallowed Azamina",
+    "name": "聖なる薊花",
     "archetype": "アザミナ",
-    "normalizedName": "TheHallowedAzamina"
+    "normalizedName": "聖なる薊花"
   },
   {
     "id": 5697558,
@@ -83455,9 +83455,9 @@
   },
   {
     "id": 4398189,
-    "name": "Witch of the White Forest",
+    "name": "白き森のアステーリャ",
     "archetype": "白き森",
-    "normalizedName": "WitchoftheWhiteForest"
+    "normalizedName": "白き森のアステーリャ"
   },
   {
     "id": 80741828,
@@ -83647,9 +83647,9 @@
   },
   {
     "id": 62995268,
-    "name": "Woes of the White Forest",
+    "name": "白き森のわざわいなり",
     "archetype": "白き森",
-    "normalizedName": "WoesoftheWhiteForest"
+    "normalizedName": "白き森のわざわいなり"
   },
   {
     "id": 49417509,
@@ -86172,48 +86172,6 @@
     "normalizedName": "ティアラメンツ・カレイドハート"
   },
   {
-    "id": 37039750,
-    "name": "告死聖徒ルシエラ",
-    "archetype": "アザミナ",
-    "normalizedName": "告死聖徒ルシエラ"
-  },
-  {
-    "id": 43896501,
-    "name": "殺戮聖徒レジーナ",
-    "archetype": "アザミナ",
-    "normalizedName": "殺戮聖徒レジーナ"
-  },
-  {
-    "id": 38641150,
-    "name": "白き森のシルヴィ",
-    "archetype": "白き森",
-    "normalizedName": "白き森のシルヴィ"
-  },
-  {
-    "id": 12410714,
-    "name": "白き森の聖徒ルシア",
-    "archetype": "白き森",
-    "normalizedName": "白き森の聖徒ルシア"
-  },
-  {
-    "id": 75306404,
-    "name": "ジェムナイト・クォーツ",
-    "archetype": "ジェムナイト",
-    "normalizedName": "ジェムナイト・クォーツ"
-  },
-  {
-    "id": 61980242,
-    "name": "白き森の魔狼シルウィア",
-    "archetype": "白き森",
-    "normalizedName": "白き森の魔狼シルウィア"
-  },
-  {
-    "id": 72126721,
-    "name": "白き森のいいつたえ",
-    "archetype": "白き森",
-    "normalizedName": "白き森のいいつたえ"
-  },
-  {
     "id": 11403212,
     "name": "ティアラメンツ・キトカロス",
     "archetype": "ティアラメンツ",
@@ -86236,5 +86194,11 @@
     "name": "ティアラメンツ・メイルゥ",
     "archetype": "ティアラメンツ",
     "normalizedName": "ティアラメンツ・メイルゥ"
+  },
+  {
+    "id": 75306404,
+    "name": "ジェムナイト-クォーツ",
+    "archetype": "ジェムナイト",
+    "normalizedName": "ジェムナイト-クォーツ"
   }
 ]

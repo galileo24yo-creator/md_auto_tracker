@@ -1035,22 +1035,22 @@
     "archetype": "Sinful Spoils"
   },
   {
-    "id": 17749468,
+    "id": 94845588,
     "name": "聖なる薊花",
     "archetype": "Azamina"
   },
   {
-    "id": 46396218,
+    "id": 85065943,
     "name": "背信聖徒シルヴィア",
     "archetype": "Azamina"
   },
   {
-    "id": 37039750,
-    "name": "告死聖徒ルシエラ",
+    "id": 73391962,
+    "name": "告死聖徒ルシエラーゴ",
     "archetype": "Azamina"
   },
   {
-    "id": 43896501,
+    "id": 46174776,
     "name": "殺戮聖徒レジーナ",
     "archetype": "Azamina"
   },
@@ -1070,22 +1070,22 @@
     "archetype": "Azamina"
   },
   {
-    "id": 25592142,
+    "id": 4398189,
     "name": "白き森のアステーリャ",
     "archetype": "White Forest"
   },
   {
-    "id": 61980241,
+    "id": 38648860,
     "name": "白き森のリゼット",
     "archetype": "White Forest"
   },
   {
-    "id": 38641150,
+    "id": 98385955,
     "name": "白き森のシルヴィ",
     "archetype": "White Forest"
   },
   {
-    "id": 12410714,
+    "id": 24779554,
     "name": "白き森の聖徒ルシア",
     "archetype": "White Forest"
   },
@@ -1095,22 +1095,22 @@
     "archetype": "White Forest"
   },
   {
-    "id": 75306404,
+    "id": 77313225,
     "name": "白き森の魔性ルシエラ",
     "archetype": "White Forest"
   },
   {
-    "id": 61980242,
+    "id": 41924516,
     "name": "白き森の魔狼シルウィア",
     "archetype": "White Forest"
   },
   {
-    "id": 72126721,
+    "id": 99289828,
     "name": "白き森のいいつたえ",
     "archetype": "White Forest"
   },
   {
-    "id": 35778533,
+    "id": 62995268,
     "name": "白き森のわざわいなり",
     "archetype": "White Forest"
   },
@@ -1216,7 +1216,62 @@
   },
   {
     "id": 75306404,
-    "name": "ジェムナイト・クォーツ",
+    "name": "ジェムナイト-クォーツ",
     "archetype": "Gem-Knight"
+  },
+  {
+    "id": 17749468,
+    "name": "贖罪神女",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 25592142,
+    "name": "白き森のアステーリャ",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 3496543,
+    "name": "白き森の罪宝",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 35778533,
+    "name": "白き森にはいるべからず",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 46396218,
+    "name": "背信聖徒シルヴィア",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 5800323,
+    "name": "白き森の妖魔",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 61980241,
+    "name": "白き森のリゼット",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 65033975,
+    "name": "アザミナの妖魔",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 93723936,
+    "name": "白き森のあくま",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 9785661,
+    "name": "飢渇聖徒エリュシクトーン",
+    "archetype": "Azamina"
+  },
+  {
+    "id": 42201897,
+    "name": "アザミナ・ソル・エレボス",
+    "archetype": "Azamina"
   }
 ]

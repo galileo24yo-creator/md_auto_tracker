@@ -137,7 +137,7 @@ async function updateDB() {
       console.log('Merging manual card data...');
       const manualData = JSON.parse(fs.readFileSync(MANUAL_FILE, 'utf8'));
       manualData.forEach(mCard => {
-        manualIds.add(mCard.id);
+        manualIds.add(Number(mCard.id));
         // マニアルデータは常に最優先
         const idx = finalCards.findIndex(c => c.id === mCard.id);
         const processedMCard = {
@@ -155,10 +155,11 @@ async function updateDB() {
     }
 
     // Detect untranslated cards (excluding ones in manual_cards.json)
-    const jaIds = jaData ? new Set(jaData.data.map(c => c.id)) : new Set();
+    const jaIds = jaData ? new Set(jaData.data.map(c => Number(c.id))) : new Set();
     const untranslatedList = Array.from(cardMap.values())
-      .filter(card => !jaIds.has(card.id) && !manualIds.has(card.id))
+      .filter(card => !jaIds.has(Number(card.id)) && !manualIds.has(Number(card.id)))
       .map(card => `${card.id}: ${card.name}`)
+      .sort((a, b) => a.localeCompare(b))
       .join('\n');
     fs.writeFileSync(path.join(process.cwd(), 'public', 'untranslated_cards.txt'), untranslatedList);
     console.log(`- Generated untranslated_cards.txt with ${untranslatedList ? untranslatedList.split('\n').length : 0} entries.`);
