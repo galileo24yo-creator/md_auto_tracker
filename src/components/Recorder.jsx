@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { normalizeTheme, normalizeThemeString } from '../lib/themeUtils';
 import { MonitorUp, Square, Save, Loader2, Trophy, Activity, Lock, LockOpen, Eye, EyeOff, Monitor, RotateCcw, PlayCircle, HelpCircle } from 'lucide-react';
 import DeckSelect from './DeckSelect';
 import { postData } from '../lib/api';
@@ -349,16 +350,26 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
   // Auto-fill themes and tags on Match End
   const autoFillRunRef = useRef(false);
   useEffect(() => {
-    if (result === 'VICTORY' || result === 'DEFEAT') {
+    if (result === 'VICTORY' || result === 'LOSE') {
       if (!autoFillRunRef.current) {
         autoFillRunRef.current = true;
         const translateTheme = (t) => themeMapRef.current[t] || t;
         
         // --- 1. Themes (Decks) ---
-        const myCards = detectedCardsRef.current.filter(c => c.side === 'BLUE' && c.archetype);
-        const oppCards = detectedCardsRef.current.filter(c => c.side === 'RED' && c.archetype);
-        const myThemes = [...new Set(myCards.map(c => translateTheme(c.archetype)))];
-        const oppThemes = [...new Set(oppCards.map(c => translateTheme(c.archetype)))];
+        const getValidThemes = (cards) => {
+          const stats = {}; // themeName -> Set of unique card names
+          cards.forEach(c => {
+            const theme = normalizeTheme(translateTheme(c.archetype));
+            if (!stats[theme]) stats[theme] = new Set();
+            stats[theme].add(c.name);
+          });
+          return Object.entries(stats)
+            .filter(([_, names]) => names.size >= 3)
+            .map(([theme]) => theme);
+        };
+
+        const myThemes = getValidThemes(detectedCardsRef.current.filter(c => c.side === 'BLUE' && c.archetype));
+        const oppThemes = getValidThemes(detectedCardsRef.current.filter(c => c.side === 'RED' && c.archetype));
 
         let msgParts = [];
         if (!isMyDeckLocked && myThemes.length > 0) {
@@ -543,7 +554,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
               const curGray = toGrayscale(getROIData(ctx, v, ROIS.CARD_VISUAL, 100, 100));
               if (prevGrayRef.current && prevGrayRef.current.length === curGray.length) {
                 const ssd = calculateSSD(curGray, prevGrayRef.current);
-                if (ssd > 150) {
+                if (ssd > 80) {
                   cardVotesRef.current = {}; detectionAttemptsRef.current = 0; lastFrameCardNameRef.current = '';
                   addLog('🔄 表示カードの切り替わりを検知', 'info');
                 }
@@ -658,11 +669,11 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
             const { features } = extractSequenceFeatures(rawData, 0, 0);
             const tVictory = matchSequence(features, statusTemplatesRef.current.victory || []);
             const tLose = matchSequence(features, statusTemplatesRef.current.lose || []);
-            let sequenceResult = tVictory.match ? 'VICTORY' : (tLose.match ? 'DEFEAT' : null);
+            let sequenceResult = tVictory.match ? 'VICTORY' : (tLose.match ? 'LOSE' : null);
             const isVictory = fuzzyIncludes(cleanText, 'VICTORY', 2);
-            const isDefeat = (confidence > 60 && fuzzyIncludes(cleanText, 'DEFEAT', 1)) || fuzzyIncludes(cleanText, 'LOSE', 1);
-            if (sequenceResult || isVictory || isDefeat) {
-              const detectedResult = sequenceResult || (isVictory ? 'VICTORY' : 'DEFEAT');
+            const isLose = confidence > 75 && fuzzyIncludes(cleanText, 'LOSE', 1);
+            if (sequenceResult || isVictory || isLose) {
+              const detectedResult = sequenceResult || (isVictory ? 'VICTORY' : 'LOSE');
               setResult(detectedResult); setIsResultLocked(true);
               const nextState = (curMode === 'ランク' || slotsRef.current.isDiffLocked) ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
               setCurrentState(nextState); stateRef.current = nextState;
@@ -791,14 +802,14 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
                  } 
                }} className="p-4 rounded-xl border border-zinc-700 bg-zinc-900/50 text-center cursor-pointer hover:border-indigo-500 group"><div className="text-[9px] text-zinc-500 uppercase font-bold mb-1 group-hover:text-indigo-400">Turn</div><div className="text-xl font-black text-indigo-400">{turn ? (turn + '攻') : '--'}</div></div>
               <div onClick={() => { 
-                const nextResult = result === 'VICTORY' ? 'DEFEAT' : 'VICTORY';
+                const nextResult = result === 'VICTORY' ? 'LOSE' : 'VICTORY';
                 setResult(nextResult); setIsResultLocked(true); 
                 const n = (mode === 'ランク' || slotsRef.current.isDiffLocked) ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING; 
                 if (currentState !== n) {
                   setCurrentState(n); stateRef.current = n; 
                   addLog(`手動操作: 結果入力を受け付けました [${nextResult}]`, 'info');
                 }
-              }} className={`p-4 rounded-xl border border-zinc-700 bg-zinc-900/50 text-center cursor-pointer group ${result === 'DEFEAT' ? 'hover:border-rose-500' : 'hover:border-emerald-500'}`}><div className={`text-[9px] uppercase font-bold mb-1 ${result === 'DEFEAT' ? 'text-rose-900/50 group-hover:text-rose-400' : 'text-zinc-500 group-hover:text-emerald-400'}`}>Result</div><div className={`text-xl font-black ${result === 'DEFEAT' ? 'text-rose-500' : 'text-emerald-400'}`}>{result || '--'}</div></div>
+              }} className={`p-4 rounded-xl border border-zinc-700 bg-zinc-900/50 text-center cursor-pointer group ${result === 'LOSE' ? 'hover:border-rose-500' : 'hover:border-emerald-500'}`}><div className={`text-[9px] uppercase font-bold mb-1 ${result === 'LOSE' ? 'text-rose-900/50 group-hover:text-rose-400' : 'text-zinc-500 group-hover:text-emerald-400'}`}>Result</div><div className={`text-xl font-black ${result === 'LOSE' ? 'text-rose-500' : 'text-emerald-400'}`}>{result || '--'}</div></div>
               <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 text-center col-span-2 relative"><label className="absolute top-2 left-3 text-[9px] text-zinc-500 uppercase font-bold">Diff / Rating</label><input type="text" value={diff} onChange={e => { const v = e.target.value; setDiff(v); setRatingChange(v); const l = v.trim() !== ''; setIsDiffLocked(l); if (l && currentState === STATES.DETECTING_RATING) { setCurrentState(STATES.NEXT_MATCH_STANDBY); stateRef.current = STATES.NEXT_MATCH_STANDBY; addLog(`手動操作: レート増減を入力`, 'info'); } }} className="w-full bg-transparent text-4xl font-black text-indigo-400 outline-none text-center" placeholder="--" /></div>
               <div className="flex flex-col gap-2 col-span-2 mt-2"><button onClick={() => saveMatch()} disabled={isProcessing || !turn || !result} className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3">{isProcessing ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />} Submit Record</button><button onClick={() => resetSlots()} className="w-full bg-zinc-800 text-zinc-400 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2"><RotateCcw className="w-4 h-4" /> Reset Match Slots</button></div>
             </div>

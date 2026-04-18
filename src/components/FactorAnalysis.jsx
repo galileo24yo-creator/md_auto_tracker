@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { normalizeThemeString } from '../lib/themeUtils';
 import { Target, Flame, Activity, TrendingUp, TrendingDown, Shield } from 'lucide-react';
 
 export default function FactorAnalysis({ records }) {
@@ -19,8 +20,8 @@ export default function FactorAnalysis({ records }) {
       const myDecks = String(r.myDeck || '').split(/[,、，]+/).map(t => t.trim()).filter(Boolean);
       if (myDecks.length === 0) return;
 
-      // 最初のデッキだけを代表として扱う
-      const d = myDecks[0];
+      // 最初のデッキだけを代表として扱う（正規化して使用）
+      const d = normalizeThemeString(myDecks[0]);
       if (!deckStats[d]) deckStats[d] = { total: 0, wins: 0, tags: new Set() };
       
       deckStats[d].total += 1;
@@ -64,7 +65,7 @@ export default function FactorAnalysis({ records }) {
 
       if (oppDecks.length === 0 || tags.length === 0) return;
 
-      const mainOpp = oppDecks[0]; // 対面代表テーマ
+      const mainOpp = normalizeThemeString(oppDecks[0]); // 対面代表テーマ（正規化）
       
       if (!matrix[mainOpp]) matrix[mainOpp] = {};
       

@@ -7,6 +7,7 @@ import DeckSelect from './DeckSelect';
 import FilterSelect from './FilterSelect';
 import SmartInsights from './SmartInsights';
 import FactorAnalysis from './FactorAnalysis';
+import { normalizeTheme, normalizeThemeString } from '../lib/themeUtils';
 import { useMatchAnalytics, COLORS, getFilteredRecords, getRankings } from '../hooks/useMatchAnalytics';
 import { RatingWidget, WinRateWidget, RecentMatchesWidget, CauseTrendWidget, MatchupWinRateWidget, TurnStatsWidget, StreakWidget, SummaryBarWidget, MyDeckStatsWidget, MatchupTableWidget } from './VisualBoard';
 
@@ -135,7 +136,7 @@ const MatchList = memo(({ records, onSelect }) => (
           <div className="flex flex-col flex-1 mx-4">
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors uppercase tracking-tight text-xs mr-1 shrink-0">
-                {r.opponentDeck || r.OpponentDeck || "UNKNOWN"}
+                {normalizeThemeString(r.opponentDeck || r.OpponentDeck) || "UNKNOWN"}
               </span>
               {(r.memo || r.Memo) && String(r.memo || r.Memo).split(/[,、，]+/).map((rawTag, idx) => {
                 const tag = rawTag.trim();
@@ -147,7 +148,7 @@ const MatchList = memo(({ records, onSelect }) => (
             </div>
             <div className="text-[9px] font-bold uppercase tracking-widest mt-1 flex items-center gap-1">
               <span className="text-zinc-500">MY:</span>
-              <span className="text-zinc-300 group-hover:text-zinc-100 transition-colors">{r.myDeck || r.MyDeck || "---"}</span>
+              <span className="text-zinc-300 group-hover:text-zinc-100 transition-colors">{normalizeThemeString(r.myDeck || r.MyDeck) || "---"}</span>
             </div>
             <span className="text-[8px] text-zinc-400 uppercase tracking-widest font-bold mt-1">{String(r.date || "").split(' ')[0]} • {r.mode} • {r.turn}</span>
           </div>
@@ -442,7 +443,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
     setEditData({
       mode: selectedMatch.mode || "ランク",
       turn: selectedMatch.turn || "先",
-      result: String(selectedMatch.result).toUpperCase().includes('VIC') || selectedMatch.result === 'WIN' ? 'VICTORY' : 'DEFEAT',
+      result: String(selectedMatch.result).toUpperCase().includes('VIC') || selectedMatch.result === 'WIN' ? 'VICTORY' : 'LOSE',
       myDeck: selectedMatch.myDeck ? String(selectedMatch.myDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean) : [],
       oppDeck: selectedMatch.opponentDeck ? String(selectedMatch.opponentDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean) : [],
       diff: selectedMatch.diff || selectedMatch.rating || "",
@@ -560,8 +561,8 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
     scopeFilteredRecords.forEach(r => { 
       // 大文字小文字両方に対応
       const val = r.myDeck || r.MyDeck;
-      if (val) String(val).split(/[,、，]+/).forEach(t => { 
-        const theme = String(t).trim(); 
+      if (val) String(val).split(/[,、，\+]+/).forEach(t => { 
+        const theme = normalizeTheme(t); 
         if (theme) s.add(theme); 
       }); 
     });
@@ -572,8 +573,8 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
     const s = new Set();
     scopeFilteredRecords.forEach(r => { 
       const val = r.opponentDeck || r.OpponentDeck;
-      if (val) String(val).split(/[,、，]+/).forEach(t => { 
-        const theme = String(t).trim(); 
+      if (val) String(val).split(/[,、，\+]+/).forEach(t => { 
+        const theme = normalizeTheme(t); 
         if (theme) s.add(theme); 
       }); 
     });
@@ -639,7 +640,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
     filteredRecords.forEach(r => { 
       const opDeck = r.opponentDeck || r.OpponentDeck;
       if (opDeck) { 
-        const d = String(opDeck).split(/[,、，]+/).map(x => String(x).trim()).filter(Boolean).sort().join(' + '); 
+        const d = normalizeThemeString(opDeck);
         if (d) c[d] = (c[d] || 0) + 1; 
       } 
     });
@@ -653,7 +654,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
     filteredRecords.forEach(r => { 
       const mDeck = r.myDeck || r.MyDeck;
       if (mDeck) { 
-        const d = String(mDeck).split(/[,、，]+/).map(x => String(x).trim()).filter(Boolean).sort().join(' + '); 
+        const d = normalizeThemeString(mDeck);
         if (!d) return; 
         if (!s[d]) s[d] = { w: 0, t: 0 }; 
         s[d].t++; 
@@ -1052,7 +1053,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                     </select>
                     <div className="flex gap-2">
                        <select value={editData.turn} onChange={e => setEditData({...editData, turn: e.target.value})} className="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 text-sm outline-none focus:ring-1 focus:ring-indigo-500"><option value="先">先</option><option value="後">後</option></select>
-                       <select value={editData.result} onChange={e => setEditData({...editData, result: e.target.value})} className="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 text-sm font-black outline-none focus:ring-1 focus:ring-emerald-500"><option value="VICTORY">WIN</option><option value="DEFEAT">LOSS</option></select>
+                       <select value={editData.result} onChange={e => setEditData({...editData, result: e.target.value})} className="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 text-sm font-black outline-none focus:ring-1 focus:ring-emerald-500"><option value="VICTORY">WIN</option><option value="LOSE">LOSS</option></select>
                     </div>
                   </div>
                   <DeckSelect availableDecks={decks} selectedDecks={editData.myDeck} onChange={v => setEditData({...editData, myDeck: v})} placeholder="My Deck" />

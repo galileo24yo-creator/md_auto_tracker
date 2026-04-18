@@ -40,19 +40,47 @@ const ARCHETYPE_MAP = {
   'Mikanko': '御巫',
   'Rescue-ACE': 'Ｒ－ＡＣＥ',
   'Tenpyai Dragon': '天盃龍',
-  'Voiceless Voice': '粛声'
+  'Voiceless Voice': '粛声',
+  'Kewl Tune': 'キラーチューン',
+  'Fiendsmith': 'デモンスミス',
+  'Mitsurugi': '巳剣',
+  'Maliss': 'M∀LICE',
+  'Radiant Typhoon': '絢嵐',
+  'Vanquish Soul': 'ＶＳ（ヴァンキッシュ・ソウル）',
+  'Temple of the Kings': '王家の神殿',
+  'Apophis': 'アポピス',
+  'Serket': 'セルケト',
+  'Primite': '原石',
+  'Dracotail': 'ドラゴンテイル',
+  'Solfachord': 'ドレミコード',
+  'Yummy': 'ヤミー',
+  'R.B.': 'Ｒ.Ｂ.（リボルボット）',
+  'Ryzeal': 'ライゼオル',
+  'Magnet': 'マグネット・ウォリアー',
+  'Branded': '烙印',
+  'Despia': 'デスピア',
+  'Bystial': 'ビーステッド',
+  'Dogmatika': 'ドラグマ',
+  'Albaz': 'アルバスの落胤',
+  'Icejade': '氷水',
+  'Swordsoul': '相剣',
+  'Tri-Brigade': '鉄獣戦線',
+  'Chimera': 'キマイラ',
+  'Springans': 'スプリガンズ',
+  'Spright': 'スプライト',
+  'Therion': 'セリオンズ'
 };
 
 async function updateDB() {
   console.log('🔄 Updating database with hybrid merge (All + Japanese)...');
-  
+
   try {
     // Phase 1: Fetch All Cards (Foundation)
     console.log('Fetching all cards (English context)...');
     const baseResponse = await fetch(BASE_URL);
     if (!baseResponse.ok) throw new Error(`Base API error: ${baseResponse.status}`);
     const baseData = await baseResponse.json();
-    
+
     // IDをキーにしたマップを作成
     const cardMap = new Map();
     baseData.data.forEach(card => {
@@ -68,17 +96,17 @@ async function updateDB() {
     console.log('Fetching Japanese names...');
     const jaResponse = await fetch(JA_URL);
     if (!jaResponse.ok) {
-        console.warn('⚠️ Japanese API failed, using English names as fallback.');
+      console.warn('⚠️ Japanese API failed, using English names as fallback.');
     } else {
-        const jaData = await jaResponse.json();
-        jaData.data.forEach(card => {
-            if (cardMap.has(card.id)) {
-                const existing = cardMap.get(card.id);
-                existing.name = card.name; // 日本語名で上書き
-                // テーマ名も日本語があればここで置換（APIが対応していれば）
-            }
-        });
-        console.log(`- Patched Japanese names for ${jaData.data.length} cards.`);
+      const jaData = await jaResponse.json();
+      jaData.data.forEach(card => {
+        if (cardMap.has(card.id)) {
+          const existing = cardMap.get(card.id);
+          existing.name = card.name; // 日本語名で上書き
+          // テーマ名も日本語があればここで置換（APIが対応していれば）
+        }
+      });
+      console.log(`- Patched Japanese names for ${jaData.data.length} cards.`);
     }
 
     // Final Mapping & Normalization
@@ -93,25 +121,25 @@ async function updateDB() {
       console.log('Merging manual card data...');
       const manualData = JSON.parse(fs.readFileSync(MANUAL_FILE, 'utf8'));
       manualData.forEach(mCard => {
-         // マニアルデータは常に最優先
-         const idx = finalCards.findIndex(c => c.id === mCard.id);
-         const processedMCard = {
-             ...mCard,
-             normalizedName: normalizeText(mCard.name),
-             archetype: ARCHETYPE_MAP[mCard.archetype] || mCard.archetype
-         };
-         if (idx !== -1) {
-             finalCards[idx] = processedMCard;
-         } else {
-             finalCards.push(processedMCard);
-         }
+        // マニアルデータは常に最優先
+        const idx = finalCards.findIndex(c => c.id === mCard.id);
+        const processedMCard = {
+          ...mCard,
+          normalizedName: normalizeText(mCard.name),
+          archetype: ARCHETYPE_MAP[mCard.archetype] || mCard.archetype
+        };
+        if (idx !== -1) {
+          finalCards[idx] = processedMCard;
+        } else {
+          finalCards.push(processedMCard);
+        }
       });
       console.log(`- Merged ${manualData.length} manual entry/entries.`);
     }
 
-    fs.writeFileSync(OUTPUT_FILE, JSON.stringify(finalCards));
+    fs.writeFileSync(OUTPUT_FILE, JSON.stringify(finalCards, null, 2));
     console.log(`✅ Successfully generated card_db.json with ${finalCards.length} cards!`);
-    
+
   } catch (err) {
     console.error('❌ Failed to update card database:', err);
     process.exit(1);

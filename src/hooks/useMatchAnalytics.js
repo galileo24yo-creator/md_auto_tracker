@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { normalizeTheme, normalizeThemeString } from '../lib/themeUtils';
 
 /**
  * カラーパレット定数
@@ -75,14 +76,14 @@ export const getFilteredRecords = (records, filters) => {
   if (mode && mode !== 'ALL') r = r.filter(v => String(v.mode || "").includes(String(mode).replace('戦', '')));
   if (myDecks && myDecks.length > 0) {
     r = r.filter(v => {
-      const themes = String(v.myDeck || "").split(/[,、，]+/).map(x => String(x).trim()).filter(Boolean);
-      return myDecks.every(f => themes.includes(f));
+      const themes = String(v.myDeck || "").split(/[,、，\+]+/).map(x => normalizeTheme(x)).filter(Boolean);
+      return myDecks.every(f => themes.includes(normalizeTheme(f)));
     });
   }
   if (opponentDecks && opponentDecks.length > 0) {
     r = r.filter(v => {
-      const themes = String(v.opponentDeck || "").split(/[,、，]+/).map(x => String(x).trim()).filter(Boolean);
-      return opponentDecks.every(f => themes.includes(f));
+      const themes = String(v.opponentDeck || "").split(/[,、，\+]+/).map(x => normalizeTheme(x)).filter(Boolean);
+      return opponentDecks.every(f => themes.includes(normalizeTheme(f)));
     });
   }
 
@@ -117,7 +118,7 @@ export const getRankings = (records, minLimit) => {
   records.forEach(r => { 
     const opponentDeckStr = r.opponentDeck || r.OpponentDeck;
     if (!opponentDeckStr) return; 
-    const d = String(opponentDeckStr).split(/[,、，]+/).map(x => String(x).trim()).filter(Boolean).sort().join(' + '); 
+    const d = normalizeThemeString(opponentDeckStr);
     if (!d) return; 
     const w = String(r.result).toUpperCase().includes('VIC') || r.result === 'WIN'; 
     if (!s[d]) s[d] = { t: 0, w: 0, ft: 0, fw: 0, st: 0, sw: 0 }; 
@@ -244,7 +245,7 @@ export function useMatchAnalytics(records, filters) {
     const s = {};
     filteredRecords.forEach(r => { 
       if (r.myDeck) { 
-        const d = String(r.myDeck).split(/[,、，]+/).map(x => String(x).trim()).filter(Boolean).sort().join(' + '); 
+        const d = normalizeThemeString(r.myDeck);
         if (!d) return; 
         if (!s[d]) s[d] = { w: 0, t: 0 }; 
         s[d].t++; 

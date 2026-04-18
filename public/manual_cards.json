@@ -3,5 +3,990 @@
     "id": 92248362,
     "name": "Ｋ９－１７号 イヅナ",
     "archetype": "K9"
+  },
+  {
+    "id": 42971201,
+    "name": "キラーチューン・レコ",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 16387555,
+    "name": "キラーチューン・キュー",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 43904702,
+    "name": "キラーチューン・クリップ",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 42781164,
+    "name": "キラーチューン・トラックメイカー",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 15665977,
+    "name": "キラーチューン・レッドシール",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 40847034,
+    "name": "キラーチューン・プレイリスト",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 65961304,
+    "name": "キラーチューン　Ｂ２Ｂ",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 14442329,
+    "name": "ジュークジョイント“Killer Tune”",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 39576656,
+    "name": "キラーチューン・クラックル",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 41069676,
+    "name": "キラーチューン・ラウドネスウォー",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 16509007,
+    "name": "キラーチューン・ミクス",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 88170262,
+    "name": "キラーチューン・リミックス",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 17209452,
+    "name": "キラーチューン・ロタリー",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 78058681,
+    "name": "キラーチューン・シンクロ",
+    "archetype": "Kewl Tune"
+  },
+  {
+    "id": 60764609,
+    "name": "魔を刻むデモンスミス",
+    "archetype": "Fiendsmith"
+  },
+  {
+    "id": 28803166,
+    "name": "紅涙の魔ラクリモーサ",
+    "archetype": "Fiendsmith"
+  },
+  {
+    "id": 2463794,
+    "name": "刻まれし魔の鎮魂棺",
+    "archetype": "Fiendsmith"
+  },
+  {
+    "id": 49867899,
+    "name": "刻まれし魔の大聖棺",
+    "archetype": "Fiendsmith"
+  },
+  {
+    "id": 32991300,
+    "name": "刻まれし魔の神聖棺",
+    "archetype": "Fiendsmith"
+  },
+  {
+    "id": 74100201,
+    "name": "刻まれし魔ラクリモーサ",
+    "archetype": "Fiendsmith"
+  },
+  {
+    "id": 82135803,
+    "name": "刻まれし魔ディエスイレ",
+    "archetype": "Fiendsmith"
+  },
+  {
+    "id": 46580971,
+    "name": "刻まれし魔レクストレメンデ",
+    "archetype": "Fiendsmith"
+  },
+  {
+    "id": 98567237,
+    "name": "刻まれし魔の詠聖",
+    "archetype": "Fiendsmith"
+  },
+  {
+    "id": 42144793,
+    "name": "刻まれし魔の讃聖",
+    "archetype": "Fiendsmith"
+  },
+  {
+    "id": 74435860,
+    "name": "刻まれし魔の楽園",
+    "archetype": "Fiendsmith"
+  },
+  {
+    "id": 60505298,
+    "name": "刻まれし魔の憐歌",
+    "archetype": "Fiendsmith"
+  },
+  {
+    "id": 81560239,
+    "name": "巳剣之尊 草那藝",
+    "archetype": "Mitsurugi"
+  },
+  {
+    "id": 45171524,
+    "name": "巳剣之尊 麁正",
+    "archetype": "Mitsurugi"
+  },
+  {
+    "id": 18176525,
+    "name": "巳剣之尊 佐士",
+    "archetype": "Mitsurugi"
+  },
+  {
+    "id": 13332685,
+    "name": "天羽々斬之巳剣",
+    "archetype": "Mitsurugi"
+  },
+  {
+    "id": 19899073,
+    "name": "天叢雲之巳剣",
+    "archetype": "Mitsurugi"
+  },
+  {
+    "id": 55397172,
+    "name": "布都御魂之巳剣",
+    "archetype": "Mitsurugi"
+  },
+  {
+    "id": 49721684,
+    "name": "巳剣之神鏡",
+    "archetype": "Mitsurugi"
+  },
+  {
+    "id": 76725398,
+    "name": "巳剣之勾玉",
+    "archetype": "Mitsurugi"
+  },
+  {
+    "id": 17954937,
+    "name": "巳剣大祓",
+    "archetype": "Mitsurugi"
+  },
+  {
+    "id": 49604192,
+    "name": "八雲断巳剣",
+    "archetype": "Mitsurugi"
+  },
+  {
+    "id": 65028594,
+    "name": "Ｍ∀ＬＩＣＥ＜Ｐ＞Ｃｈｅｓｈｉｒｅ Ｃａｔ",
+    "archetype": "Maliss"
+  },
+  {
+    "id": 32061192,
+    "name": "Ｍ∀ＬＩＣＥ＜Ｐ＞Ｄｏｒｍｏｕｓｅ",
+    "archetype": "Maliss"
+  },
+  {
+    "id": 20938824,
+    "name": "Ｍ∀ＬＩＣＥ＜Ｐ＞Ｍａｒｃｈ Ｈａｒｅ",
+    "archetype": "Maliss"
+  },
+  {
+    "id": 69272449,
+    "name": "Ｍ∀ＬＩＣＥ＜Ｐ＞Ｗｈｉｔｅ Ｒａｂｂｉｔ",
+    "archetype": "Maliss"
+  },
+  {
+    "id": 21848500,
+    "name": "Ｍ∀ＬＩＣＥ＜Ｑ＞ＨＥＡＲＴＳ ＯＦ ＣＲＹＰＴＥＲ",
+    "archetype": "Maliss"
+  },
+  {
+    "id": 68059897,
+    "name": "Ｍ∀ＬＩＣＥ＜Ｑ＞ＲＥＤ ＲＡＮＳＯＭ",
+    "archetype": "Maliss"
+  },
+  {
+    "id": 95454996,
+    "name": "Ｍ∀ＬＩＣＥ＜Ｑ＞ＷＨＩＴＥ ＢＩＮＤＥＲ",
+    "archetype": "Maliss"
+  },
+  {
+    "id": 93453053,
+    "name": "Ｍ∀ＬＩＣＥ ＩＮ ＴＨＥ ＭＩＲＲＯＲ",
+    "archetype": "Maliss"
+  },
+  {
+    "id": 68337209,
+    "name": "Ｍ∀ＬＩＣＥ ＩＮ ＴＨＥ ＵＮＤＥＲＧＲＯＵＮＤ",
+    "archetype": "Maliss"
+  },
+  {
+    "id": 22617208,
+    "name": "Ｍ∀ＬＩＣＥ＜Ｃ＞ＭＴＰ－０７",
+    "archetype": "Maliss"
+  },
+  {
+    "id": 33256037,
+    "name": "Ｍ∀ＬＩＣＥ＜Ｃ＞ＧＷＣ－０６",
+    "archetype": "Maliss"
+  },
+  {
+    "id": 74776118,
+    "name": "Ｍ∀ＬＩＣＥ＜Ｃ＞ＴＢ－１１",
+    "archetype": "Maliss"
+  },
+  {
+    "id": 98150493,
+    "name": "絢嵐たるエルダム",
+    "archetype": "Radiant Typhoon"
+  },
+  {
+    "id": 46796332,
+    "name": "絢嵐たるスエン",
+    "archetype": "Radiant Typhoon"
+  },
+  {
+    "id": 63935272,
+    "name": "絢嵐たるメガラ",
+    "archetype": "Radiant Typhoon"
+  },
+  {
+    "id": 21543818,
+    "name": "絢嵐たるクローゼア",
+    "archetype": "Radiant Typhoon"
+  },
+  {
+    "id": 77284610,
+    "name": "絢嵐渦麗ヴァルルーン",
+    "archetype": "Radiant Typhoon"
+  },
+  {
+    "id": 35821094,
+    "name": "絢嵐豪火フォニクス",
+    "archetype": "Radiant Typhoon"
+  },
+  {
+    "id": 39341885,
+    "name": "絢嵐たる海霊ヴァルルーン",
+    "archetype": "Radiant Typhoon"
+  },
+  {
+    "id": 40905951,
+    "name": "絢嵐たる献詠",
+    "archetype": "Radiant Typhoon"
+  },
+  {
+    "id": 39648951,
+    "name": "絢嵐たる顕現",
+    "archetype": "Radiant Typhoon"
+  },
+  {
+    "id": 12467770,
+    "name": "絢嵐たる見神",
+    "archetype": "Radiant Typhoon"
+  },
+  {
+    "id": 91623896,
+    "name": "絢嵐たる軒昂",
+    "archetype": "Radiant Typhoon"
+  },
+  {
+    "id": 53813120,
+    "name": "絢嵐たる権能",
+    "archetype": "Radiant Typhoon"
+  },
+  {
+    "id": 29302858,
+    "name": "ＶＳ ラゼン",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 20563821,
+    "name": "ＶＳ Ｄｒ.マッドラヴ",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 66401502,
+    "name": "ＶＳ パンテラ",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 88566373,
+    "name": "ＶＳ ヘヴィ・ボーガー",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 93382435,
+    "name": "ＶＳ 龍帝ヴァリウス",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 9091064,
+    "name": "ＶＳ 蛟龍",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 93156774,
+    "name": "ＶＳ ホーリー・スー",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 55688914,
+    "name": "ＶＳ プルトンＨＧ",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 77894049,
+    "name": "闘神の虚像",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 78536109,
+    "name": "ＶＳ コンティニュー",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 35550352,
+    "name": "Ｓｔａｋｅ Ｙｏｕｒ Ｓｏｕｌ！",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 95574570,
+    "name": "ＶＳ 螺旋流辻風",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 53330789,
+    "name": "ＶＳ トリニティ・バースト",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 60883493,
+    "name": "ＶＳ 裏螺旋流雪風",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 45831637,
+    "name": "Ｓｔａｒｔ ｆｏｒ ＶＳ！",
+    "archetype": "Vanquish Soul"
+  },
+  {
+    "id": 91025875,
+    "name": "Ｋ９－００号 ルプス",
+    "archetype": "K9"
+  },
+  {
+    "id": 54919528,
+    "name": "Ｋ９－ØØ “Hound”",
+    "archetype": "K9"
+  },
+  {
+    "id": 27420823,
+    "name": "Ｋ９－１７号 “Ｒｉｐｐｅｒ”",
+    "archetype": "K9"
+  },
+  {
+    "id": 28642461,
+    "name": "Ｋ９－６６ａ号 ヨクル",
+    "archetype": "K9"
+  },
+  {
+    "id": 55031170,
+    "name": "Ｋ９－６６ｂ号 ランタン",
+    "archetype": "K9"
+  },
+  {
+    "id": 47960073,
+    "name": "Ｋ９－０４号 咒",
+    "archetype": "K9"
+  },
+  {
+    "id": 67515699,
+    "name": "Ｋ９－６６Ｘ “Jacks”",
+    "archetype": "K9"
+  },
+  {
+    "id": 90303227,
+    "name": "Ｋ９－Ｘ “Werewolf”",
+    "archetype": "K9"
+  },
+  {
+    "id": 31286915,
+    "name": "Ｋ９－Ｘ “Ripper/M”",
+    "archetype": "K9"
+  },
+  {
+    "id": 27308231,
+    "name": "K9-LC拘束解除",
+    "archetype": "K9"
+  },
+  {
+    "id": 53792930,
+    "name": "K9-EX強制解除",
+    "archetype": "K9"
+  },
+  {
+    "id": 26585784,
+    "name": "K9-EW特殊解除実験",
+    "archetype": "K9"
+  },
+  {
+    "id": 80181649,
+    "name": "“Ｃａｓｅ ｏｆ Ｋ９”",
+    "archetype": "K9"
+  },
+  {
+    "id": 29762407,
+    "name": "王家の神殿",
+    "archetype": "Temple of the Kings"
+  },
+  {
+    "id": 28506029,
+    "name": "アポピスの化神",
+    "archetype": "Apophis"
+  },
+  {
+    "id": 85888377,
+    "name": "澱神アポピス",
+    "archetype": "Apophis"
+  },
+  {
+    "id": 95561146,
+    "name": "アポピスの蛇神",
+    "archetype": "Apophis"
+  },
+  {
+    "id": 97800311,
+    "name": "聖神蛇アポピス",
+    "archetype": "Apophis"
+  },
+  {
+    "id": 89194033,
+    "name": "守護獣セルケト",
+    "archetype": "Serket"
+  },
+  {
+    "id": 23804920,
+    "name": "聖神獣セルケト",
+    "archetype": "Serket"
+  },
+  {
+    "id": 48739166,
+    "name": "アヌビスの裁き",
+    "archetype": "Temple of the Kings"
+  },
+  {
+    "id": 59576447,
+    "name": "アヌビスの審判",
+    "archetype": "Temple of the Kings"
+  },
+  {
+    "id": 27107507,
+    "name": "守護者アヌビス",
+    "archetype": "Temple of the Kings"
+  },
+  {
+    "id": 97522863,
+    "name": "刻印を持つ者",
+    "archetype": "Temple of the Kings"
+  },
+  {
+    "id": 69299029,
+    "name": "王の遺宝祀りし聖域",
+    "archetype": "Temple of the Kings"
+  },
+  {
+    "id": 81418467,
+    "name": "原石竜インペリアル・ドラゴン",
+    "archetype": "Primite"
+  },
+  {
+    "id": 63198739,
+    "name": "原石竜アナザー・ベリル",
+    "archetype": "Primite"
+  },
+  {
+    "id": 56506740,
+    "name": "原石の皇脈",
+    "archetype": "Primite"
+  },
+  {
+    "id": 29095457,
+    "name": "原石の穿光",
+    "archetype": "Primite"
+  },
+  {
+    "id": 41488249,
+    "name": "原石の鳴獰",
+    "archetype": "Primite"
+  },
+  {
+    "id": 92501449,
+    "name": "原石の反叫",
+    "archetype": "Primite"
+  },
+  {
+    "id": 27556460,
+    "name": "原石の惨叫",
+    "archetype": "Primite"
+  },
+  {
+    "id": 17217034,
+    "name": "合体術式－エンゲージ・ゼロ",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 20357457,
+    "name": "未来の柱－キアノス",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 25072579,
+    "name": "試号閃刀姫－アマツ",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 34456146,
+    "name": "慈愛の賢者－シエラ",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 96795312,
+    "name": "武の賢者－アーカス",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 22790910,
+    "name": "智の賢者－ヒンメル",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 98462037,
+    "name": "閃刀姫－アザレア",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 56741506,
+    "name": "閃刀姫－アザレア・テンペランス",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 63013339,
+    "name": "閃刀姫－カメリア",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 76072561,
+    "name": "閃刀姫＝ゼロ",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 61151074,
+    "name": "閃刀機－アディルセイバー",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 34433770,
+    "name": "閃刀亜式－レムニスゲート",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 33331231,
+    "name": "閃術兵器－Ｈ.Ａ.Ｍ.Ｐ.",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 23530726,
+    "name": "閃術兵器－Ｓ.Ｐ.Ｅ.Ｃ.Ｔ.Ｒ.Ａ.",
+    "archetype": "Sky Striker"
+  },
+  {
+    "id": 74820316,
+    "name": "宵星の騎士エンリルギルス",
+    "archetype": "Orcust"
+  },
+  {
+    "id": 48835607,
+    "name": "オルフェゴール・ガラテアｉ",
+    "archetype": "Orcust"
+  },
+  {
+    "id": 33760966,
+    "name": "星辰爪竜アルザリオン",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 1498449,
+    "name": "星辰砲手ファイメナ",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 5431722,
+    "name": "星辰の吼炎",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 79755671,
+    "name": "星辰法宮グラメル",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 69932023,
+    "name": "星辰の裂角",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 75003700,
+    "name": "星辰槍手ルキアス",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 7375867,
+    "name": "星辰竜ムルル",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 44482554,
+    "name": "星辰竜パーン",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 84477320,
+    "name": "星辰響手プリクル",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 42125140,
+    "name": "星辰鋏竜シャウラス",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 80208225,
+    "name": "星辰の刺毒",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 70871153,
+    "name": "星辰竜ウルグラ",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 6153210,
+    "name": "計都星辰",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 32548318,
+    "name": "羅睺星辰",
+    "archetype": "Dracotail"
+  },
+  {
+    "id": 60442460,
+    "name": "導かれし烙印",
+    "archetype": "Branded"
+  },
+  {
+    "id": 34090915,
+    "name": "復烙印",
+    "archetype": "Branded"
+  },
+  {
+    "id": 19271881,
+    "name": "赫ける王の烙印",
+    "archetype": "Branded"
+  },
+  {
+    "id": 45675980,
+    "name": "烙印の即凶劇",
+    "archetype": "Branded"
+  },
+  {
+    "id": 72554664,
+    "name": "烙印の光",
+    "archetype": "Branded"
+  },
+  {
+    "id": 30271097,
+    "name": "The Fallen & The Virtuous",
+    "archetype": "Branded"
+  },
+  {
+    "id": 86762958,
+    "name": "アシスト★ヤミー！",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 67098897,
+    "name": "クッキィ★ヤミーウェイ",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 68810435,
+    "name": "クッキィ☆ヤミー",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 31603289,
+    "name": "カプシー★ヤミーウェイ",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 31425736,
+    "name": "カプシー☆ヤミー",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 93192592,
+    "name": "ロリポー★ヤミーウェイ",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 4215180,
+    "name": "ロリポー☆ヤミー",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 10966439,
+    "name": "マシュマオ☆ヤミー",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 56870908,
+    "name": "Ｙｕｍ☆Ｙｕｍ☆ヤミーズ",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 65853758,
+    "name": "ヤミー★リデンプション",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 30581601,
+    "name": "ヤミー★スナッチー",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 29369059,
+    "name": "ヤミー☆サプライズ",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 93360904,
+    "name": "ヤミーズメント★アクロッキー",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 66975205,
+    "name": "ヤミーズメント☆ミニヨン",
+    "archetype": "Yummy"
+  },
+  {
+    "id": 34022970,
+    "name": "エクス・ライゼオル",
+    "archetype": "Ryzeal"
+  },
+  {
+    "id": 8633261,
+    "name": "アイス・ライゼオル",
+    "archetype": "Ryzeal"
+  },
+  {
+    "id": 72238166,
+    "name": "ノード・ライゼオル",
+    "archetype": "Ryzeal"
+  },
+  {
+    "id": 61116514,
+    "name": "パルマ・ライゼオル",
+    "archetype": "Ryzeal"
+  },
+  {
+    "id": 84433129,
+    "name": "スター・ライゼオル",
+    "archetype": "Ryzeal"
+  },
+  {
+    "id": 35844557,
+    "name": "ソード・ライゼオル",
+    "archetype": "Ryzeal"
+  },
+  {
+    "id": 6798031,
+    "name": "ライゼオル・クロス",
+    "archetype": "Ryzeal"
+  },
+  {
+    "id": 34909328,
+    "name": "ライゼオル・デッドネーダー",
+    "archetype": "Ryzeal"
+  },
+  {
+    "id": 7511613,
+    "name": "ライゼオル・デュオドライブ",
+    "archetype": "Ryzeal"
+  },
+  {
+    "id": 53276089,
+    "name": "ライゼオル・マスドライバー",
+    "archetype": "Ryzeal"
+  },
+  {
+    "id": 60394026,
+    "name": "ライゼオル・プラグイン",
+    "archetype": "Ryzeal"
+  },
+  {
+    "id": 86289475,
+    "name": "磁石の戦士Ω＋",
+    "archetype": "Magnet"
+  },
+  {
+    "id": 87814728,
+    "name": "磁石の戦士Σ－",
+    "archetype": "Magnet"
+  },
+  {
+    "id": 51826619,
+    "name": "磁石の戦士Σ＋",
+    "archetype": "Magnet"
+  },
+  {
+    "id": 78710386,
+    "name": "Ｒ.Ｂ.ファンク・ドック",
+    "archetype": "R.B."
+  },
+  {
+    "id": 33438265,
+    "name": "Ｒ.Ｂ.ＧＡ１０カッター",
+    "archetype": "R.B."
+  },
+  {
+    "id": 6043161,
+    "name": "Ｒ.Ｂ.ＧＡ１０ドリラー",
+    "archetype": "R.B."
+  },
+  {
+    "id": 44573911,
+    "name": "Ｒ.Ｂ.ＧＡ１０パイルバンカー",
+    "archetype": "R.B."
+  },
+  {
+    "id": 17188206,
+    "name": "Ｒ.Ｂ.ラムダ・ブレード",
+    "archetype": "R.B."
+  },
+  {
+    "id": 81794107,
+    "name": "Ｒ.Ｂ.ラムダ・キャノン",
+    "archetype": "R.B."
+  },
+  {
+    "id": 43450363,
+    "name": "Ｒ.Ｂ.ラストスタンド",
+    "archetype": "R.B."
+  },
+  {
+    "id": 79859067,
+    "name": "Ｒ.Ｂ.ネクストフェーズ",
+    "archetype": "R.B."
+  },
+  {
+    "id": 16066654,
+    "name": "Ｒ.Ｂ.オペレーションテスト",
+    "archetype": "R.B."
+  },
+  {
+    "id": 80071619,
+    "name": "Ｒ.Ｂ.シェパードクルーク",
+    "archetype": "R.B."
+  },
+  {
+    "id": 5109321,
+    "name": "Ｒ.Ｂ.ステージ・ランディング",
+    "archetype": "R.B."
+  },
+  {
+    "id": 32216688,
+    "name": "Ｒ.Ｂ.ブルート・ブルース",
+    "archetype": "R.B."
+  },
+  {
+    "id": 6821579,
+    "name": "Ｒ.Ｂ.バルカン・ブースター",
+    "archetype": "R.B."
+  },
+  {
+    "id": 79436874,
+    "name": "Ｒ.Ｂ.バルカン・ロケット",
+    "archetype": "R.B."
+  },
+  {
+    "id": 14558127,
+    "name": "灰流うらら",
+    "archetype": ""
+  },
+  {
+    "id": 56832865,
+    "name": "マルチャミー・プルリア",
+    "archetype": ""
+  },
+  {
+    "id": 91217316,
+    "name": "マルチャミー・フワロス",
+    "archetype": ""
+  },
+  {
+    "id": 87126721,
+    "name": "マルチャミー・ニャルス",
+    "archetype": ""
+  },
+  {
+    "id": 18451126,
+    "name": "青き眼の精霊",
+    "archetype": "Blue-Eyes"
+  },
+  {
+    "id": 59822133,
+    "name": "青眼の精霊龍",
+    "archetype": "Blue-Eyes"
+  },
+  {
+    "id": 59725130,
+    "name": "青眼の究極霊龍",
+    "archetype": "Blue-Eyes"
+  },
+  {
+    "id": 52410714,
+    "name": "白き乙女",
+    "archetype": "Blue-Eyes"
+  },
+  {
+    "id": 93424696,
+    "name": "地平に輝く白龍",
+    "archetype": "Blue-Eyes"
+  },
+  {
+    "id": 75231776,
+    "name": "青き眼の祈り",
+    "archetype": "Blue-Eyes"
+  },
+  {
+    "id": 24719232,
+    "name": "青き眼の導き",
+    "archetype": "Blue-Eyes"
+  },
+  {
+    "id": 53130232,
+    "name": "究極竜魔導師",
+    "archetype": "Blue-Eyes"
   }
 ]
