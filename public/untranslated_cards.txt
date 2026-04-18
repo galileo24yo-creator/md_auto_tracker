@@ -149,7 +149,6 @@
 1164211: Shield of the Millennium Dynasty
 11654067: Fire Ejection
 11677278: Mimighoul Armor
-11688916: Solfachord Primoa
 11714098: 30,000-Year White Turtle
 11765832: Garura, Wings of Resonant Life
 11793047: Gorgon Egg
@@ -1369,7 +1368,6 @@
 56322832: Tensei Ryu-Ge Anva
 56410769: Ripple Bird
 56499179: Genro Ryu-Ge Hakva
-56510115: Solfachord Symphony
 56597273: Cloudian Token
 56700100: My Friend Purrely
 56725612: Fairy Tail Ball
@@ -2052,12 +2050,10 @@
 844056: Red Arrows
 8445808: Maiden in Love
 84464389: Borreload Fatalflare Dragon
-84521924: GranSolfachord Coolia
 84550369: Mikanko Shinbu - Noble Twins
 84631951: Dinovatus Docus
 84635192: Tsuru-Puru-Purun
 84673574: QQ Enneagon
-84693918: Solfachord Solfegia
 847217: Orichalcos Sword of Sealing
 84755744: Salamangreat Tiger
 84794011: Solitude
@@ -2283,7 +2279,6 @@
 93347961: Elemental HERO Flame Wingman - Infernal Rage
 93413793: Ukanomitsune-no-Tamayura
 93454062: Naturia Mole Cricket
-93481594: Solfachord Happiness
 93509766: Kyoro Ryu-Ge Kaiva
 93683815: Vulmina, Statue of the Sacred Dragon
 93729896: Nightmare Throne

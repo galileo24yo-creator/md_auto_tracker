@@ -59,6 +59,7 @@ const ARCHETYPE_MAP = {
   'Primite': '原石',
   'Dracotail': 'ドラゴンテイル',
   'Solfachord': 'ドレミコード',
+  'GranSolfachord': 'ドレミコード',
   'Yummy': 'ヤミー',
   'R.B.': 'Ｒ.Ｂ.（リボルボット）',
   'Ryzeal': 'ライゼオル',

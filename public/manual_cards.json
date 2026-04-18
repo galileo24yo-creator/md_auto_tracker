@@ -1523,5 +1523,14 @@
     "id": 25661743,
     "name": "獄神門－テルミナス",
     "archetype": "Power Patron"
-  }
+  },
+  {
+    "id": 11688916,
+    "name": "ドレミコード・プリモア",
+    "archetype": "Solfachord"
+  },
+  { "id": 84521924, "name": "グランドレミコード・クーリア", "archetype": "Solfachord" },
+  { "id": 93481594, "name": "ドレミコード・ハピネス", "archetype": "Solfachord" },
+  { "id": 84693918, "name": "ドレミコード・ソルフェージア", "archetype": "Solfachord" },
+  { "id": 56510115, "name": "ドレミコード・シンフォニー", "archetype": "Solfachord" }
 ]

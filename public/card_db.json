@@ -33451,9 +33451,9 @@
   },
   {
     "id": 84521924,
-    "name": "GranSolfachord Coolia",
-    "archetype": "GranSolfachord",
-    "normalizedName": "GranSolfachordCoolia"
+    "name": "グランドレミコード・クーリア",
+    "archetype": "ドレミコード",
+    "normalizedName": "グランドレミコード・クーリア"
   },
   {
     "id": 37972500,
@@ -68221,9 +68221,9 @@
   },
   {
     "id": 93481594,
-    "name": "Solfachord Happiness",
+    "name": "ドレミコード・ハピネス",
     "archetype": "ドレミコード",
-    "normalizedName": "SolfachordHappiness"
+    "normalizedName": "ドレミコード・ハピネス"
   },
   {
     "id": 29650040,
@@ -68239,9 +68239,9 @@
   },
   {
     "id": 11688916,
-    "name": "Solfachord Primoa",
+    "name": "ドレミコード・プリモア",
     "archetype": "ドレミコード",
-    "normalizedName": "SolfachordPrimoa"
+    "normalizedName": "ドレミコード・プリモア"
   },
   {
     "id": 53265336,
@@ -68251,15 +68251,15 @@
   },
   {
     "id": 84693918,
-    "name": "Solfachord Solfegia",
+    "name": "ドレミコード・ソルフェージア",
     "archetype": "ドレミコード",
-    "normalizedName": "SolfachordSolfegia"
+    "normalizedName": "ドレミコード・ソルフェージア"
   },
   {
     "id": 56510115,
-    "name": "Solfachord Symphony",
+    "name": "ドレミコード・シンフォニー",
     "archetype": "ドレミコード",
-    "normalizedName": "SolfachordSymphony"
+    "normalizedName": "ドレミコード・シンフォニー"
   },
   {
     "id": 86780027,
