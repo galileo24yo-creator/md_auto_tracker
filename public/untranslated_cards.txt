@@ -1,4 +1,3 @@
-80181649: "A Case for K9"
 98319530: "Infernoble Arms - Almace"
 11714098: 30,000-Year White Turtle
 4731783: A Bao A Qu, the Lightless Shadow
@@ -48,8 +47,6 @@
 86758746: Amazoness Secret Arts
 97870394: Amazoness Spiritualist
 50486289: Amazoness War Chief
-13332685: Ame no Habakiri no Mitsurugi
-19899073: Ame no Murakumo no Mitsurugi
 80570228: Anarchist Monk of the Six Samurai
 54656950: Anchorbolt Hedgehog
 43321985: Ancient Fairy Life Dragon
@@ -80,7 +77,6 @@
 60411677: Anubis the Last Judge
 44886582: Apex Polymerization
 28531163: Apocavities
-95561146: Apophis the Serpent
 59131526: Aqua Chorus Round
 32278723: Aqua Jet Surface
 12436646: Aqua Snake
@@ -159,18 +155,12 @@
 18711696: Assault Sonic Warrior
 77202120: Assault Synchron
 98520301: Asset Mountis
-86762958: Assist★Yummy!
-25592142: Astellar of the White Forest
 48171151: Astrograph Sorcerer, the Star Magician
 101305023: Astrolasma Urania
 51618973: Avance, Swordsman of the Nekroz
 30453613: Awakening of Veidos
 33171768: Axon Kicker Oracle
-17749468: Azamina
-39491690: Azamina Aphes
-20934683: Azamina Debtors
 42201897: Azamina Determination
-46396218: Azamina Ilia Silvia
 46174776: Azamina Moa Regina
 73391962: Azamina Mu Rcielago
 9785661: Azamina Sol Erysichthon
@@ -223,7 +213,6 @@
 23969415: Beta Evolution Pill - Ultranscendance
 84079032: Bettan Bat
 300302045: Beware the Brothers Paradox!
-35778533: Beware the White Forest
 91337277: Big Inflate Dragon
 92714517: Big Welcome Labrynth
 55461744: Big-Winged Berfomet
@@ -270,13 +259,10 @@
 9540040: Boulder Tortoise
 44265115: Brain Controller
 6560411: Bramble Rose Dragon
-60442460: Branded Befallen
-34090915: Branded Regained
 90011273: Breachborrel Dragon
 69873498: Break the Seal
 58882608: Breath of the Tistina
 100436101: Breeze the Electrovore of Rkunas
-19271881: Brightest, Blazing, Branded King
 65892310: Brionac, the Magical Ice Dragon
 57985393: Broomy
 26223582: Buerillabaisse de Nouvelles
@@ -378,7 +364,6 @@
 74652966: Code of Soul
 300302060: Cold-Blooded Tactician
 12501230: Combat Wheel
-17217034: Combined Maneuver - Engage Zero!
 100455002: Comic Cat
 72867001: Commander Souza, Swordmaster
 27450401: Compass Token
@@ -391,8 +376,6 @@
 10125011: Constellar Tellarknights
 300302025: Consumed By Darkness
 43471513: Convex Knight
-67098897: Cooky★Yummy Way
-68810435: Cooky☆Yummy
 83819309: Cooling Embers
 3806388: Core of Chaos
 92565383: Cornfield Coatl
@@ -426,8 +409,6 @@
 55326323: Crystron Token
 99471856: Crystron Tristaros
 89552119: Cucumber Horse
-31603289: Cupsy★Yummy Way
-31425736: Cupsy☆Yummy
 34690953: Curse of Aramatir
 64998567: Curse of Diabell
 94749594: Curse of the Ancient Turtle
@@ -532,7 +513,6 @@
 30748475: Destructive Daruma Karma Cannon
 46789706: Detonating Kuriboh
 85771021: Deus Token
-14307929: Diabell, Queen of the White Forest
 72270339: Diabellstar the Black Witch
 23151193: Diabellstar Vengeance
 53765052: Diabellze the Original Sinkeeper
@@ -559,8 +539,6 @@
 12397569: Divine Domain Baatistina
 89907228: Divine Dragon Token
 44698398: Divine Golden Shadow Dragon Dragluxion
-23804920: Divine Scorpion Beast of Serket
-97800311: Divine Serpent Apophis
 53639887: Divine Temple of the Snake-Eye
 42427230: Division
 97843505: Djinn the Watcher of the Wind
@@ -609,18 +587,6 @@
 55349196: Double-Headed Dino King Rex
 40702028: DPH Gendamoore
 66092596: Draco Awakening
-33760966: Dracotail Arthalion
-1498449: Dracotail Faimena
-5431722: Dracotail Flame
-79755671: Dracotail Gulamel
-69932023: Dracotail Horn
-75003700: Dracotail Lukias
-7375867: Dracotail Mululu
-44482554: Dracotail Pan
-84477320: Dracotail Phryxul
-42125140: Dracotail Shaulas
-80208225: Dracotail Sting
-70871153: Dracotail Urgula
 48705086: Dragolithia Kunzite
 300202003: Dragon Caller
 300302064: Dragon Force
@@ -710,7 +676,6 @@
 64491754: Elfnotes: Welcome Home
 101303071: Elvennotes ~Oracle Alicetea~
 101304014: Elvennotes Regina
-61980241: Elzette of the White Forest
 38648860: Elzette, Azamina of the White Forest
 48017189: EM:P Meowmine
 35035985: Embers of the Ashened
@@ -736,7 +701,6 @@
 82556059: Engine Token
 72444406: Enigmaster Packbit
 46186135: Enlightenment Dragon
-74820316: Enlilgirsu, the Orcust Mekk-Knight
 82359538: Enneacraft - Aiza.LEON
 81237046: Enneacraft - Archa.TAIL
 28454232: Enneacraft - Asta.PIXEA
@@ -754,7 +718,6 @@
 33676146: Escapegoat
 87532344: Eternal Favorite
 28903523: Eternal Sunshine
-45675980: Etude of the Branded
 71228611: Eucalyptus Mole
 64382840: Eva Token
 88926295: Evigishki Neremanas
@@ -783,7 +746,6 @@
 51822687: Expurrely Happiness
 83827392: Expurrely Noir
 6195332: Exstellarknight Constellar Ptolemy Ω7
-34022970: Ext Ryzeal
 98828338: Extinguishing the Ashened
 26050548: Extox Hydra
 23617756: Exxod Fires of Rage
@@ -820,17 +782,11 @@
 22855882: Fiend Sword
 52800428: Fiend's Hand
 24662957: Fiendish Golem
-60764609: Fiendsmith Engraver
 99989863: Fiendsmith in Paradise
 26434972: Fiendsmith Kyrie
-32991300: Fiendsmith's Agnumday
-82135803: Fiendsmith's Desirae
 46640168: Fiendsmith's Lacrima
-2463794: Fiendsmith's Requiem
 11464648: Fiendsmith's Rextremende
 35552985: Fiendsmith's Sanct
-49867899: Fiendsmith's Sequence
-98567237: Fiendsmith's Tract
 27012717: Fierce Tiger Monghu
 71275181: Fifty Fifty?
 36319131: Fighting Flame Dragon
@@ -903,7 +859,6 @@
 55158350: Fusion Draft
 43331750: Fusion Duplication
 300302001: Fusion Party!
-55397172: Futsu no Mitama no Mitsurugi
 92058902: Future Fusion Nova
 78679226: Future Silence
 70088809: Fydraulis Harmonia
@@ -919,7 +874,6 @@
 95095116: Gaia Prominence, the Fierce Force
 13289758: Gaia Stream, the Graceful Force
 46261704: Galactikuriboh
-48835607: Galatea-I, the Orcust Automaton
 91714772: Galaxy Defense Robot Orbital 7
 897409: Galaxy Hundred
 79509511: Galaxy Journey
@@ -944,10 +898,7 @@
 88931417: Gatling Ogre
 23076639: Gazelle the King of Mythical Claws
 26913989: Geistgrinder Golem
-24220368: Gem-Knight Dispersion
-88225269: Gem-Knight Hollowcore
 25342956: Gem-Knight Master Diamond Dispersion
-51831560: Gem-Knight Nepyrim
 52126602: Gen the Diamond Tiger
 49370026: Genin
 7656689: Genni, the Maid of Endymion
@@ -1137,7 +1088,6 @@
 66661679: Ice Coffin Token
 97476032: Ice Doll
 65569724: Ice Doll Mirror
-8633261: Ice Ryzeal
 20848593: Ice Water
 86682165: Icejade Gymir Aegirine
 72776252: Icejade Manifestation
@@ -1187,7 +1137,6 @@
 3137279: Ixeep, Omen of the Ghoti
 69191257: Jade Dragon Mech
 92962242: Jioh the Gravity Ninja
-14442329: JJ "Kewl Tune"
 55337339: Job-Change Mirror
 47894537: Jongleur-Ghoul Illusionist
 101305035: June Pride - Elfnotes
@@ -1208,19 +1157,6 @@
 20568404: Jurrac Stego
 48411997: Jurrac Token
 89948817: Jurrac Volcano
-47960073: K9-04 Noroi
-27420823: K9-17 "Ripper"
-92248362: K9-17 Izuna
-28642461: K9-66a Jokul
-55031170: K9-66b Lantern
-67515699: K9-66X "Jacks"
-26585784: K9-EW Special Release Experiment
-27308231: K9-LC Release Restraint
-54919528: K9-ØØ "Hound"
-91025875: K9-ØØ Lupis
-31286915: K9-X "Ripper/M"
-90303227: K9-X "Werewolf"
-53792930: K9-X Forced Release
 39972130: Kagemusha Raccoon Token
 20065259: Kagero the Cannon Ninja
 39049051: Kahyoreigetsu
@@ -1231,15 +1167,11 @@
 84103702: Kanikabuto
 48109103: Kappa Avenger
 82286798: Kashtira Akstra
-48626373: Kashtira Arise-Heart
 33925864: Kashtira Big Bang
 69540484: Kashtira Birth
-32909498: Kashtira Fenrir
 94392192: Kashtira Ogre
 8953369: Kashtira Overlap
 21639276: Kashtira Preparations
-31149212: Kashtira Riseheart
-73542331: Kashtira Shangri-Ira
 68304193: Kashtira Unicorn
 34447918: Kashtiratheosis
 81179446: Kattapillar
@@ -1248,20 +1180,7 @@
 63542003: Keldo the Sacred Protector
 25131968: Ken the Warrior Dragon
 94503794: Kerzebs, the Gaoled Glutton
-6153210: Ketu Dracotail
-65961304: Kewl Tune B2B
-43904702: Kewl Tune Clip
-39576656: Kewl Tune Crackle
-16387555: Kewl Tune Cue
-41069676: Kewl Tune Loudness War
-16509007: Kewl Tune Mix
-40847034: Kewl Tune Playlist
 89392810: Kewl Tune Reco
-88170262: Kewl Tune Remix
-17209452: Kewl Tune Rotary
-15665977: Kewl Tune RS
-78058681: Kewl Tune Synchro
-42781164: Kewl Tune Track Maker
 72578374: Khaos Starsource Dragon
 4271596: King of the Ashened City
 17269895: King's Resonance
@@ -1284,7 +1203,6 @@
 47028805: L Magi Mergy
 35026117: Labyrinth Heavy Tank
 34771947: Labyrinth Wall Shadow
-28803166: Lacrima the Crimson Tears
 81497285: Lady Labrynth of the Silver Castle
 48658295: Lady's Dragonmaid
 74615388: Laevatein, Generaider Boss of Shadows
@@ -1320,7 +1238,6 @@
 21251800: Light Bringer Lucifer
 35614780: Light End Sublimation Dragon
 30913809: Light Force
-72554664: Light of the Branded
 82616239: Light Water Dragon
 89753095: Lightning Crash
 10515412: Lightstorm Dragon
@@ -1336,8 +1253,6 @@
 34320307: Living Vase
 25801745: Lo, the Prayers of the Voiceless Voice
 2116237: Loka Samsara
-93192592: Lollipo★Yummy Way
-4215180: Lollipo☆Yummy
 92447211: Long-Tailed Black Horse
 300302034: Looking into the Future
 59829423: Lord of the Missing Barrows
@@ -1346,11 +1261,7 @@
 300302003: Low Blow
 45409943: Luce the Dusk's Dark
 3985011: Lucky Trinket
-8379983: Lunalight Gold Leo
-54701958: Lunalight Liger Dancer
-2344618: Lunalight Masquerade
 81196066: Lunalight Perfume Dancer
-35763582: Lunalight Silver Hound
 62210247: Lunar Queen Elzaim
 47643326: Lunar Rabbit Omajinai
 81916745: Lycoris Lilyreaper
@@ -1375,9 +1286,6 @@
 66532962: Magistus Chorozo
 50951254: Magmacho Dragon
 65514302: Magnet Bonding
-86289475: Magnet Warrior Omega Plus
-87814728: Magnet Warrior Sigma Minus
-51826619: Magnet Warrior Sigma Plus
 300302014: Magnetic Attraction
 43227: Magnum the Reliever
 8445808: Maiden in Love
@@ -1396,14 +1304,6 @@
 94722358: Maliss <C> MTP-07
 57111661: Maliss <C> TB-11
 96676583: Maliss <P> Chessy Cat
-32061192: Maliss <P> Dormouse
-20938824: Maliss <P> March Hare
-69272449: Maliss <P> White Rabbit
-21848500: Maliss <Q> Hearts Crypter
-68059897: Maliss <Q> Red Ransom
-95454996: Maliss <Q> White Binder
-93453053: Maliss in the Mirror
-68337209: Maliss in Underground
 42671152: Malus Token
 49127943: Man-Eating Plant
 45065541: Mannadium Abscission
@@ -1420,7 +1320,6 @@
 64538914: Manticore of Smashing
 22916418: Mantman the Ultrahuman
 58205203: Mariamne Paradox, the True Dracophoenix Knight
-10966439: Marshmao☆Yummy
 101305009: Martyr of the Sacred Beasts
 77581312: Masked Clown
 85672957: Masked HERO Atomic
@@ -1541,17 +1440,10 @@
 28954097: Mirror Swordknight
 95589901: Mischief of the Wolves
 67282505: Mitsu the Insect Ninja
-17954937: Mitsurugi Great Purification
-76725398: Mitsurugi Magatama
-49721684: Mitsurugi Mirror
 76948970: Mitsurugi no Miko, Wousu
 40543231: Mitsurugi no Mikoto, Aramasa
 82782870: Mitsurugi no Mikoto, Kusanagi
-18176525: Mitsurugi no Mikoto, Saji
-45171524: Mitsurugi Prayers
-81560239: Mitsurugi Ritual
 12210097: Mitsurugi Sacred Boundary
-49604192: Mitsurugi Tempest
 66736715: Moissa Knight, the Comet General
 19093698: Moissa Wight
 85401123: Mokomoko
@@ -1571,7 +1463,6 @@
 4931562: Mountain Warrior
 99937011: Mudora the Sword Oracle
 42141493: Mulcharmy Fuwalos
-87126721: Mulcharmy Meowls
 84192580: Mulcharmy Purulia
 35514097: Multi Token
 885016: Multi-Universe
@@ -1627,7 +1518,6 @@
 300302068: No One Suspects the Dark Scorpion Gang!
 25807544: Noble Arms Museum
 81101309: Noctilucent Train Bleu Traveler
-72238166: Node Ryzeal
 75046994: Noh-P.U.N.K. Rising Scale
 15394084: Nordic Beast Token
 79936051: Northern Crossfire
@@ -1684,7 +1574,6 @@
 21501961: Pair Bear Scare!!
 300202006: Pal-O'Mine-zation!
 99217226: Paladins of Bonds and Unity
-61116514: Palm Ryzeal
 483: Parallel Teleport
 22712877: Paralyzing Mushroom
 3289027: Parl, Hermit of Dark World
@@ -1726,7 +1615,6 @@
 8653757: Photon Timestop
 17418745: Photon Token
 46497537: Pig Iron vs. Pen Peg
-20357457: Pillar of the Future - Cyanos
 47759571: Pitknight Earlie
 25919316: Pitknight Filly
 28062326: Plant Token
@@ -1775,15 +1663,8 @@
 67660909: Priestess of the Ashened City
 2507443: Prima Light
 57448410: Prima Materiactor
-63198739: Primite Dragon Ether Beryl
 26462013: Primite Dragon Nether Berzelius
-29095457: Primite Drillbeam
 99161253: Primite Fusion
-41488249: Primite Howl
-81418467: Primite Imperial Dragon
-56506740: Primite Lordly Lode
-92501449: Primite Roar
-27556460: Primite Scream
 11496832: Principug
 12612470: Procession of the Tea Jar
 300302070: Professor of Alchemy
@@ -1793,7 +1674,6 @@
 101305080: Protective Stone Gardenscaping
 56187077: Proto Enneacraft - "orgIA"
 95091919: Prototype Psychic Blaster
-25072579: Prototype Sky Striker Ace - Amatsu
 26523337: Psiics, Moonlight of the Ghoti
 16238373: Psychic Arsenal
 88139289: Psychic Blaster Mk-II
@@ -1820,20 +1700,6 @@
 100456009: Quick Summon
 61052897: R-Genex Turing
 34568783: R-Genex Undine
-78710386: R.B. Funk Dock
-33438265: R.B. Ga10 Cutter
-6043161: R.B. Ga10 Driller
-44573911: R.B. Ga10 Pile Bunker
-17188206: R.B. Lambda Blade
-81794107: R.B. Lambda Cannon
-43450363: R.B. Last Stand
-79859067: R.B. Next Phase
-16066654: R.B. Operation Test
-80071619: R.B. Shepherd's Crook
-5109321: R.B. Stage Landing
-32216688: R.B. The Brute Blues
-6821579: R.B. VALCan Booster
-79436874: R.B. VALCan Rocket
 28674153: Radian Token
 86310763: Radiance of the Voiceless Voice
 25940932: Radiant Typhoon Ascendance
@@ -1841,11 +1707,9 @@
 54143349: Radiant Typhoon Eldam
 85315450: Radiant Typhoon Fonix, the Great Flame
 16922142: Radiant Typhoon Krosea
-53813120: Radiant Typhoon Mandate
 94103142: Radiant Typhoon Manifestation
 27755794: Radiant Typhoon Meghala
 80538047: Radiant Typhoon Swen
-39341885: Radiant Typhoon Varuroon, the Marine Eidolon
 53927851: Radiant Typhoon Varuroon, the Vibrant Vortex
 20508881: Radiant Typhoon Vision
 33955120: Rage Rose Witch
@@ -1862,7 +1726,6 @@
 97262307: Ragnaraika Wicked Butterfly
 77573354: Ragnaraika Wisteria of Woe
 53904087: Rahamu, Envoy of the Sacred Tome
-32548318: Rahu Dracotail
 25191307: Raidraptor - Bloom Vulture
 8617563: Raidraptor - Brave Strix
 13927359: Raidraptor - Glorious Bright
@@ -1977,12 +1840,7 @@
 29882827: Ryu-Ge Rising
 81549048: Ryu-Ge Rivalry
 55276522: Ryu-Ge War Zone
-6798031: Ryzeal Cross
-34909328: Ryzeal Detonator
-7511613: Ryzeal Duo Drive
-53276089: Ryzeal Mass Driver
 33787730: Ryzeal Plasma Hole
-60394026: Ryzeal Plugin
 101305041: S-Force Mystify
 20515672: S-Force Nightchaser
 101305040: S-Force Nightslayer
@@ -1997,9 +1855,6 @@
 10804018: Saffira, Divine Dragon of the Voiceless Voice
 51296484: Saffira, Dragon Queen of the Voiceless Voice
 66156348: Saga of the Dragon Emperor
-34456146: Sage of Benevolence - Ciela
-96795312: Sage of Strength - Akash
-22790910: Sage of Wisdom - Himmel
 36608728: Saiba the Fighting Swordsmith
 85065943: Saint Azamina
 67972302: Sakitama
@@ -2102,13 +1957,7 @@
 90939874: Six Strike - Sextuple Barrage
 101305002: Skull Archfiend of Chaos
 10774240: Skull Guardian, Protector of the Voiceless Voice
-98462037: Sky Striker Ace - Azalea
-56741506: Sky Striker Ace - Azalea Temperance
-63013339: Sky Striker Ace - Camellia
-76072561: Sky Striker Ace = Zero
 52340445: Sky Striker Ace Token
-61151074: Sky Striker Mecha - Adil Saber
-34433770: Sky Striker Special Maneuver - Lemnisgate!
 12958920: Skyblaster Token
 101305049: Skyfire of the Sacred Beast
 74659582: Sleipnir the Runick Mane
@@ -2180,7 +2029,6 @@
 88124568: SPYRAL Double Agent
 54562327: Stake your Soul!
 41371602: Stand Up Centur-Ion!
-84433129: Star Ryzeal
 76636978: Stardust Dragon - Victim Sanctuary
 91262474: Stardust Wurm
 54077752: Stare of the Snake Hair
@@ -2236,8 +2084,6 @@
 48654267: Supreme King Z-ARC - Synchro Universe
 55697723: Surfacing Big Jaws
 101305011: Surge Blitzclique
-33331231: Surgical Striker - H.A.M.P.
-23530726: Surgical Striker - S.P.E.C.T.R.A.
 35167375: Surprise Fusion
 62173132: Susurrus of the Sinful Spoils
 5993144: Swallow's Cowrie
@@ -2246,7 +2092,6 @@
 36848764: Sweet Roommaid
 47961342: Switch Point
 300104005: Switcheroo
-35844557: Sword Ryzeal
 83308376: Swordsoul Punishment
 75646173: Synchar
 22414174: Synchro Creed
@@ -2283,7 +2128,6 @@
 60362066: Tearlaments Heartbeat
 4928565: Tearlaments Kashtira
 34225426: Tearlaments Perlegia
-84330567: Tearlaments Rulkallos
 36494597: Teleport Fusion
 42822433: Tellarknight Altairan
 58858807: Tellarknight Constellar Caduceus
@@ -2323,7 +2167,6 @@
 8944575: The Drdek
 45445571: The Duke of Demise
 68897338: The Fabled Behilmoth
-30271097: The Fallen &amp; The Virtuous
 93871599: The Flute of Guiding Dragon
 22283204: The Gaze of Timaeus
 44649322: The Great Mikanko Ceremony
@@ -2332,7 +2175,6 @@
 3461403: The Immortal Bushi Mourns the Mortal Body
 29265962: The League of Uniform Nomenclature Strikes
 54120521: The Legend of Tickets
-97522863: The Man with the Mark
 98898173: The Melting Red Shadow
 63899196: The Monarchs Masterplan
 9283801: The Monarchs Revolt
@@ -2417,7 +2259,6 @@
 1688285: Traptrix Pinguicula
 49027020: Traptrix Pudica
 84824728: Treasure Panther
-69299029: Treasures of the Kings
 10019086: Tri-Brigade Arms Bucephalus II
 33781156: Tri-Brigade Arms Mouser
 92269002: Tri-Brigade Hammer
@@ -2504,15 +2345,6 @@
 29280200: Vanquish Soul Dr. Mad Love
 91951471: Vanquish Soul Dust Devil
 92895501: Vanquish Soul Heavy Borger
-93156774: Vanquish Soul Hollie Sue
-9091064: Vanquish Soul Jiaolong
-66401502: Vanquish Soul Pantera
-55688914: Vanquish Soul Pluton HG
-29302858: Vanquish Soul Razen
-77894049: Vanquish Soul Rocks
-60883493: Vanquish Soul Snow Devil
-53330789: Vanquish Soul Trinity Burst
-35550352: Vanquish Soul, Start!
 1340142: Varar, Vaalmonican Concord
 19743887: VARefar, the Judge of Ball
 70636044: Varudras, the Final Bringer of the End Times
@@ -2526,7 +2358,6 @@
 613013: Veiss Shark
 66100116: Vengeful Witch
 55125728: Vera the Vernusylph Goddess
-59576447: Verdict of Anubis
 7206349: Vernusylph in Full Bloom
 81519836: Vernusylph of the Misting Seedlings
 73664385: Verre Magic - Lacrima of Light
@@ -2653,12 +2484,6 @@
 17115745: Yormungarde
 88346805: You're Finished
 47172959: Yubel - The Loving Defender Forever
-56870908: Yum☆Yum☆Yummys
-65853758: Yummy★Redemption
-30581601: Yummy★Snatchy
-29369059: Yummy☆Surprise
-93360904: Yummyusment★Acroquey
-66975205: Yummyusment☆Mignon
 33744268: Z-Zillion Tank
 40460013: Zalamander Catalyzer
 4891376: Zalen the Shackled Dragon

@@ -131,20 +131,13 @@ async function updateDB() {
       archetype: ARCHETYPE_MAP[card.archetype] || card.archetype
     }));
 
-    // Detect untranslated cards
-    const jaIds = jaData ? new Set(jaData.data.map(c => c.id)) : new Set();
-    const untranslated = Array.from(cardMap.values())
-      .filter(card => !jaIds.has(card.id))
-      .map(card => `${card.id}: ${card.name}`)
-      .join('\n');
-    fs.writeFileSync(path.join(process.cwd(), 'public', 'untranslated_cards.txt'), untranslated);
-    console.log(`- Generated untranslated_cards.txt with ${untranslated.split('\n').length} entries.`);
-
     // Phase 3: Manual Overrides
+    const manualIds = new Set();
     if (fs.existsSync(MANUAL_FILE)) {
       console.log('Merging manual card data...');
       const manualData = JSON.parse(fs.readFileSync(MANUAL_FILE, 'utf8'));
       manualData.forEach(mCard => {
+        manualIds.add(mCard.id);
         // マニアルデータは常に最優先
         const idx = finalCards.findIndex(c => c.id === mCard.id);
         const processedMCard = {
@@ -160,6 +153,15 @@ async function updateDB() {
       });
       console.log(`- Merged ${manualData.length} manual entry/entries.`);
     }
+
+    // Detect untranslated cards (excluding ones in manual_cards.json)
+    const jaIds = jaData ? new Set(jaData.data.map(c => c.id)) : new Set();
+    const untranslatedList = Array.from(cardMap.values())
+      .filter(card => !jaIds.has(card.id) && !manualIds.has(card.id))
+      .map(card => `${card.id}: ${card.name}`)
+      .join('\n');
+    fs.writeFileSync(path.join(process.cwd(), 'public', 'untranslated_cards.txt'), untranslatedList);
+    console.log(`- Generated untranslated_cards.txt with ${untranslatedList ? untranslatedList.split('\n').length : 0} entries.`);
 
     fs.writeFileSync(OUTPUT_FILE, JSON.stringify(finalCards, null, 2));
     console.log(`✅ Successfully generated card_db.json with ${finalCards.length} cards!`);
