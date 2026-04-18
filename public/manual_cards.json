@@ -1050,36 +1050,6 @@
     "archetype": "Azamina"
   },
   {
-    "id": 4398189,
-    "name": "白き森のアステーリャ",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 98385955,
-    "name": "白き森のシルヴィ",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 24779554,
-    "name": "白き森の聖徒ルシア",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 41924516,
-    "name": "白き森の魔狼シルウィア",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 99289828,
-    "name": "白き森のいいつたえ",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 62995268,
-    "name": "白き森のわざわいなり",
-    "archetype": "White Forest"
-  },
-  {
     "id": 8379983,
     "name": "月光金獅子",
     "archetype": "Lunalight"
@@ -1190,29 +1160,9 @@
     "archetype": "Azamina"
   },
   {
-    "id": 3496543,
-    "name": "白き森の罪宝",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 35778533,
-    "name": "白き森にはいるべからず",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 5800323,
-    "name": "白き森の妖魔",
-    "archetype": "White Forest"
-  },
-  {
     "id": 65033975,
     "name": "アザミナの妖魔",
     "archetype": "Azamina"
-  },
-  {
-    "id": 93723936,
-    "name": "白き森のあくま",
-    "archetype": "White Forest"
   },
   {
     "id": 11688916,
@@ -1485,38 +1435,8 @@
     "archetype": "Power Patron"
   },
   {
-    "id": 61980241,
-    "name": "白き森のリゼット",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 25592142,
-    "name": "白き森のアステーリャ",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 14307929,
-    "name": "白き森の聖徒リゼット",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 38648860,
-    "name": "白き森の妖魔（アザミナ）リゼット",
-    "archetype": "White Forest"
-  },
-  {
-    "id": 77313225,
-    "name": "白き森の禍魔リシエラ",
-    "archetype": "White Forest"
-  },
-  {
     "id": 9785661,
     "name": "飢渇聖徒エリュシクトーン",
-    "archetype": "Azamina"
-  },
-  {
-    "id": 39491690,
-    "name": "アザミナ・アーフェス",
     "archetype": "Azamina"
   },
   {
@@ -1548,5 +1468,90 @@
     "id": 42201897,
     "name": "アザミナ・ハマルティア",
     "archetype": "Azamina"
+  },
+  {
+    "id": 25592142,
+    "name": "白き森のアステーリャ",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 61980241,
+    "name": "白き森のリゼット",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 38648860,
+    "name": "白き森の聖徒リゼット",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 60145298,
+    "name": "白魔女ディアベルゼ",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 98385955,
+    "name": "白き森のシルヴィ",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 24779554,
+    "name": "白き森のルシア",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 5800323,
+    "name": "白き森の幻妖",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 77313225,
+    "name": "白き森の魔性ルシエラ",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 41924516,
+    "name": "白き森の魔狼シルウィア",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 14307929,
+    "name": "白き森の妖魔ディアベル",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 35778533,
+    "name": "白き森にはいるべからず",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 99289828,
+    "name": "白き森のいいつたえ",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 93723936,
+    "name": "白き森のあくま",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 3496543,
+    "name": "白き森の罪宝",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 4398189,
+    "name": "白き森の魔女",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 39491690,
+    "name": "アザミナ・アーフェス",
+    "archetype": "White Forest"
+  },
+  {
+    "id": 62995268,
+    "name": "白き森のわざわいなり",
+    "archetype": "White Forest"
   }
 ]

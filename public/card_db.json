@@ -5312,7 +5312,7 @@
   {
     "id": 39491690,
     "name": "アザミナ・アーフェス",
-    "archetype": "アザミナ",
+    "archetype": "白き森",
     "normalizedName": "アザミナ・アーフェス"
   },
   {
@@ -18769,9 +18769,9 @@
   },
   {
     "id": 14307929,
-    "name": "白き森の聖徒リゼット",
+    "name": "白き森の妖魔ディアベル",
     "archetype": "白き森",
-    "normalizedName": "白き森の聖徒リゼット"
+    "normalizedName": "白き森の妖魔ディアベル"
   },
   {
     "id": 72270339,
@@ -18793,9 +18793,9 @@
   },
   {
     "id": 60145298,
-    "name": "Diabellze the White Witch",
-    "archetype": "Diabell",
-    "normalizedName": "DiabellzetheWhiteWitch"
+    "name": "白魔女ディアベルゼ",
+    "archetype": "白き森",
+    "normalizedName": "白魔女ディアベルゼ"
   },
   {
     "id": 24634594,
@@ -23791,9 +23791,9 @@
   },
   {
     "id": 38648860,
-    "name": "白き森の妖魔（アザミナ）リゼット",
+    "name": "白き森の聖徒リゼット",
     "archetype": "白き森",
-    "normalizedName": "白き森の妖魔(アザミナ)リゼット"
+    "normalizedName": "白き森の聖徒リゼット"
   },
   {
     "id": 48017189,
@@ -57403,9 +57403,9 @@
   },
   {
     "id": 5800323,
-    "name": "白き森の妖魔",
+    "name": "白き森の幻妖",
     "archetype": "白き森",
-    "normalizedName": "白き森の妖魔"
+    "normalizedName": "白き森の幻妖"
   },
   {
     "id": 61840587,
@@ -60757,9 +60757,9 @@
   },
   {
     "id": 77313225,
-    "name": "白き森の禍魔リシエラ",
+    "name": "白き森の魔性ルシエラ",
     "archetype": "白き森",
-    "normalizedName": "白き森の禍魔リシエラ"
+    "normalizedName": "白き森の魔性ルシエラ"
   },
   {
     "id": 58695102,
@@ -63457,9 +63457,9 @@
   },
   {
     "id": 24779554,
-    "name": "白き森の聖徒ルシア",
+    "name": "白き森のルシア",
     "archetype": "白き森",
-    "normalizedName": "白き森の聖徒ルシア"
+    "normalizedName": "白き森のルシア"
   },
   {
     "id": 40139997,
@@ -83455,9 +83455,9 @@
   },
   {
     "id": 4398189,
-    "name": "白き森のアステーリャ",
+    "name": "白き森の魔女",
     "archetype": "白き森",
-    "normalizedName": "白き森のアステーリャ"
+    "normalizedName": "白き森の魔女"
   },
   {
     "id": 80741828,
