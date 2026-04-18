@@ -80,6 +80,10 @@ const ARCHETYPE_MAP = {
   'Snake-Eye': 'スネークアイ',
   'Azamina': 'アザミナ',
   'White Forest': '白き森',
+  'Artmage': 'アルトメギア',
+  'DoomZ': 'ドゥームズ',
+  'Elfnote': 'エルフェンノーツ',
+  'Power Patron': '獄神',
   'Lunalight': '月光（ムーンライト）',
   'Gem-Knight': 'ジェムナイト',
   'Gem-': 'ジェムナイト'

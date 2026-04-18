@@ -63,11 +63,9 @@
 101305031: Invoked Babalon
 101305032: Invoked Okeanos
 101305033: Invoked Transcendence Aeon
-101305035: June Pride - Elfnotes
 101305036: Glitch Clutch Nullgainer
 101305037: The Phantom Knights of Malevolent Scythe
 101305038: Melffy God Mommy
-101305039: Power Patron Envoy of Pure Prayers
 101305040: S-Force Nightslayer
 101305041: S-Force Mystify
 101305042: Clown Clan Drish
@@ -83,7 +81,6 @@
 101305052: Blitzclique - Stepped Leader
 101305053: Invocation "Sword"
 101305054: Spirit Sword Aiwass
-101305055: Dead-End Power Patron Realm - Viraia
 101305056: Pasto-Ral Theorealize
 101305057: The Phantom Knights' Rank-Up-Magic Requiem
 101305058: S-Force Origin
@@ -99,8 +96,6 @@
 101305068: Blitzclique - Return Stroke
 101305069: Blitzclique - Alternator
 101305070: Magical Name - "Rosa Mundi"
-101305071: Power Patron Shadows of the End Times
-101305072: Elfnotes: Quatrain of Succession
 101305073: The Phantom Knights of Umbrage Veil
 101305074: S-Force Sorted World
 101305075: Exciting Melffy Time
@@ -112,7 +107,6 @@
 10136446: Darklord Eveningstar
 10140443: Salamangreat Burst Gryphon
 10218411: Double Fusion
-10266279: Power Patron Shadow Spirit Junordo
 10300821: Number C79: Battlin' Boxer General Kaiser
 10333641: Superheavy Samurai Stealthy
 1035143: Darkuriboh
@@ -143,7 +137,6 @@
 11132674: Gigantic "Champion" Sargas
 11161666: Sanaki the Mikanko Devotee
 11212437: Diabolic Dragon Fortress - Draluvice
-1122030: Artmage Vandalism -Assault-
 11248645: Highness Archfiend
 11250655: Emperor of the Land and Sea
 11335209: Duamutef, Blessing of Horus
@@ -173,7 +166,6 @@
 12172567: Mind Castlin
 12197223: Shiina, Twin Tempests of Celestial Thunder
 12210097: Mitsurugi Sacred Boundary
-12375297: Elfnote Power Patron
 12381100: Dragon Master Magia
 12397569: Divine Domain Baatistina
 12436646: Aqua Snake
@@ -211,7 +203,6 @@
 13510157: Hound of the Tistina
 13536607: V-LAN Token
 13567610: Carnot the Eternal Machine
-13597785: Elfnote Lucina
 13708888: Evil HERO Neos Lord
 13744068: Berserk Archfiend
 13836592: Behemoth the King of a Hundred Battles
@@ -292,14 +283,12 @@
 17418745: Photon Token
 17441953: Turtle Raccoon
 17462320: Realm Elegy
-17473466: Power Patron Shadow Beast Nervedo
 17511156: Wood Clown
 17535764: Gokipole
 17550376: Nemleria Dream Defender - Oreiller
 17621695: Enneapolis
 176393: Koa'ki Meiru Token
 1769875: Chimera the King of Phantom Beasts
-17719582: Artmage Peripeteia -Turmoil-
 17725109: Roar of the Blue-Eyed Dragons
 17733394: Wood Remains
 17832359: Wonko, Noble Knight of the Forest
@@ -389,7 +378,6 @@
 21637502: Hecahands Breus
 21639276: Kashtira Preparations
 21677871: Gold Pride - Start Your Engines!
-21720439: Artmage Movement -Pedigree-
 21770261: Slime Token
 21846145: Abduction
 21861412: Flux Ochsenfeld
@@ -429,7 +417,6 @@
 2339825: T.G. Close
 23446369: Eye of Illusion
 23512906: Gold Pride - Leon
-23599634: Artmage Pact -Awakening-
 23611122: Sudden Thunder Swamp
 23617756: Exxod Fires of Rage
 23623653: Spiritual Beast Tamer Lara
@@ -438,7 +425,6 @@
 23738096: Supply Soldier of the Indestructible Insects
 23746827: Million-Century Ice Prison
 23812568: Additional Mirror Level 7
-23829452: Artmage Power Patron
 23920796: Mimighoul Cerberus
 23923758: Steam Knight - Hamburk
 23965033: Amazoness Augusta
@@ -446,7 +432,6 @@
 2405631: Guoglim, Spear of the Ghoti
 24079759: Goblin Biker Dugg Charger
 24081957: Sinful Spoils of Subversion - Snake-Eye
-24092792: Elfnotes: Rhapsodia of Madness
 24166324: Meteoroa Drytron
 24194033: Dorover
 24215921: Gruesome Grave Squirmer
@@ -485,7 +470,6 @@
 25550531: Purrely
 25554552: Rokket Loader
 25577965: Flametongue the Burning Blade
-25661743: Unleashed Power Patron Portal - Terminus
 25784595: Bone Archfiend
 25801745: Lo, the Prayers of the Voiceless Voice
 25807544: Noble Arms Museum
@@ -523,7 +507,6 @@
 27132400: Altergeist Malwisp
 27134209: Beargram, Shelled Emperor of the Forest Crown
 27157727: Stronghold the Hidden Fortress
-27184601: Artmage Diactorus
 27198002: Fox Token
 2725599: Rescue-ACE Arbitrator
 27260347: Snake-Eyes Diabellstar
@@ -567,7 +550,6 @@
 28674153: Radian Token
 28736826: Ultimate Baseball Homerun King
 28798938: Dual Avatar - Manifested A-Un
-28877382: DoomZ V Five - Amalthe
 28903523: Eternal Sunshine
 28954097: Mirror Swordknight
 28958464: Spell Card "Monster Reborn"
@@ -756,7 +738,6 @@
 30989084: Aromalilith Rosemary
 30998403: D/D/D Sky King Zeus Ragnarok
 31006879: On Your Mark, Get Set, DUEL!
-31010081: DoomZ Break - Diactorus
 31086840: Number 69: Heraldry Crest - Shatter Stream
 31114334: Assault Blackwing - Kusanagi the Gathering Storm
 3121655: Junk Dragonlet
@@ -793,7 +774,6 @@
 32278723: Aqua Jet Surface
 32289031: Tellarknight Constellar Delteros
 32344688: Dark Chimera
-32442017: DoomZ Raiders
 324483: Ultimate Flame Swordsman
 32467459: El Shaddoll Meshahrail
 32480825: T.G. Mighty Striker
@@ -854,7 +834,6 @@
 34528176: Dragunity Knight - Areus
 34536276: Ganigumo
 34541543: Master Tao the Chanter
-34541940: Artmage Finmel
 34568783: R-Genex Undine
 3461403: The Immortal Bushi Mourns the Mortal Body
 34690519: Spirit of the Mountain
@@ -927,14 +906,12 @@
 37442336: Cosmic Quasar Dragon
 37458564: Cyberse Contract Witch
 37495766: Rescue-ACE Turbulence
-37517035: Artmage Masterwork -Succession-
 37531679: Salamandra, the Flying Flame Dragon
 37552929: Maiden of the Millennium Moon
 37613663: Millennium Ankh
 37683441: Trickstar Noble Angel
 37720300: Starship Adjust Plane
 37984331: True Exodia
-38007649: DoomZ Change
 38035986: Akakieisu
 38041941: Seed Token
 38044854: Rise Rank-Up-Magic Raidraptor's Force
@@ -1035,7 +1012,6 @@
 42141493: Mulcharmy Fuwalos
 42193638: Vaalmonica Versare
 42209438: Legendary Lord Six Samurai - Kizan
-42302563: Elfnote Seraphim Strelitzia
 42307760: Ragnaraika Stag Sovereign
 42382265: D/D Scale Surveyor
 42418084: Winged Egg of New Life
@@ -1077,7 +1053,6 @@
 43618262: Hatsugai
 43633088: Emergency Apport
 43834302: Synchro Fellowship
-43871165: Power Patron Shadow Machine Zegredo
 43905751: Madjinn Gunn
 4392470: Leo Wizard
 43932352: Bayt'al-Hecahands
@@ -1097,7 +1072,6 @@
 44553392: A Shattered, Colorless Realm
 44586427: Batteryman Token
 44649322: The Great Mikanko Ceremony
-44654994: Artmage Impasto -Recapture-
 44689689: Spinos Token
 44694191: Fleeting Phantom Mask Master
 44698398: Divine Golden Shadow Dragon Dragluxion
@@ -1243,7 +1217,6 @@
 50357013: Tokusano Shinkyojin
 50415441: Mimighoul Archfiend
 50486289: Amazoness War Chief
-50590801: Elfnotes: Aristeia of Trust
 50596425: Nekroz Divinemirror
 50604072: Crimson Blader/Assault Mode
 5063379: Flavian - Colosseum of the Gladiator Beasts
@@ -1274,7 +1247,6 @@
 51612489: Riot's Reason
 51618973: Avance, Swordsman of the Nekroz
 51650038: Madolche Dessert
-51669847: Null Power Patron Realm - Vidria
 51779204: Absolute Powerforce
 5182107: Superheavy Samurai Security
 51822687: Expurrely Happiness
@@ -1318,7 +1290,6 @@
 53541822: Ancient Gear Duel
 53545926: Token Support
 53557529: Whirlwind Fur Hire
-53589300: Nerva the Power Patron of Creation
 53618197: Confiras de Nouvelles
 53639887: Divine Temple of the Snake-Eye
 53753697: Zoa the Fiendish Beast
@@ -1341,7 +1312,6 @@
 5414777: World of Spirits
 54207171: Mementotlan Akihiron
 54261514: Final Bringer of the End Times
-54265980: DoomZ VII Seven - Elara
 54332792: Neo Kaiser Sea Horse
 54399598: Fleeting Flower of the Magician
 54475145: Heart of the Blue-Eyes
@@ -1401,7 +1371,6 @@
 56499179: Genro Ryu-Ge Hakva
 56510115: Solfachord Symphony
 56597273: Cloudian Token
-56651978: Elfnote Regina
 56700100: My Friend Purrely
 56725612: Fairy Tail Ball
 56727340: Superheavy Samurai Soulgaia Booster
@@ -1459,7 +1428,6 @@
 59069885: Embrace of the Tistina
 59080: Magia Magic - Thunder of Judgment
 59131526: Aqua Chorus Round
-5914858: Junora the Power Patron of Tuning
 59160189: Torment Token
 59293853: Mimighoul Room
 59323650: Regenesis Dragon
@@ -1470,7 +1438,6 @@
 59481082: Lightsworn Dragonling
 59494222: Gravekeeper's Inscription
 59504256: Demigod of the Tistina
-59581480: Elfnote Tinia
 59712426: Arcana Force XV - The Fiend
 59805313: Volcanic Rimfire
 59829423: Lord of the Missing Barrows
@@ -1510,7 +1477,6 @@
 60830240: Void Reignition
 6083904: Diabrocken the Ominous Specter
 6089145: Clear Wall
-60946049: Artmage Graflare
 6103114: Beaked Snake
 61052897: R-Genex Turing
 61070601: Fusion Armament
@@ -1595,7 +1561,6 @@
 64327901: Goblin Biker Grand Bash
 64382840: Eva Token
 64413994: Stealth Angecradle
-64491754: Elfnotes: Welcome Home
 64511793: Eyearmor
 64538914: Manticore of Smashing
 64603182: Ancient Gear Dark Golem
@@ -1632,7 +1597,6 @@
 65734501: Rescue-ACE Air Lifter
 65810490: Wicked Token
 65815684: Vicious Astraloud
-65848113: DoomZ XIII Over - Graflario
 65889305: Argostars - Lightning Tydeu
 65892310: Brionac, the Magical Ice Dragon
 65892585: Gold Pride - Chariot Carrie
@@ -1704,7 +1668,6 @@
 68075840: Power Pro Knight Sisters
 6812770: Performage Cup Tricker
 68144894: Hecahands Godos
-68231287: Jupiter the Power Patron of Destruction
 68304193: Kashtira Unicorn
 68316358: Allure Dance
 68378605: Vodnika the Fountain Spirit
@@ -1715,7 +1678,6 @@
 68756810: Cutter Shark
 68811206: Tyler the Great Warrior
 68815402: Wild Fire Token
-68831625: DoomZ Command "D.O.O.M.D.U.R.G."
 68870276: Fiend Reflection #1
 68897338: The Fabled Behilmoth
 68928540: Kamakiriman
@@ -1757,7 +1719,6 @@
 70391589: Siphon Token
 70417076: Performage Wind Drainer
 70485614: Decisive Battle of Golgonda
-70488851: Vidrium the Power Patron of Chaos Extermination
 70514456: Ragnaraika Mantis Monk
 70522875: Dragunity Lord - Georgius
 70538272: Filia Regis
@@ -1845,7 +1806,6 @@
 73915052: Sheep Token
 7392746: Chewbone Jr. Token
 73936388: Mirage Swordsman
-74011784: Artmage Varnish -Alteration-
 74055055: Oil
 74139959: Cosmic Tree Irmistil
 74150658: Talons of Shurilane
@@ -1859,12 +1819,10 @@
 74440056: Needle Token
 74577599: Traptrix Holeutea
 74615388: Laevatein, Generaider Boss of Shadows
-74631897: Artmage Non-Finito
 74652966: Code of Soul
 74659582: Sleipnir the Runick Mane
 74665150: Decode Talker Integration
 74725513: Qebehsenuef, Protection of Horus
-74733322: Artmage Academic Arcane Arts Acropolis
 7473735: Harmonic Synchro Fusion
 7477101: Seventh Tachyon
 74906081: Startling Stare of the Snake-Eyes
@@ -1978,7 +1936,6 @@
 80054655: Crossroad Sonic Chick
 80073414: Absolute Axon Kicker
 80275707: Laughing Puffin
-80320877: DoomZ Destruction
 80326401: Wishes for Eyes of Blue
 8039562: Dragunity Falchion
 80447641: Bat, the Forest Ninja
@@ -2015,7 +1972,6 @@
 81549048: Ryu-Ge Rivalry
 81563416: Fairy of the Fountain
 81618817: Lord of Zemia
-81650695: Power Patron DoomZ
 81677154: Mementotlan Tatsunootoshigo
 81684048: Pumpking the King of Grave Ghosts
 81686058: Ill Witch
@@ -2082,7 +2038,6 @@
 83838727: Sandwich Day
 83962752: Synchro Panic
 84031359: Darklord Gulgolet
-84054556: DoomZ Command "A.D.R.A.S.T.E.I.A."
 84079032: Bettan Bat
 84103702: Kanikabuto
 84121302: Libromancer Origin Story
@@ -2136,7 +2091,6 @@
 85771021: Deus Token
 85899505: Timaeus the United Magical Dragon
 85969517: Plunder Patrollship Jord
-85976588: Elfnote Fortuna
 86038337: Faisan, Hunting Scout of the Deep Forest
 86098176: Assault Lich
 86111442: Sentinel of the Tistina
@@ -2250,7 +2204,6 @@
 90711610: Goblin Biker Grand Entrance
 90764871: Archfiend Strategy
 90829280: Spirit of Yubel
-90880453: Elfnotes: A Plea for Help
 90884404: Utchatzimime Token
 90939874: Six Strike - Sextuple Barrage
 90946420: Goblin Biker Grand Pileup
@@ -2300,7 +2253,6 @@
 92422871: Cyberse Desavewurm
 92428405: Soul of the Supreme King
 92447211: Long-Tailed Black Horse
-92472273: DoomZ XII Zero - Drastea
 92487128: Sosei Ryu-Ge Mistva
 92517928: Galaxy-Eyes Antimatter Dragon
 92530005: Performage Ball Balancer
@@ -2381,7 +2333,6 @@
 95515789: Blazing Cartesia, the Virtuous
 9551692: Master of Ham
 95589901: Mischief of the Wolves
-95626382: DoomZ XII End - Drastrius
 9567495: Dragon Gate
 95718355: Regenesis Archfiend
 95784714: Flying Mary, the Wandering Ghost Ship
@@ -2419,7 +2370,6 @@
 97262307: Ragnaraika Wicked Butterfly
 97345699: Vesper Girsu
 97417863: D/D/D/D Super-Dimensional Sovereign Emperor Zero Paradox
-97434754: Artmage Litera
 97452818: Moon Token
 97474300: Duelist Genesis
 97476032: Ice Doll

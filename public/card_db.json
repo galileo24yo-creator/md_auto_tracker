@@ -4579,87 +4579,87 @@
   },
   {
     "id": 74733322,
-    "name": "Artmage Academic Arcane Arts Acropolis",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmageAcademicArcaneArtsAcropolis"
+    "name": "神芸学都アルトメギア",
+    "archetype": "アルトメギア",
+    "normalizedName": "神芸学都アルトメギア"
   },
   {
     "id": 27184601,
-    "name": "Artmage Diactorus",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmageDiactorus"
+    "name": "アルトメギア・ディアクトラス",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギア・ディアクトラス"
   },
   {
     "id": 34541940,
-    "name": "Artmage Finmel",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmageFinmel"
+    "name": "アルトメギア・フィンメル",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギア・フィンメル"
   },
   {
     "id": 60946049,
-    "name": "Artmage Graflare",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmageGraflare"
+    "name": "アルトメギア・グラフレア",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギア・グラフレア"
   },
   {
     "id": 44654994,
-    "name": "Artmage Impasto -Recapture-",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmageImpasto-Recapture-"
+    "name": "アルトメギア・インパスト",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギア・インパスト"
   },
   {
     "id": 97434754,
-    "name": "Artmage Litera",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmageLitera"
+    "name": "アルトメギア・リテラ",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギア・リテラ"
   },
   {
     "id": 37517035,
-    "name": "Artmage Masterwork -Succession-",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmageMasterwork-Succession-"
+    "name": "アルトメギア・傑作",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギア・傑作"
   },
   {
     "id": 21720439,
-    "name": "Artmage Movement -Pedigree-",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmageMovement-Pedigree-"
+    "name": "アルトメギア・ムーブメント",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギア・ムーブメント"
   },
   {
     "id": 74631897,
-    "name": "Artmage Non-Finito",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmageNon-Finito"
+    "name": "アルトメギア・ノンフィニート",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギア・ノンフィニート"
   },
   {
     "id": 23599634,
-    "name": "Artmage Pact -Awakening-",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmagePact-Awakening-"
+    "name": "アルトメギア・盟約",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギア・盟約"
   },
   {
     "id": 17719582,
-    "name": "Artmage Peripeteia -Turmoil-",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmagePeripeteia-Turmoil-"
+    "name": "アルトメギア・ペリペテイア",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギア・ペリペテイア"
   },
   {
     "id": 23829452,
-    "name": "Artmage Power Patron",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmagePowerPatron"
+    "name": "アルトメギアの獄神獣",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギアの獄神獣"
   },
   {
     "id": 1122030,
-    "name": "Artmage Vandalism -Assault-",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmageVandalism-Assault-"
+    "name": "アルトメギア・ヴァンダリズム",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギア・ヴァンダリズム"
   },
   {
     "id": 74011784,
-    "name": "Artmage Varnish -Alteration-",
-    "archetype": "Artmage",
-    "normalizedName": "ArtmageVarnish-Alteration-"
+    "name": "アルトメギア・ヴァーニッシュ",
+    "archetype": "アルトメギア",
+    "normalizedName": "アルトメギア・ヴァーニッシュ"
   },
   {
     "id": 21223277,
@@ -17659,9 +17659,9 @@
   },
   {
     "id": 101305055,
-    "name": "Dead-End Power Patron Realm - Viraia",
-    "archetype": "Power Patron",
-    "normalizedName": "Dead-EndPowerPatronRealm-Viraia"
+    "name": "獄神領域－ヴィライア",
+    "archetype": "獄神",
+    "normalizedName": "獄神領域-ヴィライア"
   },
   {
     "id": 75527221,
@@ -20395,69 +20395,69 @@
   },
   {
     "id": 31010081,
-    "name": "DoomZ Break - Diactorus",
-    "archetype": "DoomZ",
-    "normalizedName": "DoomZBreak-Diactorus"
+    "name": "ＤｏｏｍＺ ＢＲＥＡＫ ディアクトラス",
+    "archetype": "ドゥームズ",
+    "normalizedName": "DoomZBREAKディアクトラス"
   },
   {
     "id": 38007649,
-    "name": "DoomZ Change",
-    "archetype": "Change",
-    "normalizedName": "DoomZChange"
+    "name": "ＤｏｏｍＺ ＣＨＡＮＧＥ",
+    "archetype": "ドゥームズ",
+    "normalizedName": "DoomZCHANGE"
   },
   {
     "id": 84054556,
-    "name": "DoomZ Command \"A.D.R.A.S.T.E.I.A.\"",
-    "archetype": "DoomZ",
-    "normalizedName": "DoomZCommand\"A.D.R.A.S.T.E.I.A.\""
+    "name": "ＤｏｏｍＺ ＣＯＭＭＡＮＤ アドラステイア",
+    "archetype": "ドゥームズ",
+    "normalizedName": "DoomZCOMMANDアドラステイア"
   },
   {
     "id": 68831625,
-    "name": "DoomZ Command \"D.O.O.M.D.U.R.G.\"",
-    "archetype": "DoomZ",
-    "normalizedName": "DoomZCommand\"D.O.O.M.D.U.R.G.\""
+    "name": "ＤｏｏｍＺ ＣＯＭＭＡＮＤ ドゥームドラグ",
+    "archetype": "ドゥームズ",
+    "normalizedName": "DoomZCOMMANDドゥームドラグ"
   },
   {
     "id": 80320877,
-    "name": "DoomZ Destruction",
-    "archetype": "DoomZ",
-    "normalizedName": "DoomZDestruction"
+    "name": "ＤｏｏｍＺ ＤＥＳＴＲＵＣＴＩＯＮ",
+    "archetype": "ドゥームズ",
+    "normalizedName": "DoomZDESTRUCTION"
   },
   {
     "id": 32442017,
-    "name": "DoomZ Raiders",
-    "archetype": "DoomZ",
-    "normalizedName": "DoomZRaiders"
+    "name": "ＤｏｏｍＺ ＲＡＩＤＥＲＳ",
+    "archetype": "ドゥームズ",
+    "normalizedName": "DoomZRAIDERS"
   },
   {
     "id": 28877382,
-    "name": "DoomZ V Five - Amalthe",
-    "archetype": "DoomZ",
-    "normalizedName": "DoomZVFive-Amalthe"
+    "name": "ＤｏｏｍＺ Ｖ ５ アマルテ",
+    "archetype": "ドゥームズ",
+    "normalizedName": "DoomZV5アマルテ"
   },
   {
     "id": 54265980,
-    "name": "DoomZ VII Seven - Elara",
-    "archetype": "DoomZ",
-    "normalizedName": "DoomZVIISeven-Elara"
+    "name": "ＤｏｏｍＺ ＶＩＩ ７ エララ",
+    "archetype": "ドゥームズ",
+    "normalizedName": "DoomZVII7エララ"
   },
   {
     "id": 95626382,
-    "name": "DoomZ XII End - Drastrius",
-    "archetype": "DoomZ",
-    "normalizedName": "DoomZXIIEnd-Drastrius"
+    "name": "ＤｏｏｍＺ ＸＩＩ ＥＮＤ ドラスティウス",
+    "archetype": "ドゥームズ",
+    "normalizedName": "DoomZXIIENDドラスティウス"
   },
   {
     "id": 92472273,
-    "name": "DoomZ XII Zero - Drastea",
-    "archetype": "DoomZ",
-    "normalizedName": "DoomZXIIZero-Drastea"
+    "name": "ＤｏｏｍＺ ＸＩＩ ＺＥＲＯ ドラスティア",
+    "archetype": "ドゥームズ",
+    "normalizedName": "DoomZXIIZEROドラスティア"
   },
   {
     "id": 65848113,
-    "name": "DoomZ XIII Over - Graflario",
-    "archetype": "DoomZ",
-    "normalizedName": "DoomZXIIIOver-Graflario"
+    "name": "ＤｏｏｍＺ ＸＩＩＩ ＯＶＥＲ グラフラリオ",
+    "archetype": "ドゥームズ",
+    "normalizedName": "DoomZXIIIOVERグラフラリオ"
   },
   {
     "id": 53855410,
@@ -23695,69 +23695,69 @@
   },
   {
     "id": 85976588,
-    "name": "Elfnote Fortuna",
-    "archetype": "Elfnote",
-    "normalizedName": "ElfnoteFortuna"
+    "name": "耀聖の風詩フォルトゥーナ",
+    "archetype": "エルフェンノーツ",
+    "normalizedName": "耀聖の風詩フォルトゥーナ"
   },
   {
     "id": 13597785,
-    "name": "Elfnote Lucina",
-    "archetype": "Elfnote",
-    "normalizedName": "ElfnoteLucina"
+    "name": "耀聖の風詩ルキナ",
+    "archetype": "エルフェンノーツ",
+    "normalizedName": "耀聖の風詩ルキナ"
   },
   {
     "id": 12375297,
-    "name": "Elfnote Power Patron",
-    "archetype": "Elfnote",
-    "normalizedName": "ElfnotePowerPatron"
+    "name": "耀聖の獄神獣",
+    "archetype": "エルフェンノーツ",
+    "normalizedName": "耀聖の獄神獣"
   },
   {
     "id": 56651978,
-    "name": "Elfnote Regina",
-    "archetype": "Elfnote",
-    "normalizedName": "ElfnoteRegina"
+    "name": "耀聖の風詩レギナ",
+    "archetype": "エルフェンノーツ",
+    "normalizedName": "耀聖の風詩レギナ"
   },
   {
     "id": 42302563,
-    "name": "Elfnote Seraphim Strelitzia",
-    "archetype": "Elfnote",
-    "normalizedName": "ElfnoteSeraphimStrelitzia"
+    "name": "耀聖の風詩ストレリチア",
+    "archetype": "エルフェンノーツ",
+    "normalizedName": "耀聖の風詩ストレリチア"
   },
   {
     "id": 59581480,
-    "name": "Elfnote Tinia",
-    "archetype": "Elfnote",
-    "normalizedName": "ElfnoteTinia"
+    "name": "耀聖の風詩ティニア",
+    "archetype": "エルフェンノーツ",
+    "normalizedName": "耀聖の風詩ティニア"
   },
   {
     "id": 90880453,
-    "name": "Elfnotes: A Plea for Help",
-    "archetype": "Elfnote",
-    "normalizedName": "Elfnotes:APleaforHelp"
+    "name": "耀聖の風詩－助けて",
+    "archetype": "エルフェンノーツ",
+    "normalizedName": "耀聖の風詩-助けて"
   },
   {
     "id": 50590801,
-    "name": "Elfnotes: Aristeia of Trust",
-    "archetype": "Elfnote",
-    "normalizedName": "Elfnotes:AristeiaofTrust"
+    "name": "耀聖の風詩－信頼の勲章",
+    "archetype": "エルフェンノーツ",
+    "normalizedName": "耀聖の風詩-信頼の勲章"
   },
   {
     "id": 101305072,
-    "name": "Elfnotes: Quatrain of Succession",
-    "archetype": "Elfnote",
-    "normalizedName": "Elfnotes:QuatrainofSuccession"
+    "name": "耀聖の風詩－継承の詩片",
+    "archetype": "エルフェンノーツ",
+    "normalizedName": "耀聖の風詩-継承の詩片"
   },
   {
     "id": 24092792,
-    "name": "Elfnotes: Rhapsodia of Madness",
-    "archetype": "Elfnote",
-    "normalizedName": "Elfnotes:RhapsodiaofMadness"
+    "name": "耀聖の風詩－狂乱の狂詩曲",
+    "archetype": "エルフェンノーツ",
+    "normalizedName": "耀聖の風詩-狂乱の狂詩曲"
   },
   {
     "id": 64491754,
-    "name": "Elfnotes: Welcome Home",
-    "archetype": "Elfnote",
-    "normalizedName": "Elfnotes:WelcomeHome"
+    "name": "耀聖の風詩－おかえり",
+    "archetype": "エルフェンノーツ",
+    "normalizedName": "耀聖の風詩-おかえり"
   },
   {
     "id": 73872164,
@@ -39373,9 +39373,9 @@
   },
   {
     "id": 101305035,
-    "name": "June Pride - Elfnotes",
-    "archetype": "Elfnote",
-    "normalizedName": "JunePride-Elfnotes"
+    "name": "耀聖の風詩－６月の誇り",
+    "archetype": "エルフェンノーツ",
+    "normalizedName": "耀聖の風詩-6月の誇り"
   },
   {
     "id": 73490417,
@@ -39565,15 +39565,15 @@
   },
   {
     "id": 5914858,
-    "name": "Junora the Power Patron of Tuning",
-    "archetype": "Power Patron",
-    "normalizedName": "JunorathePowerPatronofTuning"
+    "name": "調獄神ジュノーラ",
+    "archetype": "獄神",
+    "normalizedName": "調獄神ジュノーラ"
   },
   {
     "id": 68231287,
-    "name": "Jupiter the Power Patron of Destruction",
-    "archetype": "Power Patron",
-    "normalizedName": "JupiterthePowerPatronofDestruction"
+    "name": "壊獄神ジュピター",
+    "archetype": "獄神",
+    "normalizedName": "壊獄神ジュピター"
   },
   {
     "id": 59546797,
@@ -51655,9 +51655,9 @@
   },
   {
     "id": 53589300,
-    "name": "Nerva the Power Patron of Creation",
-    "archetype": "Power Patron",
-    "normalizedName": "NervathePowerPatronofCreation"
+    "name": "創獄神ネルヴァ",
+    "archetype": "獄神",
+    "normalizedName": "創獄神ネルヴァ"
   },
   {
     "id": 19505896,
@@ -52507,9 +52507,9 @@
   },
   {
     "id": 51669847,
-    "name": "Null Power Patron Realm - Vidria",
-    "archetype": "Power Patron",
-    "normalizedName": "NullPowerPatronRealm-Vidria"
+    "name": "獄神領域－ヴィドリア",
+    "archetype": "獄神",
+    "normalizedName": "獄神領域-ヴィドリア"
   },
   {
     "id": 10666000,
@@ -57643,39 +57643,39 @@
   },
   {
     "id": 81650695,
-    "name": "Power Patron DoomZ",
-    "archetype": "DoomZ",
-    "normalizedName": "PowerPatronDoomZ"
+    "name": "ドゥームズの獄神獣",
+    "archetype": "ドゥームズ",
+    "normalizedName": "ドゥームズの獄神獣"
   },
   {
     "id": 101305039,
-    "name": "Power Patron Envoy of Pure Prayers",
-    "archetype": "Power Patron",
-    "normalizedName": "PowerPatronEnvoyofPurePrayers"
+    "name": "獄神の使者",
+    "archetype": "獄神",
+    "normalizedName": "獄神の使者"
   },
   {
     "id": 17473466,
-    "name": "Power Patron Shadow Beast Nervedo",
-    "archetype": "Artmage",
-    "normalizedName": "PowerPatronShadowBeastNervedo"
+    "name": "獄神影獸－ネルヴェド",
+    "archetype": "獄神",
+    "normalizedName": "獄神影獸-ネルヴェド"
   },
   {
     "id": 43871165,
-    "name": "Power Patron Shadow Machine Zegredo",
-    "archetype": "DoomZ",
-    "normalizedName": "PowerPatronShadowMachineZegredo"
+    "name": "獄神影機－ゼグレド",
+    "archetype": "獄神",
+    "normalizedName": "獄神影機-ゼグレド"
   },
   {
     "id": 10266279,
-    "name": "Power Patron Shadow Spirit Junordo",
-    "archetype": "Elfnote",
-    "normalizedName": "PowerPatronShadowSpiritJunordo"
+    "name": "獄神影精－ジュノルド",
+    "archetype": "獄神",
+    "normalizedName": "獄神影精-ジュノルド"
   },
   {
     "id": 101305071,
-    "name": "Power Patron Shadows of the End Times",
-    "archetype": "Power Patron",
-    "normalizedName": "PowerPatronShadowsoftheEndTimes"
+    "name": "獄神影－終末の影",
+    "archetype": "獄神",
+    "normalizedName": "獄神影-終末の影"
   },
   {
     "id": 90246973,
@@ -79783,9 +79783,9 @@
   },
   {
     "id": 25661743,
-    "name": "Unleashed Power Patron Portal - Terminus",
-    "archetype": "Power Patron",
-    "normalizedName": "UnleashedPowerPatronPortal-Terminus"
+    "name": "獄神門－テルミナス",
+    "archetype": "獄神",
+    "normalizedName": "獄神門-テルミナス"
   },
   {
     "id": 101305047,
@@ -81115,9 +81115,9 @@
   },
   {
     "id": 70488851,
-    "name": "Vidrium the Power Patron of Chaos Extermination",
-    "archetype": "Power Patron",
-    "normalizedName": "VidriumthePowerPatronofChaosExtermination"
+    "name": "混絶獄神ヴィードリウム",
+    "archetype": "獄神",
+    "normalizedName": "混絶獄神ヴィードリウム"
   },
   {
     "id": 15610297,
