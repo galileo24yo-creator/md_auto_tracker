@@ -693,7 +693,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
             const tVictory = matchSequence(features, statusTemplatesRef.current.victory || []);
             const tLose = matchSequence(features, statusTemplatesRef.current.lose || []);
             let sequenceResult = tVictory.match ? 'VICTORY' : (tLose.match ? 'LOSE' : null);
-            const isVictory = confidence > 35 && fuzzyIncludes(cleanText, 'VICTORY', 2);
+            const isVictory = fuzzyIncludes(cleanText, 'VICTORY', 1);
             const isLose = confidence > 35 && fuzzyIncludes(cleanText, 'LOSE', 1);
             if (sequenceResult || isVictory || isLose) {
               const detectedResult = sequenceResult || (isVictory ? 'VICTORY' : 'LOSE');
