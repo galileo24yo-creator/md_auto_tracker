@@ -75,7 +75,7 @@ const ActionSlots = ({
               stateRef.current = STATES.NEXT_MATCH_STANDBY; 
             } 
           }} 
-          className="w-full bg-transparent text-5xl font-black text-indigo-400 outline-none text-center px-4" 
+          className="w-full bg-transparent text-3xl lg:text-4xl font-black text-indigo-400 outline-none text-center px-4" 
           placeholder="--" 
         />
       </div>

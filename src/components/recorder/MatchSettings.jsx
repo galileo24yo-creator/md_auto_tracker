@@ -22,7 +22,7 @@ const MatchSettings = ({
   setIsInputActive
 }) => {
   return (
-    <div className="glass-card p-8 border-white/5 shadow-2xl space-y-6" onFocusCapture={() => setIsInputActive(true)} onBlurCapture={() => setIsInputActive(false)}>
+    <div className="glass-card p-8 border-white/5 shadow-2xl space-y-6 relative z-20" onFocusCapture={() => setIsInputActive(true)} onBlurCapture={() => setIsInputActive(false)}>
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="space-y-2">
           <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Mode Selection</label>
