@@ -192,26 +192,26 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen py-10 px-4 md:px-10 text-zinc-200">
-      <header className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between mb-8 pb-4 border-b border-zinc-800">
+    <div className="min-h-screen py-10 px-4 md:px-10">
+      <header className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between mb-8 pb-4 border-b border-zinc-500/10">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+          <h1 className="text-3xl tracking-tighter text-premium">
             MD Tracker
           </h1>
           <div className="flex items-center gap-2 mt-1">
-            <p className="text-zinc-500 text-sm">Automated Match Analytics for Master Duel</p>
+            <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest opacity-70">Automated Match Analytics</p>
             {activeProfile && (
-              <span className="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 text-[10px] text-indigo-400 font-bold rounded-full uppercase">
-                Profile: {activeProfile.name}
+              <span className="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 text-[10px] text-indigo-400 font-black rounded-md uppercase">
+                {activeProfile.name}
               </span>
             )}
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button 
             onClick={() => setShowUserManual(true)}
-            className="p-2 rounded-lg border bg-zinc-800/50 border-zinc-700 text-zinc-400 hover:text-white hover:border-indigo-500/50 transition"
+            className="p-2.5 rounded-xl border bg-zinc-900/40 border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-700 transition-all"
             title="User Manual"
           >
             <HelpCircle className="w-5 h-5" />
@@ -219,7 +219,7 @@ function App() {
 
           <button 
             onClick={() => setShowSettings(!showSettings)}
-            className={`p-2 rounded-lg border transition ${showSettings ? "bg-indigo-500/20 border-indigo-500 text-indigo-400" : "bg-zinc-800/50 border-zinc-700 text-zinc-400 hover:text-white"}`}
+            className={`p-2.5 rounded-xl border transition-all ${showSettings ? "bg-indigo-500/10 border-indigo-500 text-indigo-400" : "bg-zinc-900/40 border-zinc-800 text-zinc-500 hover:text-white"}`}
             title="Settings"
           >
             <Settings className="w-5 h-5" />
@@ -228,29 +228,28 @@ function App() {
           <button 
             onClick={() => loadData(true)}
             disabled={loading || refreshing}
-            className="px-4 py-2 bg-zinc-800/50 hover:bg-zinc-700/50 border border-zinc-700 rounded-lg text-sm font-medium flex items-center gap-2 transition"
+            className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-sm font-black flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-            {refreshing ? "Refresh" : "Fresh Data"}
+            {refreshing ? "Refreshing..." : "Fresh Data"}
           </button>
         </div>
       </header>
       
       {showSettings && (
         <div className="max-w-[1600px] mx-auto mb-8 animate-in slide-in-from-top-4 duration-300">
-          <div className="bg-zinc-800/80 border border-indigo-500/30 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500/50" />
+          <div className="glass-card p-6 shadow-2xl relative overflow-hidden">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <Database className="w-5 h-5 text-indigo-400" />
+              <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                <Database className="w-4 h-4 text-indigo-400" />
                 Connection Profiles
               </h3>
               <div className="flex items-center gap-3">
                 <button 
                   onClick={() => setShowSetupGuide(true)}
-                  className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-xs font-bold flex items-center gap-2 transition"
+                  className="px-3 py-1.5 bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all"
                 >
-                  <HelpCircle className="w-3.5 h-3.5" /> Setup Guide
+                  Setup Guide
                 </button>
                 <button onClick={() => setShowSettings(false)} className="text-zinc-500 hover:text-white transition">
                   <X className="w-5 h-5" />
@@ -263,7 +262,7 @@ function App() {
                 {profiles.map(p => (
                   <div 
                     key={p.id} 
-                    className={`p-4 rounded-xl border transition-all cursor-pointer relative group ${activeProfile?.id === p.id ? 'bg-indigo-500/10 border-indigo-500' : 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700'}`}
+                    className={`p-4 rounded-xl border transition-all cursor-pointer relative group ${activeProfile?.id === p.id ? 'bg-indigo-500/5 border-indigo-500/50' : 'bg-zinc-950/30 border-zinc-800/50 hover:border-zinc-700'}`}
                     onClick={() => editingProfileId !== p.id && handleSwitchProfile(p)}
                   >
                     {editingProfileId === p.id ? (
@@ -271,47 +270,44 @@ function App() {
                         <input 
                           value={editName}
                           onChange={e => setEditName(e.target.value)}
-                          className="w-full bg-zinc-950 border border-zinc-800 rounded px-2 py-1 text-xs text-white outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white outline-none focus:ring-1 focus:ring-indigo-500"
                           placeholder="Profile Name"
                         />
                         <input 
                           value={editUrl}
                           onChange={e => setEditUrl(e.target.value)}
-                          className="w-full bg-zinc-950 border border-zinc-800 rounded px-2 py-1 text-[10px] font-mono text-zinc-400 outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-[10px] font-mono text-zinc-400 outline-none focus:ring-1 focus:ring-indigo-500"
                           placeholder="GAS WebApp URL"
                         />
-                        <input 
-                          value={editSheetUrl || ''}
-                          onChange={e => setEditSheetUrl(e.target.value)}
-                          className="w-full bg-zinc-950 border border-zinc-800 rounded px-2 py-1 text-[10px] font-mono text-zinc-400 outline-none focus:ring-1 focus:ring-indigo-500"
-                          placeholder="Spreadsheet URL (Optional)"
-                        />
                         <div className="flex gap-2">
-                          <button onClick={handleSaveProfile} className="flex-1 bg-indigo-600 text-white py-1 rounded text-[10px] font-bold flex items-center justify-center gap-1">
-                            <Check className="w-3 h-3" /> Save
+                          <button onClick={handleSaveProfile} className="flex-1 bg-indigo-600 text-white py-2 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                            Save Changes
                           </button>
-                          <button onClick={() => setEditingProfileId(null)} className="flex-1 bg-zinc-800 text-zinc-400 py-1 rounded text-[10px] font-bold">Cancel</button>
+                          <button onClick={() => setEditingProfileId(null)} className="flex-1 bg-zinc-800 text-zinc-400 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest">Cancel</button>
                         </div>
                       </div>
                     ) : (
                       <>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-bold text-sm text-zinc-200">{p.name}</span>
+                          <span className="font-black text-xs text-zinc-200 uppercase tracking-tight">{p.name}</span>
                           {activeProfile?.id === p.id && (
-                            <span className="bg-indigo-500 text-white text-[8px] px-1.5 py-0.5 rounded font-black">ACTIVE</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="status-dot bg-indigo-400 animate-pulse" />
+                              <span className="text-[8px] text-indigo-400 font-black uppercase tracking-widest">Active</span>
+                            </div>
                           )}
                         </div>
-                        <div className="text-[10px] text-zinc-500 font-mono truncate mb-3">{p.url || 'URL not set'}</div>
-                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="text-[9px] text-zinc-500 font-mono truncate mb-3 opacity-60">{p.url || 'URL not set'}</div>
+                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-1 group-hover:translate-y-0">
                           <button 
                             onClick={(e) => { e.stopPropagation(); startEditing(p); }}
-                            className="bg-zinc-800 hover:bg-zinc-700 text-zinc-400 p-1.5 rounded transition"
+                            className="bg-zinc-800 hover:bg-zinc-700 text-zinc-400 p-2 rounded-lg transition"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                           <button 
                             onClick={(e) => { e.stopPropagation(); handleDeleteProfile(p.id); }}
-                            className="bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white p-1.5 rounded transition"
+                            className="bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white p-2 rounded-lg transition"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -324,8 +320,8 @@ function App() {
                   onClick={handleAddProfile}
                   className="p-4 rounded-xl border border-dashed border-zinc-800 hover:border-indigo-500/50 hover:bg-indigo-500/5 text-zinc-500 hover:text-indigo-400 transition-all flex flex-col items-center justify-center gap-2 group"
                 >
-                  <Plus className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-bold">Add New Profile</span>
+                  <Plus className="w-6 h-6 group-hover:scale-110 transition-all" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">New Profile</span>
                 </button>
               </div>
             </div>
@@ -334,62 +330,64 @@ function App() {
       )}
       
       <main className="max-w-[1600px] mx-auto grid grid-cols-1 xl:grid-cols-5 gap-8">
-        {/* Left Column: Recording and Configuration (Sticky on XL screens) */}
-        <div className="xl:col-span-2 xl:sticky xl:top-6 self-start z-20 border border-white/5 bg-slate-900/60 backdrop-blur-md rounded-2xl p-6 shadow-2xl ring-1 ring-white/10">
-          <Recorder 
-            availableDecks={data.decks} 
-            availableTags={displayReasons} 
-            onRecorded={() => loadData(true)} 
-            onOpenManual={() => setShowUserManual(true)}
-          />
+        <div className="xl:col-span-2 xl:sticky xl:top-6 self-start z-20">
+          <div className="glass-card glass-card-hover p-6 shadow-2xl transition-all">
+            <Recorder 
+              availableDecks={data.decks} 
+              availableTags={displayReasons} 
+              onRecorded={() => loadData(true)} 
+              onOpenManual={() => setShowUserManual(true)}
+            />
+          </div>
         </div>
 
-        {/* Right Column: Dashboard (60% width) */}
-        <div className="xl:col-span-3 border border-white/5 bg-slate-900/80 rounded-2xl p-6 shadow-2xl ring-1 ring-white/10">
-          {loading ? (
-            <div className="h-64 flex flex-col items-center justify-center text-zinc-500">
-              <Loader2 className="w-8 h-8 animate-spin mb-4 text-indigo-500" />
-              <p>Loading records from Google Sheets...</p>
-            </div>
-          ) : error ? (
-            <div className="h-64 flex flex-col items-center justify-center text-red-400 bg-red-500/10 rounded-xl p-8 text-center border border-red-500/20">
-              <Database className="w-10 h-10 mb-4 opacity-50" />
-              <p className="font-bold text-zinc-100 mb-2">GAS Connection Required</p>
-              <p className="text-sm opacity-80 mb-6 max-w-sm mx-auto">{error}</p>
-              <div className="flex gap-4">
-                <button 
-                  onClick={() => setShowSetupGuide(true)}
-                  className="px-6 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-lg text-sm font-bold transition shadow-lg shadow-indigo-500/20"
-                >
-                  View Setup Guide
-                </button>
-                <button 
-                  onClick={() => setShowSettings(true)}
-                  className="px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg text-sm font-bold transition"
-                >
-                  Configure URL
-                </button>
+        <div className="xl:col-span-3">
+          <div className="glass-card p-6 shadow-2xl min-h-[600px]">
+            {loading ? (
+              <div className="h-[500px] flex flex-col items-center justify-center text-zinc-500">
+                <Loader2 className="w-10 h-10 animate-spin mb-4 text-indigo-500 opacity-50" />
+                <p className="text-xs font-black uppercase tracking-widest opacity-40">Loading Database</p>
               </div>
-            </div>
-          ) : (
-            <Dashboard 
-              records={data.records} 
-              onRefresh={() => loadData(true)} 
-              decks={data.decks}
-              reasons={data.reasons}
-              displayReasons={displayReasons}
-              activeProfile={activeProfile}
-            />
-          )}
+            ) : error ? (
+              <div className="h-[500px] flex flex-col items-center justify-center">
+                <div className="p-8 glass-card border-rose-500/20 text-center max-w-sm">
+                  <Database className="w-10 h-10 mb-4 mx-auto text-rose-500 opacity-50" />
+                  <p className="font-black text-white uppercase tracking-tight mb-2">Sync Required</p>
+                  <p className="text-[10px] text-zinc-500 font-bold mb-6 leading-relaxed uppercase">{error}</p>
+                  <div className="flex flex-col gap-2">
+                    <button 
+                      onClick={() => setShowSetupGuide(true)}
+                      className="w-full py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-500/20"
+                    >
+                      Setup Guide
+                    </button>
+                    <button 
+                      onClick={() => setShowSettings(true)}
+                      className="w-full py-3 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                    >
+                      Configure URL
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Dashboard 
+                records={data.records} 
+                onRefresh={() => loadData(true)} 
+                decks={data.decks}
+                reasons={data.reasons}
+                displayReasons={displayReasons}
+                activeProfile={activeProfile}
+              />
+            )}
+          </div>
         </div>
       </main>
 
-      {/* Setup Guide Modal */}
       {showSetupGuide && (
         <SetupGuide onClose={() => setShowSetupGuide(false)} />
       )}
 
-      {/* User Manual Modal */}
       {showUserManual && (
         <UserManual 
           onClose={() => setShowUserManual(false)} 

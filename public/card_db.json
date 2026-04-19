@@ -6386,7 +6386,7 @@
   {
     "id": 50371210,
     "name": "光の導き",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "光の導き"
   },
   {
@@ -7034,7 +7034,7 @@
   {
     "id": 93437091,
     "name": "ビンゴマシーンGO！GO！",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "ビンゴマシーンGO!GO!"
   },
   {
@@ -7178,7 +7178,7 @@
   {
     "id": 36262024,
     "name": "黒竜の雛",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "黒竜の雛"
   },
   {
@@ -7298,7 +7298,7 @@
   {
     "id": 93969023,
     "name": "黒鋼竜",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "黒鋼竜"
   },
   {
@@ -8276,55 +8276,55 @@
   {
     "id": 64202399,
     "name": "深淵の青眼龍",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "深淵の青眼龍"
   },
   {
     "id": 43228023,
     "name": "青眼の究極亜竜",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青眼の究極亜竜"
   },
   {
     "id": 38517737,
     "name": "青眼の亜白龍",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青眼の亜白龍"
   },
   {
     "id": 20654247,
     "name": "青眼の混沌龍",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青眼の混沌龍"
   },
   {
     "id": 55410871,
     "name": "ブルーアイズ・カオス・MAX・ドラゴン",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "ブルーアイズ・カオス・MAX・ドラゴン"
   },
   {
     "id": 30576089,
     "name": "ブルーアイズ・ジェット・ドラゴン",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "ブルーアイズ・ジェット・ドラゴン"
   },
   {
     "id": 53347303,
     "name": "青眼の光龍",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青眼の光龍"
   },
   {
     "id": 57043986,
     "name": "ブルーアイズ・ソリッド・ドラゴン",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "ブルーアイズ・ソリッド・ドラゴン"
   },
   {
     "id": 59822133,
     "name": "青眼の精霊龍",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青眼の精霊龍"
   },
   {
@@ -8336,43 +8336,43 @@
   {
     "id": 100455005,
     "name": "Blue-Eyes Toon Ultimate Dragon",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "Blue-EyesToonUltimateDragon"
   },
   {
     "id": 2129638,
     "name": "青眼の双爆裂龍",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青眼の双爆裂龍"
   },
   {
     "id": 11443677,
     "name": "ブルーアイズ・タイラント・ドラゴン",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "ブルーアイズ・タイラント・ドラゴン"
   },
   {
     "id": 23995346,
     "name": "青眼の究極竜",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青眼の究極竜"
   },
   {
     "id": 89604813,
     "name": "Blue-Eyes Ultimate Spirit Dragon",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "Blue-EyesUltimateSpiritDragon"
   },
   {
     "id": 89631139,
     "name": "青眼の白龍",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青眼の白龍"
   },
   {
     "id": 30397786,
     "name": "Blue-Eyes White Dragon, the White Phantom Beast",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "Blue-EyesWhiteDragon,theWhitePhantomBeast"
   },
   {
@@ -9866,7 +9866,7 @@
   {
     "id": 17655904,
     "name": "滅びの爆裂疾風弾",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "滅びの爆裂疾風弾"
   },
   {
@@ -10376,7 +10376,7 @@
   {
     "id": 32566831,
     "name": "紅玉の宝札",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "紅玉の宝札"
   },
   {
@@ -11066,7 +11066,7 @@
   {
     "id": 21082832,
     "name": "カオス・フォーム",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "カオス・フォーム"
   },
   {
@@ -16526,7 +16526,7 @@
   {
     "id": 18803791,
     "name": "黒竜降臨",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "黒竜降臨"
   },
   {
@@ -17498,7 +17498,7 @@
   {
     "id": 79266769,
     "name": "闇鋼龍 ダークネスメタル",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "闇鋼龍ダークネスメタル"
   },
   {
@@ -17834,13 +17834,13 @@
   {
     "id": 22804410,
     "name": "ディープアイズ・ホワイト・ドラゴン",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "ディープアイズ・ホワイト・ドラゴン"
   },
   {
     "id": 67886895,
     "name": "Deep-Eyes White Dragon, the Blue Abyss",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "Deep-EyesWhiteDragon,theBlueAbyss"
   },
   {
@@ -18944,7 +18944,7 @@
   {
     "id": 66961194,
     "name": "ロード・オブ・ドラゴン－ドラゴンの独裁者－",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "ロード・オブ・ドラゴン-ドラゴンの独裁者-"
   },
   {
@@ -21056,7 +21056,7 @@
   {
     "id": 62873545,
     "name": "究極竜騎士",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "究極竜騎士"
   },
   {
@@ -21134,7 +21134,7 @@
   {
     "id": 45467446,
     "name": "白き霊龍",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "白き霊龍"
   },
   {
@@ -30158,7 +30158,7 @@
   {
     "id": 85651167,
     "name": "真紅眼の鉄騎士－ギア・フリード",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の鉄騎士-ギア・フリード"
   },
   {
@@ -35216,7 +35216,7 @@
   {
     "id": 54475145,
     "name": "Heart of the Blue-Eyes",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "HeartoftheBlue-Eyes"
   },
   {
@@ -37916,7 +37916,7 @@
   {
     "id": 52684508,
     "name": "黒炎弾",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "黒炎弾"
   },
   {
@@ -39944,7 +39944,7 @@
   {
     "id": 34627841,
     "name": "正義の味方 カイバーマン",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "正義の味方カイバーマン"
   },
   {
@@ -43472,7 +43472,7 @@
   {
     "id": 19025379,
     "name": "ロード・オブ・ザ・レッド",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "ロード・オブ・ザ・レッド"
   },
   {
@@ -45308,7 +45308,7 @@
   {
     "id": 88241506,
     "name": "青き眼の乙女",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青き眼の乙女"
   },
   {
@@ -45500,7 +45500,7 @@
   {
     "id": 2783661,
     "name": "青き眼の威光",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青き眼の威光"
   },
   {
@@ -45566,7 +45566,7 @@
   {
     "id": 9433350,
     "name": "Sin 青眼の白龍",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "Sin青眼の白龍"
   },
   {
@@ -46592,7 +46592,7 @@
   {
     "id": 45644898,
     "name": "青き眼の祭司",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青き眼の祭司"
   },
   {
@@ -48260,13 +48260,13 @@
   {
     "id": 30086349,
     "name": "流星竜メテオ・ブラック・ドラゴン",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "流星竜メテオ・ブラック・ドラゴン"
   },
   {
     "id": 90660762,
     "name": "メテオ・ブラック・ドラゴン",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "メテオ・ブラック・ドラゴン"
   },
   {
@@ -48278,7 +48278,7 @@
   {
     "id": 17871506,
     "name": "真紅眼の凶星竜－メテオ・ドラゴン",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の凶星竜-メテオ・ドラゴン"
   },
   {
@@ -51446,7 +51446,7 @@
   {
     "id": 56532353,
     "name": "真青眼の究極竜",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "真青眼の究極竜"
   },
   {
@@ -51674,7 +51674,7 @@
   {
     "id": 43845801,
     "name": "アルティメット・バースト",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "アルティメット・バースト"
   },
   {
@@ -54968,7 +54968,7 @@
   {
     "id": 71408082,
     "name": "黒竜の聖騎士",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "黒竜の聖騎士"
   },
   {
@@ -54998,7 +54998,7 @@
   {
     "id": 73398797,
     "name": "白竜の聖騎士",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "白竜の聖騎士"
   },
   {
@@ -58262,7 +58262,7 @@
   {
     "id": 36734924,
     "name": "青き眼の巫女",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青き眼の巫女"
   },
   {
@@ -58622,7 +58622,7 @@
   {
     "id": 72855441,
     "name": "青き眼の護人",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青き眼の護人"
   },
   {
@@ -59882,7 +59882,7 @@
   {
     "id": 29432790,
     "name": "青き眼の激臨",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青き眼の激臨"
   },
   {
@@ -61262,7 +61262,7 @@
   {
     "id": 18491580,
     "name": "真紅眼の亜黒竜",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の亜黒竜"
   },
   {
@@ -61280,115 +61280,115 @@
   {
     "id": 74677422,
     "name": "真紅眼の黒竜",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の黒竜"
   },
   {
     "id": 19747827,
     "name": "真紅眼の黒竜剣",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の黒竜剣"
   },
   {
     "id": 30079770,
     "name": "真紅眼の黒炎竜",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の黒炎竜"
   },
   {
     "id": 80870883,
     "name": "Red-Eyes Black Fullmetal Dragon",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "Red-EyesBlackFullmetalDragon"
   },
   {
     "id": 64335805,
     "name": "レッドアイズ・ブラックメタルドラゴン",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "レッドアイズ・ブラックメタルドラゴン"
   },
   {
     "id": 27657173,
     "name": "真紅眼の黒星竜",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の黒星竜"
   },
   {
     "id": 71782404,
     "name": "レッドアイズ・バーン",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "レッドアイズ・バーン"
   },
   {
     "id": 37818794,
     "name": "超魔導竜騎士－ドラグーン・オブ・レッドアイズ",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "超魔導竜騎士-ドラグーン・オブ・レッドアイズ"
   },
   {
     "id": 96561011,
     "name": "真紅眼の闇竜",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の闇竜"
   },
   {
     "id": 88264978,
     "name": "レッドアイズ・ダークネスメタルドラゴン",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "レッドアイズ・ダークネスメタルドラゴン"
   },
   {
     "id": 57135971,
     "name": "鎖付き真紅眼牙",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "鎖付き真紅眼牙"
   },
   {
     "id": 44405066,
     "name": "真紅眼の鋼炎竜",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の鋼炎竜"
   },
   {
     "id": 6172122,
     "name": "真紅眼融合",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼融合"
   },
   {
     "id": 92353449,
     "name": "レッドアイズ・インサイト",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "レッドアイズ・インサイト"
   },
   {
     "id": 83711531,
     "name": "Red-Eyes Metal Claws Dragon",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "Red-EyesMetalClawsDragon"
   },
   {
     "id": 53485634,
     "name": "真紅眼の遡刻竜",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の遡刻竜"
   },
   {
     "id": 21140872,
     "name": "真紅眼の黒刃竜",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の黒刃竜"
   },
   {
     "id": 6556909,
     "name": "真紅き魂",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅き魂"
   },
   {
     "id": 44397496,
     "name": "レッドアイズ・スピリッツ",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "レッドアイズ・スピリッツ"
   },
   {
@@ -61400,31 +61400,31 @@
   {
     "id": 45410988,
     "name": "レッドアイズ・トランスマイグレーション",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "レッドアイズ・トランスマイグレーション"
   },
   {
     "id": 67300516,
     "name": "真紅眼の飛竜",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の飛竜"
   },
   {
     "id": 5186893,
     "name": "真紅眼の不死竜",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の不死竜"
   },
   {
     "id": 38192988,
     "name": "真紅眼の不死竜皇",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の不死竜皇"
   },
   {
     "id": 28240337,
     "name": "真紅眼の不屍竜",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の不屍竜"
   },
   {
@@ -62222,7 +62222,7 @@
   {
     "id": 39387565,
     "name": "真紅眼の鎧旋",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "真紅眼の鎧旋"
   },
   {
@@ -64076,7 +64076,7 @@
   {
     "id": 8240199,
     "name": "青き眼の賢士",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青き眼の賢士"
   },
   {
@@ -74504,7 +74504,7 @@
   {
     "id": 66574418,
     "name": "伝説の黒石",
-    "archetype": "真紅眼",
+    "archetype": "レッドアイズ",
     "normalizedName": "伝説の黒石"
   },
   {
@@ -75680,7 +75680,7 @@
   {
     "id": 56920308,
     "name": "強靭！無敵！最強！",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "強靭!無敵!最強!"
   },
   {
@@ -75824,13 +75824,13 @@
   {
     "id": 71039903,
     "name": "太古の白石",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "太古の白石"
   },
   {
     "id": 79814787,
     "name": "伝説の白石",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "伝説の白石"
   },
   {
@@ -78482,7 +78482,7 @@
   {
     "id": 62089826,
     "name": "真の光",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "真の光"
   },
   {
@@ -79280,7 +79280,7 @@
   {
     "id": 71143015,
     "name": "究極融合",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "究極融合"
   },
   {
@@ -86120,7 +86120,7 @@
   {
     "id": 59725130,
     "name": "青眼の究極霊龍",
-    "archetype": "青眼",
+    "archetype": "ブルーアイズ",
     "normalizedName": "青眼の究極霊龍"
   },
   {
@@ -86200,5 +86200,11 @@
     "name": "ジェムナイト-クォーツ",
     "archetype": "ジェムナイト",
     "normalizedName": "ジェムナイト-クォーツ"
+  },
+  {
+    "id": 99910001,
+    "name": "光と闇の儀式",
+    "archetype": "",
+    "normalizedName": "光と闇の儀式"
   }
 ]

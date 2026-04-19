@@ -26,8 +26,8 @@ function normalizeText(text) {
 const ARCHETYPE_MAP = {
   'K9': 'Ｋ９（ケーナイン）',
   'Blackwing': 'ＢＦ（ブラックフェザー）',
-  'Blue-Eyes': '青眼',
-  'Red-Eyes': '真紅眼',
+  'Blue-Eyes': 'ブルーアイズ',
+  'Red-Eyes': 'レッドアイズ',
   'Dark Magician': 'ブラック・マジシャン',
   'Adamancipator': 'アダマシア',
   'Destiny HERO': 'Ｄ－ＨＥＲＯ',
