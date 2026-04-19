@@ -150,6 +150,78 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
     if (msg) addLog(msg, 'info');
   }, [currentState, addLog]);
 
+  // ==========================================
+  // Intelligent Autofill Engine
+  // ==========================================
+  useEffect(() => {
+    if (detectedCards.length === 0) return;
+
+    // --- Thresholds ---
+    const THRESHOLD_THEME = 3.0; // 緩和: 5.0 -> 3.0
+    const THRESHOLD_TAG = 0.8;
+
+    // 1. Group theme weights
+    const themeScores = { BLUE: {}, RED: {} };
+    // 2. Specific card detection for tags
+    const highConfidenceCards = [];
+
+    detectedCards.forEach(card => {
+      if (card.archetype) {
+        themeScores[card.side][card.archetype] = (themeScores[card.side][card.archetype] || 0) + (card.totalWeight || 0);
+      }
+      if (card.totalWeight >= THRESHOLD_TAG) {
+        highConfidenceCards.push(card);
+      }
+    });
+
+    // --- Autofill Decks ---
+    // Self side
+    if (!isMyDeckLocked) {
+      Object.entries(themeScores.BLUE).forEach(([theme, score]) => {
+        if (score >= THRESHOLD_THEME) {
+          const normTheme = normalizeTheme(themeMapRef.current[theme] || theme);
+          setMyDecks(prev => prev.includes(normTheme) ? prev : [...prev, normTheme]);
+        }
+      });
+    }
+
+    // Opponent side
+    if (!isOpponentDeckLocked) {
+      Object.entries(themeScores.RED).forEach(([theme, score]) => {
+        if (score >= THRESHOLD_THEME) {
+          const normTheme = normalizeTheme(themeMapRef.current[theme] || theme);
+          setOppDecks(prev => prev.includes(normTheme) ? prev : [...prev, normTheme]);
+        }
+      });
+    }
+
+    // --- Autofill Tags ---
+    if (!isTagsLocked && availableTags) {
+      const CARD_TO_TAG_BASE = {
+        '増殖するＧ': 'G',
+        '灰流うらら': 'うらら',
+        '無限泡影': '泡',
+        '原始生命態ニビル': 'ニビル',
+        'エフェクト・ヴェーラー': 'ヴェーラー',
+        'ドロール＆ロックバード': 'ドロバ',
+        '墓穴の指名者': '墓穴',
+        '抹殺の指名者': '抹殺'
+      };
+
+      highConfidenceCards.forEach(card => {
+        const baseTag = CARD_TO_TAG_BASE[card.name];
+        if (baseTag) {
+          const prefix = card.side === 'BLUE' ? '[+] 自：' : '[-] 敵：';
+          const targetTag = availableTags.find(t => t && t.startsWith(prefix) && t.includes(baseTag));
+          if (targetTag) {
+            setSelectedTags(prev => prev.includes(targetTag) ? prev : [...prev, targetTag]);
+          }
+        }
+      });
+    }
+
+  }, [detectedCards, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, availableTags]);
+
   // Card Database & Fuse.js
   const fuseRef = useRef(null);
   const cardVotesRef = useRef({}); 
@@ -159,6 +231,8 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
   const lastFrameCardNameRef = useRef(''); 
   const detectionWindowRef = useRef([]); 
   const [currentCard, setCurrentCard] = useState({ name: '', archetype: '', confidence: 0, votes: 0 }); 
+  const sessionHitsRef = useRef(0);
+  const lastSessionCardRef = useRef('');
 
   const themeMapRef = useRef({});
 
@@ -587,6 +661,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
                 const ssd = calculateSSD(curGray, prevGrayRef.current);
                 if (ssd > 600) {
                   cardVotesRef.current = {}; detectionAttemptsRef.current = 0; detectionWindowRef.current = []; lastFrameCardNameRef.current = '';
+                  sessionHitsRef.current = 0; lastSessionCardRef.current = '';
                   addLog('🔄 カードの切り替わりを検知 (SSD)', 'info');
                 }
               }
@@ -605,7 +680,7 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
                 }
                 nctx.putImageData(nImg, 0, 0);
 
-                jpn.recognize(nc).then(({ data: { text } }) => {
+                jpn.recognize(nc).then(({ data: { text, confidence } }) => {
                   const rawText = text.trim().replace(/\n+/g, '').replace(/\s+/g, '');
                   const cleanText = normalizeCardName(rawText);
                   
@@ -622,48 +697,70 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
                       if (results && results.length > 0) {
                         const bestMatch = results[0].item;
                         const matchScore = results[0].score || 0;
-                        if (matchScore < 0.25) {
+                        if (matchScore < 0.45) { // 緩和: 0.25 -> 0.45
                             const name = bestMatch.name;
-                            const vMap = cardVotesRef.current;
+                            const side = colorRes.side;
                             
-                            // 名前が前回判定時と明確に異なる場合は即座に履歴をリセット
-                            if (lastFrameCardNameRef.current && lastFrameCardNameRef.current !== name && matchScore < 0.15) {
-                              cardVotesRef.current = { [name]: { count: 1, archetype: bestMatch.archetype } };
-                              detectionAttemptsRef.current = 1; detectionWindowRef.current = []; lastFrameCardNameRef.current = name;
-                              console.log(`[Switch Detect] Quick switch: ${name}`);
+                            // --- Session Counting (Consecutive detection logic) ---
+                            if (lastSessionCardRef.current === name) {
+                              sessionHitsRef.current++;
                             } else {
-                              if (!vMap[name]) vMap[name] = { count: 0, archetype: bestMatch.archetype };
-                              vMap[name].count++; lastFrameCardNameRef.current = name;
+                              sessionHitsRef.current = 1;
+                              lastSessionCardRef.current = name;
+                            }
+                            
+                            // --- Soft-Cut (Attenuation) Logic ---
+                            let scoreMultiplier = 1.0;
+                            if (matchScore >= 0.25) {
+                                // 0.25を超えたら重みを 1/10 以下に激減させ、
+                                // スコア 0.45 に向けてさらに 2乗で減衰させる
+                                const normalizedExcess = (matchScore - 0.25) / (0.45 - 0.25);
+                                scoreMultiplier = Math.pow(1 - normalizedExcess, 2) * 0.1;
                             }
 
-                            const window = detectionWindowRef.current;
-                            window.push({ name, archetype: bestMatch.archetype, side: colorRes.side, score: matchScore });
-                            if (window.length > 3) window.shift(); // 5 -> 3 に短縮
+                            // --- Weighted Scoring ---
+                            // Weight = (Accuracy) * (OCR Confidence)
+                            const baseWeight = (1.0 - matchScore) * (confidence / 100);
                             
-                            const counts = {}; window.forEach(item => { counts[item.name] = (counts[item.name] || 0) + 1; });
-                            let topWindowCard = name; let maxWinVotes = 0;
-                            Object.entries(counts).forEach(([k, v]) => { if (v > maxWinVotes) { maxWinVotes = v; topWindowCard = k; } });
+                            // Hit-based decay: 1-3 hits: 100%, 4-10 hits: 30%, 11+: 5%
+                            const decayMultiplier = sessionHitsRef.current <= 3 ? 1.0 : (sessionHitsRef.current <= 10 ? 0.3 : 0.05);
                             
-                            const winnerData = window.find(item => item.name === topWindowCard);
-                            const reliability = (maxWinVotes / window.length * 100).toFixed(0);
-                            
-                            setCurrentCard({
-                              name: topWindowCard, archetype: winnerData.archetype, side: winnerData.side,
-                              confidence: reliability,
-                              votes: maxWinVotes
+                            // Apply both attenuation and hit-decay
+                            const effectiveWeight = baseWeight * scoreMultiplier * decayMultiplier;
+
+                            // --- Update State (Cumulative) ---
+                            setDetectedCards(prev => {
+                              const existingIdx = prev.findIndex(c => c.name === name && c.side === side);
+                              if (existingIdx >= 0) {
+                                const updated = [...prev];
+                                const c = updated[existingIdx];
+                                updated[existingIdx] = {
+                                  ...c,
+                                  hits: (c.hits || 1) + 1,
+                                  totalWeight: (c.totalWeight || 0.5) + effectiveWeight
+                                };
+                                return updated;
+                              } else {
+                                // First time detection
+                                const isSoftCut = matchScore >= 0.25;
+                                addLog(`${isSoftCut ? '[減衰加算]' : 'カード検知'}: ${name} (${side === 'BLUE' ? '味方' : '相手'})${isSoftCut ? ' (Score:' + matchScore.toFixed(2) + ')' : ''}`, side === 'BLUE' ? 'info' : 'warning');
+                                return [...prev, { 
+                                  name, 
+                                  side, 
+                                  archetype: bestMatch.archetype, 
+                                  hits: 1, 
+                                  totalWeight: effectiveWeight, 
+                                  timestamp: Date.now() 
+                                }];
+                              }
                             });
-                            
-                            // 確定条件: (3枚中2枚以上) または (1枚でも非常に高スコア 0.1未満)
-                            const isHighlyConfident = matchScore < 0.1;
-                            if (maxWinVotes >= 2 || isHighlyConfident) {
-                               const isAlreadyDetected = detectedCardsRef.current.some(c => c.name === topWindowCard && c.side === winnerData.side);
-                               if (!isAlreadyDetected) {
-                                 const newCard = { name: topWindowCard, archetype: winnerData.archetype, side: winnerData.side, timestamp: Date.now() };
-                                 detectedCardsRef.current.push(newCard);
-                                 setDetectedCards([...detectedCardsRef.current]);
-                                 addLog(`${isHighlyConfident ? '⚡ 直感検知' : '🔍 確定'}: ${topWindowCard} (${winnerData.side === 'BLUE' ? '味方' : '相手'})`, winnerData.side === 'BLUE' ? 'info' : 'warning');
-                               }
-                            }
+
+                            // --- Visual feedback for current card ---
+                            setCurrentCard({
+                              name: name, archetype: bestMatch.archetype, side: side,
+                              confidence: confidence,
+                              votes: sessionHitsRef.current
+                            });
                         } else {
                           addLog(`[低信頼] 無視: ${bestMatch.name} (Score: ${matchScore.toFixed(3)})`, 'debug');
                         }
@@ -894,8 +991,17 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
                     onClick={() => handleCardClick(c)}
                     className={`bg-indigo-900/10 border border-indigo-500/20 p-2.5 rounded-lg flex flex-col gap-0.5 transition-all duration-200 ${c.archetype ? 'cursor-pointer hover:bg-indigo-900/40 active:scale-95' : ''}`}
                   >
-                    <span className="text-zinc-100 text-[11px] font-bold truncate">{c.name}</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-zinc-100 text-[11px] font-bold truncate">{c.name}</span>
+                      <span className="text-[9px] font-black text-indigo-400/40 tabular-nums shrink-0">x{c.hits || 1}</span>
+                    </div>
                     {c.archetype && <span className="text-indigo-400/60 text-[8px] font-bold uppercase tracking-tighter">{c.archetype}</span>}
+                    <div className="mt-1 w-full h-0.5 bg-black/40 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full transition-all duration-500 ${c.totalWeight >= 3.0 ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]' : 'bg-indigo-400'}`}
+                        style={{ width: `${Math.min(100, ((c.totalWeight || 0.1) / 3.0) * 100)}%` }}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -909,8 +1015,17 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
                     onClick={() => handleCardClick(c)}
                     className={`bg-rose-900/10 border border-rose-500/20 p-2.5 rounded-lg flex flex-col gap-0.5 text-right transition-all duration-200 ${c.archetype ? 'cursor-pointer hover:bg-rose-900/40 active:scale-95' : ''}`}
                   >
-                    <span className="text-zinc-100 text-[11px] font-bold truncate">{c.name}</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-zinc-100 text-[11px] font-bold truncate">{c.name}</span>
+                      <span className="text-[9px] font-black text-rose-400/40 tabular-nums shrink-0">x{c.hits || 1}</span>
+                    </div>
                     {c.archetype && <span className="text-rose-400/60 text-[8px] font-bold uppercase tracking-tighter">{c.archetype}</span>}
+                    <div className="mt-1 w-full h-0.5 bg-black/40 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full transition-all duration-500 ${c.totalWeight >= 3.0 ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]' : 'bg-rose-400'}`}
+                        style={{ width: `${Math.min(100, ((c.totalWeight || 0.1) / 3.0) * 100)}%` }}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>

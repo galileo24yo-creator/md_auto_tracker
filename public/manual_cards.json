@@ -1653,5 +1653,140 @@
     "id": 300302050,
     "name": "ヒーローズ・ユナイト－フィフス！！",
     "archetype": "HERO"
+  },
+  {
+    "id": 11248645,
+    "name": "千年の十字",
+    "archetype": "Millennium"
+  },
+  {
+    "id": 42144793,
+    "name": "ミレニアム・アブソープション",
+    "archetype": "Millennium"
+  },
+  {
+    "id": 38775407,
+    "name": "千年の眠りから覚めし原人",
+    "archetype": "Millennium"
+  },
+  {
+    "id": 37613663,
+    "name": "千年の宝札",
+    "archetype": "Millennium"
+  },
+  {
+    "id": 37552929,
+    "name": "ミレニアムーン・メイデン",
+    "archetype": "Millennium"
+  },
+  {
+    "id": 63947968,
+    "name": "千年の幻像",
+    "archetype": "Millennium"
+  },
+  {
+    "id": 74169516,
+    "name": "千年の宝を守りしゴーレム",
+    "archetype": "Millennium"
+  },
+  {
+    "id": 1164211,
+    "name": "千年の盾",
+    "archetype": "Millennium"
+  },
+  {
+    "id": 300201006,
+    "name": "千年首飾り",
+    "archetype": "Millennium"
+  },
+  {
+    "id": 300201009,
+    "name": "千年眼",
+    "archetype": "Millennium"
+  },
+  {
+    "id": 33854624,
+    "name": "深淵の獣マグナムート",
+    "archetype": "Bystial"
+  },
+  {
+    "id": 6637331,
+    "name": "深淵の獣ドルイドヴルム",
+    "archetype": "Bystial"
+  },
+  {
+    "id": 60242223,
+    "name": "深淵の獣サロニール",
+    "archetype": "Bystial"
+  },
+  {
+    "id": 72656408,
+    "name": "深淵の獣バルドレイク",
+    "archetype": "Bystial"
+  },
+  {
+    "id": 27572350,
+    "name": "深淵の神獣ディス・パテル",
+    "archetype": "Bystial"
+  },
+  {
+    "id": 45005708,
+    "name": "深淵の獣アルベル",
+    "archetype": "Bystial"
+  },
+  {
+    "id": 69120785,
+    "name": "深淵の獣アルバ・ロス",
+    "archetype": "Bystial"
+  },
+  {
+    "id": 39931513,
+    "name": "天盃龍パイドラ",
+    "archetype": "Tenpai Dragon"
+  },
+  {
+    "id": 65326118,
+    "name": "天盃龍ファドラ",
+    "archetype": "Tenpai Dragon"
+  },
+  {
+    "id": 91810826,
+    "name": "天盃龍チュンドラ",
+    "archetype": "Tenpai Dragon"
+  },
+  {
+    "id": 23657016,
+    "name": "幻禄の天盃龍",
+    "archetype": "Tenpai Dragon"
+  },
+  {
+    "id": 18969888,
+    "name": "燦幻超龍トランセンド・ドラギオン",
+    "archetype": "Tenpai Dragon"
+  },
+  {
+    "id": 82570174,
+    "name": "燦幻昇龍バイデント・ドラギオン",
+    "archetype": "Tenpai Dragon"
+  },
+  {
+    "id": 30336082,
+    "name": "盃満ちる燦幻荘",
+    "archetype": "Tenpai Dragon"
+  },
+  {
+    "id": 66730191,
+    "name": "燦幻開門",
+    "archetype": "Tenpai Dragon"
+  },
+  {
+    "id": 55484152,
+    "name": "燦幻封螺",
+    "archetype": "Tenpai Dragon"
+  },
+  {
+    "id": 25388971,
+    "name": "燦幻開波",
+    "archetype": "Tenpai Dragon"
   }
 ]

@@ -1166,7 +1166,7 @@
   {
     "id": 93053159,
     "name": "Alba System Dogmatikalamity",
-    "archetype": "Albaz Dragon",
+    "archetype": "アルバスの落胤",
     "normalizedName": "AlbaSystemDogmatikalamity"
   },
   {
@@ -1190,7 +1190,7 @@
   {
     "id": 38811586,
     "name": "Albion the Sanctifire Dragon",
-    "archetype": "Albaz Dragon",
+    "archetype": "アルバスの落胤",
     "normalizedName": "AlbiontheSanctifireDragon"
   },
   {
@@ -4580,85 +4580,85 @@
   {
     "id": 74733322,
     "name": "神芸学都－アルトメギア",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "神芸学都-アルトメギア"
   },
   {
     "id": 27184601,
     "name": "神芸獄徒 ディアクトロス",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "神芸獄徒ディアクトロス"
   },
   {
     "id": 34541940,
     "name": "神芸学徒 ファインメルト",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "神芸学徒ファインメルト"
   },
   {
     "id": 60946049,
     "name": "神芸学徒 グラフレア",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "神芸学徒グラフレア"
   },
   {
     "id": 44654994,
     "name": "アルトメギア・インパスト－奪還－",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "アルトメギア・インパスト-奪還-"
   },
   {
     "id": 97434754,
     "name": "神芸なる知恵の乙女",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "神芸なる知恵の乙女"
   },
   {
     "id": 37517035,
     "name": "アルトメギア・マスターワーク－継承－",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "アルトメギア・マスターワーク-継承-"
   },
   {
     "id": 21720439,
     "name": "アルトメギア・ムーヴメント－血統－",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "アルトメギア・ムーヴメント-血統-"
   },
   {
     "id": 74631897,
     "name": "アルトメギア・メセナ－覚醒－",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "アルトメギア・メセナ-覚醒-"
   },
   {
     "id": 23599634,
     "name": "Artmage Pact -Awakening-",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "ArtmagePact-Awakening-"
   },
   {
     "id": 17719582,
     "name": "アルトメギア・ペリペティア－激動－",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "アルトメギア・ペリペティア-激動-"
   },
   {
     "id": 23829452,
     "name": "アルトメギアの獄神獣",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "アルトメギアの獄神獣"
   },
   {
     "id": 1122030,
     "name": "アルトメギア・ヴァンダリズム－襲撃－",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "アルトメギア・ヴァンダリズム-襲撃-"
   },
   {
     "id": 74011784,
     "name": "アルトメギア・バーニッシュ－改変－",
-    "archetype": "神芸（アルトメギア）",
+    "archetype": "アルトメギア",
     "normalizedName": "アルトメギア・バーニッシュ-改変-"
   },
   {
@@ -6370,12 +6370,6 @@
     "name": "ベイオネット・パニッシャー",
     "archetype": "",
     "normalizedName": "ベイオネット・パニッシャー"
-  },
-  {
-    "id": 43932352,
-    "name": "Bayt'al-Hecahands",
-    "archetype": "Hecahands",
-    "normalizedName": "Bayt'al-Hecahands"
   },
   {
     "id": 79480466,
@@ -9991,33 +9985,33 @@
   },
   {
     "id": 72656408,
-    "name": "Bystial Baldrake",
+    "name": "深淵の獣バルドレイク",
     "archetype": "ビーステッド",
-    "normalizedName": "BystialBaldrake"
+    "normalizedName": "深淵の獣バルドレイク"
   },
   {
     "id": 27572350,
-    "name": "Bystial Dis Pater",
+    "name": "深淵の神獣ディス・パテル",
     "archetype": "ビーステッド",
-    "normalizedName": "BystialDisPater"
+    "normalizedName": "深淵の神獣ディス・パテル"
   },
   {
     "id": 6637331,
-    "name": "Bystial Druiswurm",
+    "name": "深淵の獣ドルイドヴルム",
     "archetype": "ビーステッド",
-    "normalizedName": "BystialDruiswurm"
+    "normalizedName": "深淵の獣ドルイドヴルム"
   },
   {
     "id": 33854624,
-    "name": "Bystial Magnamhut",
+    "name": "深淵の獣マグナムート",
     "archetype": "ビーステッド",
-    "normalizedName": "BystialMagnamhut"
+    "normalizedName": "深淵の獣マグナムート"
   },
   {
     "id": 60242223,
-    "name": "Bystial Saronir",
+    "name": "深淵の獣サロニール",
     "archetype": "ビーステッド",
-    "normalizedName": "BystialSaronir"
+    "normalizedName": "深淵の獣サロニール"
   },
   {
     "id": 3405259,
@@ -20396,67 +20390,67 @@
   {
     "id": 31010081,
     "name": "終刻獄徒 ディアクトロス",
-    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "archetype": "ドゥームズ",
     "normalizedName": "終刻獄徒ディアクトロス"
   },
   {
     "id": 38007649,
     "name": "終刻変転",
-    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "archetype": "ドゥームズ",
     "normalizedName": "終刻変転"
   },
   {
     "id": 84054556,
     "name": "終刻反転『Ａ.Ｄ.Ｒ.Ａ.Ｓ.Ｔ.Ｅ.Ｉ.Ａ.』",
-    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "archetype": "ドゥームズ",
     "normalizedName": "終刻反転『A.D.R.A.S.T.E.I.A.』"
   },
   {
     "id": 68831625,
     "name": "終刻起動『Ｄ.Ｏ.Ｏ.Ｍ.Ｄ.Ｕ.Ｒ.Ｇ.』",
-    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "archetype": "ドゥームズ",
     "normalizedName": "終刻起動『D.O.O.M.D.U.R.G.』"
   },
   {
     "id": 80320877,
     "name": "終刻決壊",
-    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "archetype": "ドゥームズ",
     "normalizedName": "終刻決壊"
   },
   {
     "id": 32442017,
     "name": "終刻撃針",
-    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "archetype": "ドゥームズ",
     "normalizedName": "終刻撃針"
   },
   {
     "id": 28877382,
     "name": "終刻竜機Ｖ－アマルテ",
-    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "archetype": "ドゥームズ",
     "normalizedName": "終刻竜機V-アマルテ"
   },
   {
     "id": 54265980,
     "name": "終刻竜機ＶＩＩ－エララ",
-    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "archetype": "ドゥームズ",
     "normalizedName": "終刻竜機VII-エララ"
   },
   {
     "id": 95626382,
     "name": "終獄龍機ＸＩＩ－ドラストリウス",
-    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "archetype": "ドゥームズ",
     "normalizedName": "終獄龍機XII-ドラストリウス"
   },
   {
     "id": 92472273,
     "name": "終刻竜機ＸＩＩ－ドラスティア",
-    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "archetype": "ドゥームズ",
     "normalizedName": "終刻竜機XII-ドラスティア"
   },
   {
     "id": 65848113,
     "name": "終刻竜機ＸＩＩＩ－グラフレイオ",
-    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "archetype": "ドゥームズ",
     "normalizedName": "終刻竜機XIII-グラフレイオ"
   },
   {
@@ -23696,67 +23690,67 @@
   {
     "id": 85976588,
     "name": "耀聖の月詩フォルトナ",
-    "archetype": "耀聖（エルフェンノーツ）",
+    "archetype": "エルフェンノーツ",
     "normalizedName": "耀聖の月詩フォルトナ"
   },
   {
     "id": 13597785,
     "name": "耀聖の花詩ルキナ",
-    "archetype": "耀聖（エルフェンノーツ）",
+    "archetype": "エルフェンノーツ",
     "normalizedName": "耀聖の花詩ルキナ"
   },
   {
     "id": 12375297,
     "name": "燿ける聖詩の獄神精",
-    "archetype": "耀聖（エルフェンノーツ）",
+    "archetype": "エルフェンノーツ",
     "normalizedName": "燿ける聖詩の獄神精"
   },
   {
     "id": 56651978,
     "name": "耀聖の風詩レギナ",
-    "archetype": "耀聖（エルフェンノーツ）",
+    "archetype": "エルフェンノーツ",
     "normalizedName": "耀聖の風詩レギナ"
   },
   {
     "id": 42302563,
     "name": "獄花の大耀聖ストリチア",
-    "archetype": "耀聖（エルフェンノーツ）",
+    "archetype": "エルフェンノーツ",
     "normalizedName": "獄花の大耀聖ストリチア"
   },
   {
     "id": 59581480,
     "name": "耀聖の波詩ディーナ",
-    "archetype": "耀聖（エルフェンノーツ）",
+    "archetype": "エルフェンノーツ",
     "normalizedName": "耀聖の波詩ディーナ"
   },
   {
     "id": 90880453,
     "name": "エルフェンノーツ～再邂のテルチェット～",
-    "archetype": "耀聖（エルフェンノーツ）",
+    "archetype": "エルフェンノーツ",
     "normalizedName": "エルフェンノーツ~再邂のテルチェット~"
   },
   {
     "id": 50590801,
     "name": "エルフェンノーツ～託選のアリスティア～",
-    "archetype": "耀聖（エルフェンノーツ）",
+    "archetype": "エルフェンノーツ",
     "normalizedName": "エルフェンノーツ~託選のアリスティア~"
   },
   {
     "id": 101305072,
     "name": "エルフェンノーツ～継唱のクウォートレイン～",
-    "archetype": "耀聖（エルフェンノーツ）",
+    "archetype": "エルフェンノーツ",
     "normalizedName": "エルフェンノーツ~継唱のクウォートレイン~"
   },
   {
     "id": 24092792,
     "name": "エルフェンノーツ～狂奏のラプソディア～",
-    "archetype": "耀聖（エルフェンノーツ）",
+    "archetype": "エルフェンノーツ",
     "normalizedName": "エルフェンノーツ~狂奏のラプソディア~"
   },
   {
     "id": 64491754,
     "name": "エルフェンノーツ～廻郷のパラレリズム～",
-    "archetype": "耀聖（エルフェンノーツ）",
+    "archetype": "エルフェンノーツ",
     "normalizedName": "エルフェンノーツ~廻郷のパラレリズム~"
   },
   {
@@ -26455,9 +26449,9 @@
   },
   {
     "id": 63947968,
-    "name": "Fiend Reflection of the Millennium",
-    "archetype": "Millennium",
-    "normalizedName": "FiendReflectionoftheMillennium"
+    "name": "千年の幻像",
+    "archetype": "千年",
+    "normalizedName": "千年の幻像"
   },
   {
     "id": 26566878,
@@ -32947,9 +32941,9 @@
   },
   {
     "id": 74169516,
-    "name": "Golem that Guards the Millennium Treasures",
-    "archetype": "Millennium",
-    "normalizedName": "GolemthatGuardstheMillenniumTreasures"
+    "name": "千年の宝を守りしゴーレム",
+    "archetype": "千年",
+    "normalizedName": "千年の宝を守りしゴーレム"
   },
   {
     "id": 7526150,
@@ -35388,6 +35382,12 @@
     "normalizedName": "Hecahands"
   },
   {
+    "id": 43932352,
+    "name": "Hecahands Bait",
+    "archetype": "Hecahands",
+    "normalizedName": "HecahandsBait"
+  },
+  {
     "id": 21637502,
     "name": "Hecahands Breus",
     "archetype": "Hecahands",
@@ -35425,9 +35425,9 @@
   },
   {
     "id": 18321034,
-    "name": "Hecahands Makibel",
+    "name": "Hecahands Mankibuel",
     "archetype": "Hecahands",
-    "normalizedName": "HecahandsMakibel"
+    "normalizedName": "HecahandsMankibuel"
   },
   {
     "id": 57809669,
@@ -36289,9 +36289,9 @@
   },
   {
     "id": 11248645,
-    "name": "Highness Archfiend",
-    "archetype": "Archfiend",
-    "normalizedName": "HighnessArchfiend"
+    "name": "千年の十字",
+    "archetype": "千年",
+    "normalizedName": "千年の十字"
   },
   {
     "id": 76615300,
@@ -39374,7 +39374,7 @@
   {
     "id": 101305035,
     "name": "誇り高き耀聖の詩－エルフェンノーツ",
-    "archetype": "耀聖（エルフェンノーツ）",
+    "archetype": "エルフェンノーツ",
     "normalizedName": "誇り高き耀聖の詩-エルフェンノーツ"
   },
   {
@@ -43556,7 +43556,7 @@
   {
     "id": 70534340,
     "name": "神炎竜ルベリオン",
-    "archetype": "Albaz Dragon",
+    "archetype": "アルバスの落胤",
     "normalizedName": "神炎竜ルベリオン"
   },
   {
@@ -43664,7 +43664,7 @@
   {
     "id": 48444114,
     "name": "月光香",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光香"
   },
   {
@@ -43676,55 +43676,55 @@
   {
     "id": 11317977,
     "name": "月光黒羊",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光黒羊"
   },
   {
     "id": 11439455,
     "name": "月光蒼猫",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光蒼猫"
   },
   {
     "id": 51777272,
     "name": "月光舞猫姫",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光舞猫姫"
   },
   {
     "id": 94919024,
     "name": "月光紅狐",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光紅狐"
   },
   {
     "id": 14152693,
     "name": "月光翠鳥",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光翠鳥"
   },
   {
     "id": 87931906,
     "name": "月光融合",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光融合"
   },
   {
     "id": 8379983,
     "name": "月光金獅子",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光金獅子"
   },
   {
     "id": 35618217,
     "name": "月光彩雛",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光彩雛"
   },
   {
     "id": 24550676,
     "name": "月光舞獅子姫",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光舞獅子姫"
   },
   {
@@ -43736,73 +43736,73 @@
   {
     "id": 2344618,
     "name": "月光舞踏会",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光舞踏会"
   },
   {
     "id": 97165977,
     "name": "月光舞豹姫",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光舞豹姫"
   },
   {
     "id": 81196066,
     "name": "Lunalight Perfume Dancer",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "LunalightPerfumeDancer"
   },
   {
     "id": 48427163,
     "name": "月光紫蝶",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光紫蝶"
   },
   {
     "id": 11193246,
     "name": "月光輪廻舞踊",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光輪廻舞踊"
   },
   {
     "id": 88753594,
     "name": "月光舞剣虎姫",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光舞剣虎姫"
   },
   {
     "id": 13935001,
     "name": "月光小夜曲舞踊",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光小夜曲舞踊"
   },
   {
     "id": 35763582,
     "name": "月光銀狗",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光銀狗"
   },
   {
     "id": 83190280,
     "name": "月光虎",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光虎"
   },
   {
     "id": 84812868,
     "name": "月光白兎",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光白兎"
   },
   {
     "id": 47705572,
     "name": "月光狼",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光狼"
   },
   {
     "id": 50546208,
     "name": "月光黄鼬",
-    "archetype": "月光（ムーンライト）",
+    "archetype": "ムーンライト",
     "normalizedName": "月光黄鼬"
   },
   {
@@ -45289,9 +45289,9 @@
   },
   {
     "id": 37552929,
-    "name": "Maiden of the Millennium Moon",
-    "archetype": "Millennium",
-    "normalizedName": "MaidenoftheMillenniumMoon"
+    "name": "ミレニアムーン・メイデン",
+    "archetype": "千年",
+    "normalizedName": "ミレニアムーン・メイデン"
   },
   {
     "id": 79629370,
@@ -48493,15 +48493,15 @@
   },
   {
     "id": 37613663,
-    "name": "Millennium Ankh",
-    "archetype": "Millennium",
-    "normalizedName": "MillenniumAnkh"
+    "name": "千年の宝札",
+    "archetype": "千年",
+    "normalizedName": "千年の宝札"
   },
   {
     "id": 300201009,
-    "name": "Millennium Eye (Skill Card)",
-    "archetype": "",
-    "normalizedName": "MillenniumEye(SkillCard)"
+    "name": "千年眼",
+    "archetype": "千年",
+    "normalizedName": "千年眼"
   },
   {
     "id": 47986555,
@@ -48511,9 +48511,9 @@
   },
   {
     "id": 300201006,
-    "name": "Millennium Necklace (Skill Card)",
-    "archetype": "",
-    "normalizedName": "MillenniumNecklace(SkillCard)"
+    "name": "千年首飾り",
+    "archetype": "千年",
+    "normalizedName": "千年首飾り"
   },
   {
     "id": 41044418,
@@ -49136,7 +49136,7 @@
   {
     "id": 44146295,
     "name": "氷剣竜ミラジェイド",
-    "archetype": "Albaz Dragon",
+    "archetype": "アルバスの落胤",
     "normalizedName": "氷剣竜ミラジェイド"
   },
   {
@@ -57644,7 +57644,7 @@
   {
     "id": 81650695,
     "name": "獄神機Ｄｏｏｍ－Ｚ",
-    "archetype": "ＤｏｏｍＺ（ドゥームズ）",
+    "archetype": "ドゥームズ",
     "normalizedName": "獄神機Doom-Z"
   },
   {
@@ -62576,7 +62576,7 @@
   {
     "id": 51409648,
     "name": "Rindbrumm the Striking Dragon",
-    "archetype": "Albaz Dragon",
+    "archetype": "アルバスの落胤",
     "normalizedName": "RindbrummtheStrikingDragon"
   },
   {
@@ -64555,39 +64555,39 @@
   },
   {
     "id": 55484152,
-    "name": "Sangen Furo",
-    "archetype": "Sangen",
-    "normalizedName": "SangenFuro"
+    "name": "燦幻封螺",
+    "archetype": "天盃龍",
+    "normalizedName": "燦幻封螺"
   },
   {
     "id": 25388971,
-    "name": "Sangen Kaiho",
-    "archetype": "Sangen",
-    "normalizedName": "SangenKaiho"
+    "name": "燦幻開波",
+    "archetype": "天盃龍",
+    "normalizedName": "燦幻開波"
   },
   {
     "id": 66730191,
-    "name": "Sangen Kaimen",
-    "archetype": "Sangen",
-    "normalizedName": "SangenKaimen"
+    "name": "燦幻開門",
+    "archetype": "天盃龍",
+    "normalizedName": "燦幻開門"
   },
   {
     "id": 30336082,
-    "name": "Sangen Summoning",
-    "archetype": "Sangen",
-    "normalizedName": "SangenSummoning"
+    "name": "盃満ちる燦幻荘",
+    "archetype": "天盃龍",
+    "normalizedName": "盃満ちる燦幻荘"
   },
   {
     "id": 82570174,
-    "name": "Sangenpai Bident Dragion",
-    "archetype": "Sangen",
-    "normalizedName": "SangenpaiBidentDragion"
+    "name": "燦幻昇龍バイデント・ドラギオン",
+    "archetype": "天盃龍",
+    "normalizedName": "燦幻昇龍バイデント・ドラギオン"
   },
   {
     "id": 18969888,
-    "name": "Sangenpai Transcendent Dragion",
-    "archetype": "Sangen",
-    "normalizedName": "SangenpaiTranscendentDragion"
+    "name": "燦幻超龍トランセンド・ドラギオン",
+    "archetype": "天盃龍",
+    "normalizedName": "燦幻超龍トランセンド・ドラギオン"
   },
   {
     "id": 60627999,
@@ -65659,9 +65659,9 @@
   },
   {
     "id": 38775407,
-    "name": "Sengenjin Wakes from a Millennium",
-    "archetype": "Millennium",
-    "normalizedName": "SengenjinWakesfromaMillennium"
+    "name": "千年の眠りから覚めし原人",
+    "archetype": "千年",
+    "normalizedName": "千年の眠りから覚めし原人"
   },
   {
     "id": 87483942,
@@ -66223,9 +66223,9 @@
   },
   {
     "id": 1164211,
-    "name": "Shield of the Millennium Dynasty",
-    "archetype": "Millennium",
-    "normalizedName": "ShieldoftheMillenniumDynasty"
+    "name": "千年の盾",
+    "archetype": "千年",
+    "normalizedName": "千年の盾"
   },
   {
     "id": 3244563,
@@ -74023,27 +74023,27 @@
   },
   {
     "id": 91810826,
-    "name": "Tenpai Dragon Chundra",
-    "archetype": "Tenpai Dragon",
-    "normalizedName": "TenpaiDragonChundra"
+    "name": "天盃龍チュンドラ",
+    "archetype": "天盃龍",
+    "normalizedName": "天盃龍チュンドラ"
   },
   {
     "id": 65326118,
-    "name": "Tenpai Dragon Fadra",
-    "archetype": "Tenpai Dragon",
-    "normalizedName": "TenpaiDragonFadra"
+    "name": "天盃龍ファドラ",
+    "archetype": "天盃龍",
+    "normalizedName": "天盃龍ファドラ"
   },
   {
     "id": 23657016,
-    "name": "Tenpai Dragon Genroku",
-    "archetype": "Tenpai Dragon",
-    "normalizedName": "TenpaiDragonGenroku"
+    "name": "幻禄の天盃龍",
+    "archetype": "天盃龍",
+    "normalizedName": "幻禄の天盃龍"
   },
   {
     "id": 39931513,
-    "name": "Tenpai Dragon Paidra",
-    "archetype": "Tenpai Dragon",
-    "normalizedName": "TenpaiDragonPaidra"
+    "name": "天盃龍パイドラ",
+    "archetype": "天盃龍",
+    "normalizedName": "天盃龍パイドラ"
   },
   {
     "id": 56322832,
@@ -74527,15 +74527,15 @@
   },
   {
     "id": 69120785,
-    "name": "The Bystial Alba Los",
+    "name": "深淵の獣アルバ・ロス",
     "archetype": "ビーステッド",
-    "normalizedName": "TheBystialAlbaLos"
+    "normalizedName": "深淵の獣アルバ・ロス"
   },
   {
     "id": 45005708,
-    "name": "The Bystial Aluber",
+    "name": "深淵の獣アルベル",
     "archetype": "ビーステッド",
-    "normalizedName": "TheBystialAluber"
+    "normalizedName": "深淵の獣アルベル"
   },
   {
     "id": 32731036,
@@ -74672,7 +74672,7 @@
   {
     "id": 76666602,
     "name": "The Dragon that Devours the Dogma",
-    "archetype": "Albaz Dragon",
+    "archetype": "アルバスの落胤",
     "normalizedName": "TheDragonthatDevourstheDogma"
   },
   {
@@ -85951,9 +85951,9 @@
   },
   {
     "id": 42144793,
-    "name": "刻まれし魔の讃聖",
-    "archetype": "デモンスミス",
-    "normalizedName": "刻まれし魔の讃聖"
+    "name": "ミレニアム・アブソープション",
+    "archetype": "千年",
+    "normalizedName": "ミレニアム・アブソープション"
   },
   {
     "id": 74435860,

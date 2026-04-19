@@ -134,7 +134,6 @@
 11132674: Gigantic "Champion" Sargas
 11161666: Sanaki the Mikanko Devotee
 11212437: Diabolic Dragon Fortress - Draluvice
-11248645: Highness Archfiend
 11250655: Emperor of the Land and Sea
 11335209: Duamutef, Blessing of Horus
 11441009: P.U.N.K. JAM FEVER!
@@ -143,7 +142,6 @@
 11496832: Principug
 11522479: Battlin' Boxer Uppercutter
 11590299: Dora Dora
-1164211: Shield of the Millennium Dynasty
 11654067: Fire Ejection
 11677278: Mimighoul Armor
 11714098: 30,000-Year White Turtle
@@ -296,7 +294,7 @@
 18180762: The Thing That Hides in the Mud
 18294799: Schwarzschild Infinity Dragon
 18300894: Silk Bomb Moth
-18321034: Hecahands Makibel
+18321034: Hecahands Mankibuel
 18377261: Ha-Re the Sword Mikanko
 18458255: Dream Tower of Princess Nemleria
 18482473: H.E.R.O. Flash!
@@ -307,7 +305,6 @@
 18843291: Minerva, the Athenian Lightsworn
 18861006: Crimson Firewing Pegasus
 18905769: Guivre
-18969888: Sangenpai Transcendent Dragion
 18988396: Miracle Raven
 19000848: Buio the Dawn's Light
 19027895: Salamangreat Revive
@@ -414,7 +411,6 @@
 23611122: Sudden Thunder Swamp
 23617756: Exxod Fires of Rage
 23623653: Spiritual Beast Tamer Lara
-23657016: Tenpai Dragon Genroku
 23659124: Sea King Dragon
 23738096: Supply Soldier of the Indestructible Insects
 23746827: Million-Century Ice Prison
@@ -459,7 +455,6 @@
 25224340: Nightmare Hands
 2526224: Fire King High Avatar Kirin
 25342956: Gem-Knight Master Diamond Dispersion
-25388971: Sangen Kaiho
 25415053: Shinobird Token
 25550531: Purrely
 25554552: Rokket Loader
@@ -514,7 +509,6 @@
 27519978: Charmer Quartet in Bloom
 2752099: Rose Shaman
 27553701: Absolute King - Megaplunder
-27572350: Bystial Dis Pater
 27632520: Fairy Tail - Wickat
 27704731: Metalflame Swordsman
 2772337: Promethean Princess, Bestower of Flames
@@ -598,10 +592,8 @@
 300201003: Final Draw
 300201004: Prescience
 300201005: Gravekeeper's Lot
-300201006: Millennium Necklace (Skill Card)
 300201007: It's a Toon World!
 300201008: Mind Scan (Skill Card)
-300201009: Millennium Eye (Skill Card)
 300202001: Peak Performance
 300202002: Beatdown!
 300202003: Dragon Caller
@@ -706,7 +698,6 @@
 30284022: Dark World Puppetry
 30291086: Mental Tuner
 30327674: Chaos Witch
-30336082: Sangen Summoning
 30339825: Hydor, the Base of All Things
 30342076: Link Decoder
 30350202: Eclipse, Dragon Ruler of Catastrophes
@@ -802,7 +793,6 @@
 3376703: Arcana Force V - The Hierophant
 33781156: Tri-Brigade Arms Mouser
 33787730: Ryzeal Plasma Hole
-33854624: Bystial Magnamhut
 33872334: Phoenix Gearblade
 33878931: Togex
 33925864: Kashtira Big Bang
@@ -894,8 +884,6 @@
 37458564: Cyberse Contract Witch
 37495766: Rescue-ACE Turbulence
 37531679: Salamandra, the Flying Flame Dragon
-37552929: Maiden of the Millennium Moon
-37613663: Millennium Ankh
 37683441: Trickstar Noble Angel
 37720300: Starship Adjust Plane
 37984331: True Exodia
@@ -920,7 +908,6 @@
 38625110: Let's Go Together
 38669664: Materiactor Meltdown
 38745241: Madolche Mini Meowcaroons
-38775407: Sengenjin Wakes from a Millennium
 38798785: Echelon of the Fire Kings
 38811586: Albion the Sanctifire Dragon
 38910263: Fire King Avatar Rangbali
@@ -946,7 +933,6 @@
 39848658: Wight Reanimator
 3985011: Lucky Trinket
 39881252: Play the Diabell
-39931513: Tenpai Dragon Paidra
 39943352: Daidaratant the Ooze Giant
 39972130: Kagemusha Raccoon Token
 39973386: Duality
@@ -1042,7 +1028,7 @@
 43834302: Synchro Fellowship
 43905751: Madjinn Gunn
 4392470: Leo Wizard
-43932352: Bayt'al-Hecahands
+43932352: Hecahands Bait
 43944080: Nemleria Dream Defender - Couette
 44052075: Ancient Gear Token
 44094981: Earthbound Servant Geo Gryphon
@@ -1073,7 +1059,6 @@
 44865098: Cyber Soldier
 44886582: Apex Polymerization
 44994712: Predaplant Longinephila
-45005708: The Bystial Aluber
 45016904: Tao Tao the Chanter
 45065541: Mannadium Abscission
 45112597: Worldsea Dragon Zealantis
@@ -1335,7 +1320,6 @@
 55421040: Hunting Horn
 55423549: Leo Wizard the Dark Fiend
 55461744: Big-Winged Berfomet
-55484152: Sangen Furo
 55537983: Mimighoul Master
 55567161: Pot the Trick
 55584558: Purrely Delicious Memory
@@ -1437,7 +1421,6 @@
 60176682: Double Attack! Wind and Thunder!!
 60203670: Gold Pride - Eliminator
 60238002: Interdimensional Matter Forwarder
-60242223: Bystial Saronir
 60268386: Heraldic Beast Gryphon
 60283232: Wheel Synchron
 60306277: Synchro Zone
@@ -1534,7 +1517,6 @@
 63899196: The Monarchs Masterplan
 63899465: Rescue-ACE HQ
 63941169: Abyss-steam
-63947968: Fiend Reflection of the Millennium
 6400512: Cyber Commander
 64049553: Raidraptor - Roost
 64154377: Embryonic Beast
@@ -1563,7 +1545,6 @@
 65261141: Nightmare Pain
 65289956: Like the Diabell
 65305978: Fire King Sanctuary
-65326118: Tenpai Dragon Fadra
 65351555: Basiltrice, Familiar of the Evil Eye
 653675: Synchro Overtop
 65400671: Crystron Halqifibrax Prism
@@ -1601,7 +1582,6 @@
 66328392: Deception of the Sinful Spoils
 6636319: Evil★Twin Ki-sikil Deal
 66367984: Protection of the Elements
-6637331: Bystial Druiswurm
 66384688: Majespecter Orthrus - Nue
 66429798: Pesanta the Titan of Troubadours
 66431519: Sacred Fire King Garunix
@@ -1614,7 +1594,6 @@
 66661679: Ice Coffin Token
 66664203: Revolution Cyber Dragon
 66699781: Chaos Mirage Dragon
-66730191: Sangen Kaimen
 66736715: Moissa Knight, the Comet General
 66736884: Keel, Shipwright Fur Hire
 66787942: Predaplant Baalthea
@@ -1668,7 +1647,6 @@
 69053263: Black Rose Garden
 6906306: Rubysapphirus, the Adamant Jewel
 6908161: Ragnaraika Chain Coils
-69120785: The Bystial Alba Los
 69176851: Miasma Necromancer
 69191257: Jade Dragon Mech
 69313735: Checkmate
@@ -1758,7 +1736,6 @@
 72444406: Enigmaster Packbit
 72578374: Khaos Starsource Dragon
 72632190: Triple-Headed Behemoth
-72656408: Bystial Baldrake
 72705654: Tachyon Cloudragon
 72776252: Icejade Manifestation
 72782945: Otonari Thunder
@@ -1791,7 +1768,6 @@
 74055055: Oil
 74139959: Cosmic Tree Irmistil
 74150658: Talons of Shurilane
-74169516: Golem that Guards the Millennium Treasures
 74213995: Battleguard Echoes
 74271714: Fish and Bids
 74289646: Royal Rhino with Deceitful Dice
@@ -1982,7 +1958,6 @@
 82460246: Peaceful Planet Calarium
 8252010: X-Saber Gottoms
 82556059: Engine Token
-82570174: Sangenpai Bident Dragion
 82616239: Light Water Dragon
 82661630: Ryu-Ge Realm - Dino Domains
 82699999: Live☆Twin Lil-la Sweet
@@ -2211,7 +2186,6 @@
 91714772: Galaxy Defense Robot Orbital 7
 91749600: Vala, Seidhr of the Generaider Bosses
 9175957: Tally-ho! Springans
-91810826: Tenpai Dragon Chundra
 91818544: WAKE CUP! Mocha
 91880660: Way Where There's a Will
 91951471: Vanquish Soul Dust Devil
