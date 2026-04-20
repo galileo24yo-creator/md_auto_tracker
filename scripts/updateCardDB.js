@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
-const SOURCE_FILE = path.join(process.cwd(), 'public', 'cards.json');
+const BASE_URL = 'https://db.ygoprodeck.com/api/v7/cardinfo.php';
+const JA_URL = 'https://db.ygoprodeck.com/api/v7/cardinfo.php?language=ja';
 const OUTPUT_FILE = path.join(process.cwd(), 'public', 'card_db.json');
 const MANUAL_FILE = path.join(process.cwd(), 'public', 'manual_cards.json');
 const INFERRED_LOG = path.join(process.cwd(), 'public', 'inferred_archetypes.txt');
@@ -22,13 +23,13 @@ function normalizeText(text) {
     .trim();
 }
 
-// ルビタグを除去する処理
+// 万が一タグが混入していた場合の除去処理
 function cleanRubyTags(text) {
   if (!text) return '';
   return text
-    .replace(/<rt>.*?<\/rt>/g, '') // フリガナ部分を削除
-    .replace(/<rp>.*?<\/rp>/g, '') // 括弧部分を削除
-    .replace(/<\/?ruby>/g, '')    // rubyタグを削除
+    .replace(/<rt>.*?<\/rt>/g, '') 
+    .replace(/<rp>.*?<\/rp>/g, '') 
+    .replace(/<\/?ruby>/g, '')    
     .trim();
 }
 
@@ -156,9 +157,6 @@ const ARCHETYPE_MAP = {
   'Rikka': '六花',
   'Ritual Beast': '霊獣',
   'Red-Eyes': 'レッドアイズ',
-  'Rescue-ACE': 'Ｒ－ＡＣＥ',
-  'Rikka': '六花',
-  'Ritual Beast': '霊獣',
   'Salamangreat': 'サラマングレイト',
   'Scareclaw': 'スケアクロー',
   'Scrap': 'スクラップ',
@@ -218,91 +216,75 @@ const ARCHETYPE_MAP = {
   'Yubel': 'ユベル',
   'Zefra': 'セフラ',
   'Zoodiac': '十二獣',
-  'Zubaba': 'ズババ',
+  'Zubaba': 'ズババ'
 };
 
 const INFERENCE_RULES = {
   'ゴーティス': 'ゴーティス',
-  'ＶＳ': 'ＶＳ（ヴァンキッシュ・ソウル）',
-  'メメント': 'メメント',
-  'センチュリオン': 'センチュリオン',
-  'スネークアイ': 'スネークアイ',
-  '粛声': '粛声',
-  '御巫': '御巫',
-  'ピュアリィ': 'ピュアリィ',
-  '罪宝': '罪宝',
-  '白き森': '白き森',
-  'アザミナ': 'アザミナ',
-  'ライゼオル': 'ライゼオル',
-  'マナドゥム': 'マナドゥム',
-  'クシャトリラ': 'クシャトリラ',
-  'ティアラメンツ': 'ティアラメンツ',
-  'ラビュリンス': 'ラビュリンス',
-  'ドレミコード': 'ドレミコード',
-  '相剣': '相剣',
-  'ドラグマ': 'ドラグマ',
-  '鉄獣戦線': '鉄獣戦線',
-  '烙印': '烙印',
-  '深淵の獣': 'ビーステッド',
-  'ビーステッド': 'ビーステッド',
-  'デスピア': 'デスピア',
-  'スプリガンズ': 'スプリガンズ',
-  'セリオンズ': 'セリオンズ',
-  'スプライト': 'スプライト',
-  '氷水': '氷水'
+  'ＶＳ': 'ＶＳ（ヴァンキッシュ・ソウル）'
 };
 
 async function updateDB() {
-  console.log('🔄 Regenerating database from local cards.json (112MB)...');
+  console.log('🔄 Updating database with hybrid merge (API: All + Japanese)...');
 
   try {
-    if (!fs.existsSync(SOURCE_FILE)) {
-      throw new Error(`Source file not found: ${SOURCE_FILE}`);
-    }
+    // Phase 1: Fetch All Cards (English base)
+    console.log('Fetching all cards (English context)...');
+    const baseResponse = await fetch(BASE_URL);
+    if (!baseResponse.ok) throw new Error(`Base API error: ${baseResponse.status}`);
+    const baseData = await baseResponse.json();
+    
+    const cardMap = new Map();
+    baseData.data.forEach(card => {
+      cardMap.set(card.id, {
+        id: card.id,
+        name: card.name,
+        archetype: card.archetype || ''
+      });
+    });
+    console.log(`- Loaded ${cardMap.size} base cards.`);
 
-    const rawData = fs.readFileSync(SOURCE_FILE, 'utf8');
-    const allCards = JSON.parse(rawData);
-    console.log(`- Loaded ${allCards.length} cards from local source.`);
+    // Phase 2: Fetch Japanese Names
+    console.log('Fetching Japanese names...');
+    const jaResponse = await fetch(JA_URL);
+    if (jaResponse.ok) {
+      const jaData = await jaResponse.json();
+      jaData.data.forEach(card => {
+        if (cardMap.has(card.id)) {
+          const existing = cardMap.get(card.id);
+          existing.name = cleanRubyTags(card.name);
+        }
+      });
+      console.log(`- Patched Japanese names for ${jaData.data.length} cards.`);
+    } else {
+      console.warn('⚠️ Japanese API failed, using English names as fallback.');
+    }
 
     const inferredLog = [];
     
-    // データ変換処理
-    const finalCards = allCards.map(card => {
-      // IDの選定 (MD passwordを優先)
-      const id = card.password || card.konami_id || card.id;
-      
-      // 日本語名のクレンジング (ルビタグの除去)
-      const jaNameBuffer = card.name && card.name.ja ? card.name.ja : (card.name && typeof card.name === 'string' ? card.name : "Unknown");
-      const jaName = cleanRubyTags(jaNameBuffer);
-      
-      // テーマ情報 (series 配列を活用)
-      let rawArchetype = "";
-      if (card.series && Array.isArray(card.series) && card.series.length > 0) {
-        rawArchetype = card.series[0];
-      }
+    // Final Mapping & Normalization
+    let finalCards = Array.from(cardMap.values()).map(card => {
+      let archetype = ARCHETYPE_MAP[card.archetype] || card.archetype;
 
-      let archetype = ARCHETYPE_MAP[rawArchetype] || rawArchetype;
-      
-      // 推論ロジック: テーマが空の場合のみ実行
+      // 推論ロジック: 元のアーキタイプが空の場合、名前から推察
       if (!archetype) {
         for (const [keyword, target] of Object.entries(INFERENCE_RULES)) {
-          if (jaName.includes(keyword)) {
+          if (card.name.includes(keyword)) {
             archetype = target;
-            inferredLog.push(`${id}: ${jaName} -> ${target}`);
+            inferredLog.push(`${card.id}: ${card.name} -> ${target}`);
             break;
           }
         }
       }
 
       return {
-        id: id,
-        name: jaName,
-        archetype: archetype,
-        normalizedName: normalizeText(jaName)
+        ...card,
+        normalizedName: normalizeText(card.name),
+        archetype: archetype
       };
     });
 
-    // 手動オーバーライドの適用
+    // Phase 3: Manual Overrides
     if (fs.existsSync(MANUAL_FILE)) {
       console.log('Applying manual card overrides...');
       const manualData = JSON.parse(fs.readFileSync(MANUAL_FILE, 'utf8'));
@@ -316,8 +298,7 @@ async function updateDB() {
         };
 
         if (idx !== -1) {
-          // 既存のデータをベースに、マニュアルデータで項目ごとに上書き
-          // ただしマニュアル側のアーキタイプが空なら、自動判定した結果を維持する
+          // マニュアル側のアーキタイプが空なら、自動判定した結果を維持する
           const existing = finalCards[idx];
           finalCards[idx] = {
             ...existing,
@@ -331,7 +312,7 @@ async function updateDB() {
       console.log(`- Merged ${manualData.length} manual entry/entries.`);
     }
 
-    // ログとデータベースの保存
+    // Save outputs
     fs.writeFileSync(INFERRED_LOG, inferredLog.sort().join('\n'));
     console.log(`- Generated inferred_archetypes.txt with ${inferredLog.length} entries.`);
 
