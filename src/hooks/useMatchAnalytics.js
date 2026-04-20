@@ -76,13 +76,15 @@ export const getFilteredRecords = (records, filters) => {
   if (mode && mode !== 'ALL') r = r.filter(v => String(v.mode || "").includes(String(mode).replace('戦', '')));
   if (myDecks && myDecks.length > 0) {
     r = r.filter(v => {
-      const themes = String(v.myDeck || "").split(/[,、，\+]+/).map(x => normalizeTheme(x)).filter(Boolean);
+      // 事前正規化データがあればそれを使用（超高速）、なければ従来通り
+      const themes = v._myThemes || String(v.myDeck || "").split(/[,、，\+]+/).map(x => normalizeTheme(x)).filter(Boolean);
       return myDecks.every(f => themes.includes(normalizeTheme(f)));
     });
   }
   if (opponentDecks && opponentDecks.length > 0) {
     r = r.filter(v => {
-      const themes = String(v.opponentDeck || "").split(/[,、，\+]+/).map(x => normalizeTheme(x)).filter(Boolean);
+      // 事前正規化データがあればそれを使用（超高速）、なければ従来通り
+      const themes = v._oppThemes || String(v.opponentDeck || "").split(/[,、，\+]+/).map(x => normalizeTheme(x)).filter(Boolean);
       return opponentDecks.every(f => themes.includes(normalizeTheme(f)));
     });
   }
@@ -147,12 +149,14 @@ export function useMatchAnalytics(records, filters) {
   // 3. レート推移データ (Trend Data)
   const trendData = useMemo(() => {
     // レートの値が存在しているレコードのみを抽出してグラフ化
+    // 【最適化】5000件全部描画すると重いため、直近500件に制限
     const rMap = [...filteredRecords]
       .reverse()
       .filter(x => {
         const raw = String(x.diff || "").replace(/[^0-9.-]/g, '');
         return raw !== "" && !isNaN(parseFloat(raw));
       })
+      .slice(-500) // 最新500件のみ描画
       .map((x, i) => { 
         const rawVal = String(x.diff).replace(/[^0-9.-]/g, '');
         const delta = parseFloat(rawVal);
@@ -171,25 +175,32 @@ export function useMatchAnalytics(records, filters) {
   }, [filteredRecords]);
 
   const stats = useMemo(() => {
+    let w = 0, ft = 0, fw = 0, st = 0, sw = 0;
     const total = filteredRecords.length;
-    const wins = filteredRecords.filter(r => String(r.result).toUpperCase().includes('VIC') || r.result === 'WIN').length;
     
-    const firstMatches = filteredRecords.filter(r => String(r.turn).includes('先'));
-    const secondMatches = filteredRecords.filter(r => !String(r.turn).includes('先'));
-    const fWins = firstMatches.filter(r => String(r.result).toUpperCase().includes('VIC') || r.result === 'WIN').length;
-    const sWins = secondMatches.filter(r => String(r.result).toUpperCase().includes('VIC') || r.result === 'WIN').length;
+    // 1-パスで統計項目をすべて集計 (事前計算フラグを活用)
+    filteredRecords.forEach(r => {
+      if (r._isWin) w++;
+      if (r._isFirst) {
+        ft++;
+        if (r._isWin) fw++;
+      } else {
+        st++;
+        if (r._isWin) sw++;
+      }
+    });
 
-    const winRate = total > 0 ? (wins / total * 100).toFixed(1) : "0.0";
-    const fRate = total > 0 ? (firstMatches.length / total * 100).toFixed(1) : "0.0";
-    const fWinRate = firstMatches.length > 0 ? (fWins / firstMatches.length * 100).toFixed(1) : "0.0";
-    const sWinRate = secondMatches.length > 0 ? (sWins / secondMatches.length * 100).toFixed(1) : "0.0";
+    const winRate = total > 0 ? (w / total * 100).toFixed(1) : "0.0";
+    const fRate = total > 0 ? (ft / total * 100).toFixed(1) : "0.0";
+    const fWinRate = ft > 0 ? (fw / ft * 100).toFixed(1) : "0.0";
+    const sWinRate = st > 0 ? (sw / st * 100).toFixed(1) : "0.0";
 
     // 5. Streak計算 (最新から遡る)
     let streakCount = 0;
     let streakType = null;
-    if (filteredRecords.length > 0) {
+    if (total > 0) {
       for (const r of filteredRecords) {
-        const isWin = String(r.result).toUpperCase().includes('VIC') || r.result === 'WIN';
+        const isWin = r._isWin;
         if (streakCount === 0) {
           streakType = isWin ? 'WIN' : 'LOSS';
           streakCount = 1;
@@ -201,12 +212,12 @@ export function useMatchAnalytics(records, filters) {
       }
     }
 
-    const form = filteredRecords.slice(0, 10).map(r => (String(r.result).toUpperCase().includes('VIC') || r.result === 'WIN') ? 'W' : 'L').reverse();
+    const form = filteredRecords.slice(0, 10).map(r => r._isWin ? 'W' : 'L').reverse();
 
     return { 
-      total, wins, winRate, 
-      fRate, fWinRate, fWins, fTotal: firstMatches.length,
-      sWinRate, sWins, sTotal: secondMatches.length,
+      total, wins: w, winRate, 
+      fRate, fWinRate, fWins: fw, fTotal: ft,
+      sWinRate, sWins: sw, sTotal: st,
       streak: { type: streakType, count: streakCount },
       form 
     };
@@ -215,29 +226,48 @@ export function useMatchAnalytics(records, filters) {
   const tagTrendData = useMemo(() => {
     if (!filteredRecords || filteredRecords.length === 0) return { data: [], tags: [] };
     
+    // 1. トップタグの抽出 (事前パースデータを利用)
     const allTags = {};
     filteredRecords.forEach(r => {
-      if (r.memo) String(r.memo).split(/[,、，]+/).forEach(t => {
-        const tag = String(t).trim();
-        if (tag) allTags[tag] = (allTags[tag] || 0) + 1;
+      if (r._tags) r._tags.forEach(tag => {
+        allTags[tag] = (allTags[tag] || 0) + 1;
       });
     });
     const topTags = Object.entries(allTags).sort((a,b) => b[1] - a[1]).slice(0, 5).map(x => x[0]);
     
+    // 2. セグメントごとの一括集計 (1-パスで全セグメントを数える)
     const segments = 8;
-    const binSize = Math.max(1, Math.ceil(filteredRecords.length / segments));
-    const bins = [];
     const chronRecords = [...filteredRecords].reverse();
+    const binSize = Math.max(1, Math.ceil(chronRecords.length / segments));
+    const bins = [];
     
+    // 枠組みを先に作る
     for (let i = 0; i < chronRecords.length; i += binSize) {
-      const chunk = chronRecords.slice(i, i + binSize);
-      const dataPoint = { name: `${i + 1}-${Math.min(i + binSize, chronRecords.length)}` };
-      topTags.forEach(tag => {
-        dataPoint[tag] = chunk.filter(r => String(r.memo).includes(tag)).length;
-      });
-      bins.push(dataPoint);
+      const dataPoint = { 
+        name: `${i + 1}-${Math.min(i + binSize, chronRecords.length)}`,
+      };
+      topTags.forEach(t => dataPoint[t] = 0);
+      bins.push({ dataPoint, start: i, end: Math.min(i + binSize, chronRecords.length) });
     }
-    return { data: bins, tags: topTags };
+
+    // 各レコードがいずれのセグメントに属するか判定しながら一度にカウント
+    chronRecords.forEach((r, idx) => {
+      if (!r._tags) return;
+      // どのビンに属するか計算
+      const binIdx = Math.floor(idx / binSize);
+      if (bins[binIdx]) {
+        r._tags.forEach(tag => {
+          if (topTags.includes(tag)) {
+            bins[binIdx].dataPoint[tag]++;
+          }
+        });
+      }
+    });
+
+    return { 
+      data: bins.map(b => b.dataPoint), 
+      tags: topTags 
+    };
   }, [filteredRecords]);
 
   // 5. 自分の使用デッキ別統計 (My Deck Stats)
@@ -249,7 +279,7 @@ export function useMatchAnalytics(records, filters) {
         if (!d) return; 
         if (!s[d]) s[d] = { w: 0, t: 0 }; 
         s[d].t++; 
-        if (String(r.result).toUpperCase().includes('VIC') || r.result === 'WIN') s[d].w++; 
+        if (r._isWin) s[d].w++; 
       } 
     });
     return Object.entries(s).map(([n, v]) => ({ 

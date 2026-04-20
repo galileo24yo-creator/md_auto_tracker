@@ -18,7 +18,7 @@ import { useRecorderState } from '../hooks/useRecorderState';
 import { useOcrEngine } from '../hooks/useOcrEngine';
 import { useMatchAutofill } from '../hooks/useMatchAutofill';
 
-export default function Recorder({ availableDecks, availableTags, onRecorded, onOpenManual }) {
+export default function Recorder({ themePairings, availableDecks, availableTags, onRecorded, onOpenManual }) {
   // 1. Centralized State
   const {
     mode, setMode,
@@ -200,6 +200,9 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
     isTagsLocked,
     availableTags,
     themeMap: themeMapRef.current,
+    themePairings: themePairings,
+    myDecks,
+    oppDecks,
     setMyDecks,
     setOppDecks,
     setSelectedTags,
@@ -237,16 +240,20 @@ export default function Recorder({ availableDecks, availableTags, onRecorded, on
   useEffect(() => {
     if (isRecording && videoRef.current) {
       const loop = () => {
-        if (!isRecording) return;
+        if (!isRecording || !videoRef.current) return;
         const now = Date.now();
         if (now - lastUpdateRef.current > 500 && !isBusyRef.current) {
            isBusyRef.current = true;
            captureAndAnalyze(videoRef, canvasRef).finally(() => { isBusyRef.current = false; });
            lastUpdateRef.current = now;
         }
-        rvfcIdRef.current = videoRef.current.requestVideoFrameCallback(loop);
+        if (videoRef.current) {
+          rvfcIdRef.current = videoRef.current.requestVideoFrameCallback(loop);
+        }
       };
-      rvfcIdRef.current = videoRef.current.requestVideoFrameCallback(loop);
+      if (videoRef.current) {
+        rvfcIdRef.current = videoRef.current.requestVideoFrameCallback(loop);
+      }
       return () => { if (videoRef.current && rvfcIdRef.current) videoRef.current.cancelVideoFrameCallback(rvfcIdRef.current); };
     }
   }, [isRecording, captureAndAnalyze, lastUpdateRef, isBusyRef, rvfcIdRef]);

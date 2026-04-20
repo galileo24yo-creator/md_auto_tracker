@@ -117,13 +117,13 @@ function doGet(e) {
     }
   }
 
-  // 直近1000件のデータを取得
+  // 直近5000件のデータを取得
   const dataSheet = ss.getSheetByName(SHEET_DATA_NAME);
   let records = [];
   if (dataSheet) {
     const lastRow = dataSheet.getLastRow();
     if (lastRow > 1) {
-      const getRows = Math.min(lastRow - 1, 1000);
+      const getRows = Math.min(lastRow - 1, 5000);
       // getValues を使用して生の文字（∀等）を取得し、日付は別途フォーマットする
       const values = dataSheet.getRange(lastRow - getRows + 1, 1, getRows, 8).getValues();
       records = values.map(row => {

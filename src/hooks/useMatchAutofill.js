@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import { normalizeTheme } from '../lib/themeUtils';
 import { CARD_TO_TAG_BASE, normalizeCardName } from '../lib/recorderUtils';
 
@@ -9,6 +9,9 @@ export function useMatchAutofill({
   isTagsLocked,
   availableTags,
   themeMap,
+  themePairings,
+  myDecks,
+  oppDecks,
   setMyDecks,
   setOppDecks,
   setSelectedTags,
@@ -19,6 +22,13 @@ export function useMatchAutofill({
   detectedCardsRef // Ref for result-time analysis
 }) {
   const autoFillRunRef = useRef(false);
+
+  const hasHistory = (targetTheme, activeThemes) => {
+    if (!targetTheme || activeThemes.length === 0) return false;
+    const pairings = themePairings.get(normalizeTheme(targetTheme));
+    if (!pairings) return false;
+    return activeThemes.some(at => pairings.has(normalizeTheme(at)));
+  };
 
   // --- Real-time continuous autofill ---
   useEffect(() => {
@@ -46,7 +56,11 @@ export function useMatchAutofill({
 
     if (!isMyDeckLocked) {
       Object.entries(themeScores.BLUE).forEach(([theme, score]) => {
-        if (score >= THRESHOLD_THEME && themeUniqueCards.BLUE[theme].size >= 2) {
+        const isHistoried = hasHistory(theme, myDecks);
+        const threshold = isHistoried ? 1.5 : THRESHOLD_THEME;
+        const requiredSize = isHistoried ? 1 : 2; // 実績があれば1種類でOK
+
+        if (score >= threshold && themeUniqueCards.BLUE[theme].size >= requiredSize) {
           const normTheme = normalizeTheme(themeMap[theme] || theme);
           setMyDecks(prev => prev.includes(normTheme) ? prev : [...prev, normTheme]);
         }
@@ -55,7 +69,11 @@ export function useMatchAutofill({
 
     if (!isOpponentDeckLocked) {
       Object.entries(themeScores.RED).forEach(([theme, score]) => {
-        if (score >= THRESHOLD_THEME && themeUniqueCards.RED[theme].size >= 2) {
+        const isHistoried = hasHistory(theme, oppDecks);
+        const threshold = isHistoried ? 1.5 : THRESHOLD_THEME;
+        const requiredSize = isHistoried ? 1 : 2; // 実績があれば1種類でOK
+
+        if (score >= threshold && themeUniqueCards.RED[theme].size >= requiredSize) {
           const normTheme = normalizeTheme(themeMap[theme] || theme);
           setOppDecks(prev => prev.includes(normTheme) ? prev : [...prev, normTheme]);
         }
@@ -74,7 +92,7 @@ export function useMatchAutofill({
         }
       });
     }
-  }, [detectedCards, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, availableTags, themeMap, setMyDecks, setOppDecks, setSelectedTags, matchStartTimeRef]);
+  }, [detectedCards, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, availableTags, themeMap, setMyDecks, setOppDecks, setSelectedTags, matchStartTimeRef, myDecks, oppDecks, themePairings]);
 
   // --- Match-End Detail Autofill ---
   useEffect(() => {
@@ -109,7 +127,12 @@ export function useMatchAutofill({
               results.push(topTheme);
               for (let i = 1; i < sortedThemes.length; i++) {
                 const [theme, weight] = sortedThemes[i];
-                if (weight / totalSideWeight >= 0.20 && themeUniqueNames[theme].size >= 2) {
+                // 実績のあるサブテーマなら条件を 20% -> 5% に大幅緩和 & 1枚でOK
+                const isHistoried = hasHistory(theme, [topTheme]);
+                const shareThreshold = isHistoried ? 0.05 : 0.20;
+                const requiredSize = isHistoried ? 1 : 2;
+
+                if (weight / totalSideWeight >= shareThreshold && themeUniqueNames[theme].size >= requiredSize) {
                   results.push(theme);
                 }
               }
@@ -161,5 +184,5 @@ export function useMatchAutofill({
     } else {
       autoFillRunRef.current = false;
     }
-  }, [result, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, availableTags, themeMap, setMyDecks, setOppDecks, setSelectedTags, addLog, detectedCardsRef]);
+  }, [result, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, availableTags, themeMap, setMyDecks, setOppDecks, setSelectedTags, addLog, detectedCardsRef, themePairings]);
 }

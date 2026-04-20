@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Loader2, RefreshCw, Settings, X, Save, HelpCircle, Database, Pencil, Trash2, Plus, Check } from 'lucide-react';
 import { fetchData, getGasUrl, getProfiles, getActiveProfile, saveProfiles } from './lib/api';
 import { decodeHTMLEntities } from './lib/utils';
+import { normalizeTheme } from './lib/themeUtils';
 import Dashboard from './components/Dashboard';
 import Recorder from './components/Recorder';
 import SetupGuide from './components/SetupGuide';
@@ -39,13 +40,30 @@ function App() {
     const result = await fetchData();
     
     if (result.success) {
-      // Decode entities for all string data
-      const decodedRecords = (result.records || []).map(r => ({
-        ...r,
-        myDeck: decodeHTMLEntities(r.myDeck),
-        opponentDeck: decodeHTMLEntities(r.opponentDeck),
-        memo: decodeHTMLEntities(r.memo)
-      }));
+      // Decode entities and PRE-NORMALIZE for ultimate performance
+      const decodedRecords = (result.records || []).map(r => {
+        const myDeck = decodeHTMLEntities(r.myDeck || "");
+        const oppDeck = decodeHTMLEntities(r.opponentDeck || "");
+        const resultStr = String(r.result || "").toUpperCase();
+        
+        // 事前計算（高速化用フラグ）
+        const isWin = resultStr.includes('VIC') || resultStr === 'WIN';
+        const isFirst = String(r.turn || "").includes('先');
+        
+        return {
+          ...r,
+          myDeck,
+          opponentDeck: oppDeck,
+          memo: decodeHTMLEntities(r.memo || ""),
+          _isWin: isWin,
+          _isFirst: isFirst,
+          // 事前パース済みのタグ配列
+          _tags: (decodeHTMLEntities(r.memo || "")).split(/[,、，]+/).map(t => t.trim()).filter(Boolean),
+          // 高速フィルター用配列
+          _myThemes: myDeck.split(/[,、，\+]+/).map(t => normalizeTheme(t)).filter(Boolean),
+          _oppThemes: oppDeck.split(/[,、，\+]+/).map(t => normalizeTheme(t)).filter(Boolean)
+        };
+      });
       const decodedDecks = (result.decks || []).map(d => decodeHTMLEntities(d));
       const decodedReasons = (result.reasons || []).map(r => decodeHTMLEntities(r));
 
@@ -148,6 +166,57 @@ function App() {
     });
     return list;
   }, [data.reasons]);
+
+  // 【最適化】履歴からテーマの組み合わせ（共起）情報を抽出
+  const themePairings = useMemo(() => {
+    if (!data.records || data.records.length === 0) return new Map();
+    const map = new Map();
+    const recentRecords = data.records.slice(-100);
+    
+    recentRecords.forEach(r => {
+      ['myDeck', 'opponentDeck'].forEach(key => {
+        const deckStr = r[key];
+        if (!deckStr) return;
+        const themes = deckStr.split(/[,、，\+]+/)
+          .map(t => normalizeTheme(t))
+          .filter(Boolean);
+        if (themes.length >= 2) {
+          for (let i = 0; i < themes.length; i++) {
+            for (let j = 0; j < themes.length; j++) {
+              if (i === j) continue;
+              const t1 = themes[i];
+              const t2 = themes[j];
+              if (!map.has(t1)) map.set(t1, new Set());
+              map.get(t1).add(t2);
+            }
+          }
+        }
+      });
+    });
+    return map;
+  }, [data.records]);
+
+  // 子コンポーネントをメモ化して、Dashboardのフィルタ操作がRecorderに波及しないようにする
+  const MemoizedRecorder = useMemo(() => (
+    <Recorder 
+      themePairings={themePairings}
+      availableDecks={data.decks} 
+      availableTags={displayReasons} 
+      onRecorded={() => loadData(true)} 
+      onOpenManual={() => setShowUserManual(true)}
+    />
+  ), [themePairings, data.decks, displayReasons]);
+
+  const MemoizedDashboard = useMemo(() => (
+    <Dashboard 
+      records={data.records} 
+      onRefresh={() => loadData(true)} 
+      decks={data.decks}
+      reasons={data.reasons}
+      displayReasons={displayReasons}
+      activeProfile={activeProfile}
+    />
+  ), [data.records, data.decks, data.reasons, displayReasons, activeProfile]);
 
   useEffect(() => {
     if (isObsMode) {
@@ -279,6 +348,12 @@ function App() {
                           className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-[10px] font-mono text-zinc-400 outline-none focus:ring-1 focus:ring-indigo-500"
                           placeholder="GAS WebApp URL"
                         />
+                        <input 
+                          value={editSheetUrl}
+                          onChange={e => setEditSheetUrl(e.target.value)}
+                          className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-[10px] font-mono text-zinc-400 outline-none focus:ring-1 focus:ring-indigo-500"
+                          placeholder="Spreadsheet URL (Optional)"
+                        />
                         <div className="flex gap-2">
                           <button onClick={handleSaveProfile} className="flex-1 bg-indigo-600 text-white py-2 rounded-lg text-[10px] font-black uppercase tracking-widest">
                             Save Changes
@@ -331,14 +406,7 @@ function App() {
       
       <main className="max-w-[1600px] mx-auto grid grid-cols-1 xl:grid-cols-5 gap-8">
         <div className="xl:col-span-2 xl:sticky xl:top-6 self-start z-20">
-          <div className="glass-card glass-card-hover p-6 shadow-2xl transition-all">
-            <Recorder 
-              availableDecks={data.decks} 
-              availableTags={displayReasons} 
-              onRecorded={() => loadData(true)} 
-              onOpenManual={() => setShowUserManual(true)}
-            />
-          </div>
+          {MemoizedRecorder}
         </div>
 
         <div className="xl:col-span-3">
@@ -371,14 +439,7 @@ function App() {
                 </div>
               </div>
             ) : (
-              <Dashboard 
-                records={data.records} 
-                onRefresh={() => loadData(true)} 
-                decks={data.decks}
-                reasons={data.reasons}
-                displayReasons={displayReasons}
-                activeProfile={activeProfile}
-              />
+              MemoizedDashboard
             )}
           </div>
         </div>

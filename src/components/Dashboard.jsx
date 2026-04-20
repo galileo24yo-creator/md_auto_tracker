@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, memo, useCallback, useRef } from 'react';
+import React, { useMemo, useState, useEffect, memo, useCallback, useRef, useTransition } from 'react';
 import { toPng } from 'html-to-image';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Copy, Check, ExternalLink as LinkIcon, Trophy, Swords, XCircle, TrendingUp, Activity, Download, ArrowLeftRight, Pencil, Save, Loader2, Trash2, Settings, Plus, ExternalLink, Calendar, ChevronLeft, ChevronRight, X, Camera } from 'lucide-react';
@@ -124,41 +124,68 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
-const MatchList = memo(({ records, onSelect }) => (
-  <div className="bg-zinc-800/80 p-5 rounded-xl border border-zinc-700/50 flex flex-col h-full shadow-lg">
-    <h3 className="text-zinc-300 text-[10px] font-black uppercase tracking-widest mb-4 flex items-center justify-between">
-      Matches In Set
-      <span className="text-zinc-500 font-normal">{records.length} matches</span>
-    </h3>
-    <div className="flex-1 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
-      {records.map((r, i) => (
-        <button key={i} onClick={() => onSelect(r)} className="w-full text-left flex items-center justify-between p-3 rounded-lg bg-zinc-950/40 border border-zinc-800 text-sm hover:border-indigo-500/50 hover:bg-zinc-800/80 transition-all group">
-          <div className="flex flex-col flex-1 mx-4">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors uppercase tracking-tight text-xs mr-1 shrink-0">
-                {normalizeThemeString(r.opponentDeck || r.OpponentDeck) || "UNKNOWN"}
-              </span>
-              {(r.memo || r.Memo) && String(r.memo || r.Memo).split(/[,、，]+/).map((rawTag, idx) => {
-                const tag = rawTag.trim();
-                const isPos = tag.includes('[+]') || tag.includes('［＋］');
-                const isNeg = tag.includes('[-]') || tag.includes('［－］');
-                const colorClass = isPos ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300' : isNeg ? 'bg-rose-500/20 border-rose-500/30 text-rose-300' : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300';
-                return <span key={idx} className={`px-1.5 py-0.5 rounded border ${colorClass} text-[9px] font-bold whitespace-nowrap`}>{tag}</span>;
-              })}
-            </div>
-            <div className="text-[9px] font-bold uppercase tracking-widest mt-1 flex items-center gap-1">
-              <span className="text-zinc-500">MY:</span>
-              <span className="text-zinc-300 group-hover:text-zinc-100 transition-colors">{normalizeThemeString(r.myDeck || r.MyDeck) || "---"}</span>
-            </div>
-            <span className="text-[8px] text-zinc-400 uppercase tracking-widest font-bold mt-1">{String(r.date || "").split(' ')[0]} • {r.mode} • {r.turn}</span>
-          </div>
-          <div className={`font-black px-3 py-1 rounded-full text-[10px] ${String(r.result).includes('VIC') ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>{String(r.result).includes('VIC') ? 'WIN' : 'LOSE'}</div>
-        </button>
-      ))}
-      {records.length === 0 && <div className="h-full flex items-center justify-center text-zinc-600 italic text-xs">NO DATA</div>}
+const MatchList = memo(({ records, onSelect }) => {
+  const [displayCount, setDisplayCount] = useState(30);
+  
+  // フィルター変更時に表示数をリセット
+  useEffect(() => {
+    setDisplayCount(30);
+  }, [records]);
+
+  const displayedRecords = records.slice(0, displayCount);
+  const hasMore = records.length > displayCount;
+
+  return (
+    <div className="bg-zinc-800/80 p-5 rounded-xl border border-zinc-700/50 flex flex-col h-full shadow-lg">
+      <h3 className="text-zinc-300 text-[10px] font-black uppercase tracking-widest mb-4 flex items-center justify-between">
+        Match History
+        <span className="text-zinc-500 font-normal">{records.length} matches</span>
+      </h3>
+      <div className="flex-1 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
+        {displayedRecords.map((r, i) => {
+          const myDeckStr = r._myThemes && r._myThemes.length > 0 ? r._myThemes.join(' + ') : (r.myDeck || "---");
+          const oppDeckStr = r._oppThemes && r._oppThemes.length > 0 ? r._oppThemes.join(' + ') : (r.opponentDeck || "---");
+          
+          return (
+            <button key={i} onClick={() => onSelect(r)} className="w-full text-left flex items-center justify-between p-3 rounded-lg bg-zinc-950/40 border border-zinc-800 text-sm hover:border-indigo-500/50 hover:bg-zinc-800/80 transition-all group">
+              <div className="flex flex-col flex-1 mx-4">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="font-bold text-zinc-200 group-hover:text-indigo-400 transition-colors uppercase tracking-tight text-xs mr-1 shrink-0">
+                    {oppDeckStr}
+                  </span>
+                  {(r.memo || r.Memo) && String(r.memo || r.Memo).split(/[,、，]+/).map((rawTag, idx) => {
+                    const tag = rawTag.trim();
+                    const isPos = tag.includes('[+]') || tag.includes('［＋］');
+                    const isNeg = tag.includes('[-]') || tag.includes('［－］');
+                    const colorClass = isPos ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300' : isNeg ? 'bg-rose-500/20 border-rose-500/30 text-rose-300' : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300';
+                    return <span key={idx} className={`px-1.5 py-0.5 rounded border ${colorClass} text-[9px] font-bold whitespace-nowrap`}>{tag}</span>;
+                  })}
+                </div>
+                <div className="text-[9px] font-bold uppercase tracking-widest mt-1 flex items-center gap-1">
+                  <span className="text-zinc-500">MY:</span>
+                  <span className="text-zinc-300 group-hover:text-zinc-100 transition-colors">{myDeckStr}</span>
+                </div>
+                <span className="text-[8px] text-zinc-400 uppercase tracking-widest font-bold mt-1">{String(r.date || "").split(' ')[0]} • {r.mode} • {r.turn}</span>
+              </div>
+              <div className={`font-black px-3 py-1 rounded-full text-[10px] ${r._isWin ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>{r._isWin ? 'WIN' : 'LOSE'}</div>
+            </button>
+          );
+        })}
+        
+        {hasMore && (
+          <button 
+            onClick={() => setDisplayCount(prev => prev + 50)}
+            className="w-full py-3 bg-zinc-900 hover:bg-zinc-800 text-zinc-500 text-[9px] font-black uppercase tracking-widest rounded-lg border border-zinc-800 transition-all active:scale-95"
+          >
+            Show More (+50)
+          </button>
+        )}
+        
+        {records.length === 0 && <div className="h-full flex items-center justify-center text-zinc-600 italic text-xs">NO DATA</div>}
+      </div>
     </div>
-  </div>
-));
+  );
+});
 
 const MatchupRankings = memo(({ data, tab, onTabChange, minLimit, onLimitChange, onDeckClick, currentDecks }) => (
   <div className="bg-zinc-800/80 p-5 rounded-xl border border-zinc-700/50 flex flex-col h-full shadow-lg">
@@ -373,6 +400,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [activeWidget, setActiveWidget] = useState('rating');
   const [showNotification, setShowNotification] = useState(false);
+  const [isPending, startTransition] = useTransition(); 
   const widgetRef = useRef(null);
 
   // モーダルが閉じられたら状態をリセット
@@ -557,73 +585,41 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
   }, [scopeFilteredRecords.length, chunkSize]);
 
   const availableMyThemes = useMemo(() => {
-    const s = new Set(); // マスターリストを初期値にするのを解除
+    const s = new Set();
     scopeFilteredRecords.forEach(r => { 
-      // 大文字小文字両方に対応
-      const val = r.myDeck || r.MyDeck;
-      if (val) String(val).split(/[,、，\+]+/).forEach(t => { 
-        const theme = normalizeTheme(t); 
-        if (theme) s.add(theme); 
-      }); 
+      if (r._myThemes) r._myThemes.forEach(t => s.add(t));
     });
     return Array.from(s).sort();
-  }, [scopeFilteredRecords, decks]);
+  }, [scopeFilteredRecords]);
 
   const availableOpponentThemes = useMemo(() => {
     const s = new Set();
     scopeFilteredRecords.forEach(r => { 
-      const val = r.opponentDeck || r.OpponentDeck;
-      if (val) String(val).split(/[,、，\+]+/).forEach(t => { 
-        const theme = normalizeTheme(t); 
-        if (theme) s.add(theme); 
-      }); 
+      if (r._oppThemes) r._oppThemes.forEach(t => s.add(t));
     });
     return Array.from(s).sort();
   }, [scopeFilteredRecords]);
 
   const nextAvailableMyThemes = useMemo(() => {
-    // 相互連動 + 自分自身とも連動 (L2レコードを全てのL3フィルタで絞る)
-    const subset = getFilteredRecords(l2FilteredRecords, { 
-      myDecks: filterMyDecks,
-      opponentDecks: filterOpponentDecks, 
-      tags: filterTags 
-    });
+    const subset = getFilteredRecords(l2FilteredRecords, { myDecks: filterMyDecks, opponentDecks: filterOpponentDecks, tags: filterTags });
     const s = new Set();
     subset.forEach(r => {
-      const val = r.myDeck || r.MyDeck;
-      if (val) String(val).split(/[,、，]+/).forEach(t => {
-        const theme = String(t).trim();
-        if (theme) s.add(theme);
-      });
+      if (r._myThemes) r._myThemes.forEach(t => s.add(t));
     });
     return Array.from(s).sort();
   }, [l2FilteredRecords, filterMyDecks, filterOpponentDecks, filterTags]);
 
   const nextAvailableOpponentThemes = useMemo(() => {
-    // 相互連動 + 自分自身とも連動
-    const subset = getFilteredRecords(l2FilteredRecords, { 
-      myDecks: filterMyDecks,
-      opponentDecks: filterOpponentDecks, 
-      tags: filterTags 
-    });
+    const subset = getFilteredRecords(l2FilteredRecords, { myDecks: filterMyDecks, opponentDecks: filterOpponentDecks, tags: filterTags });
     const s = new Set();
     subset.forEach(r => {
-      const val = r.opponentDeck || r.OpponentDeck;
-      if (val) String(val).split(/[,、，]+/).forEach(t => {
-        const theme = String(t).trim();
-        if (theme) s.add(theme);
-      });
+      if (r._oppThemes) r._oppThemes.forEach(t => s.add(t));
     });
     return Array.from(s).sort();
   }, [l2FilteredRecords, filterMyDecks, filterOpponentDecks, filterTags]);
 
   const nextAvailableTags = useMemo(() => {
-    // 相互連動 + 自分自身とも連動
-    const subset = getFilteredRecords(l2FilteredRecords, { 
-      myDecks: filterMyDecks, 
-      opponentDecks: filterOpponentDecks,
-      tags: filterTags
-    });
+    const subset = getFilteredRecords(l2FilteredRecords, { myDecks: filterMyDecks, opponentDecks: filterOpponentDecks, tags: filterTags });
     const s = new Set();
     subset.forEach(r => {
       const val = r.memo || r.Memo;
@@ -638,9 +634,8 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
   const opponentDeckData = useMemo(() => {
     const c = {};
     filteredRecords.forEach(r => { 
-      const opDeck = r.opponentDeck || r.OpponentDeck;
-      if (opDeck) { 
-        const d = normalizeThemeString(opDeck);
+      if (r.opponentDeck) { 
+        const d = normalizeThemeString(r.opponentDeck);
         if (d) c[d] = (c[d] || 0) + 1; 
       } 
     });
@@ -695,7 +690,17 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                 )}
               </div>
               <div className="hidden md:block w-px h-4 bg-zinc-800 mx-1 shrink-0" />
-              <select value={filterDateType} onChange={(e) => { setFilterDateType(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-3 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 h-[42px] min-w-[120px]">
+              <select 
+                value={filterDateType} 
+                onChange={(e) => { 
+                  const next = e.target.value;
+                  startTransition(() => {
+                    setFilterDateType(next); 
+                    setSetRange([1, 1]); 
+                  });
+                }} 
+                className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-3 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 h-[42px] min-w-[120px]"
+              >
                 <option value="ALL">期間: すべて</option>
                 <option value="TODAY">期間: 今日</option>
                 <option value="7D">期間: 過去7日</option>
@@ -713,7 +718,17 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                 </button>
               )}
 
-              <select value={filterMode} onChange={(e) => { setFilterMode(e.target.value); setSetRange([1, 1]); }} className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-3 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 h-[42px] min-w-[120px]">
+              <select 
+                value={filterMode} 
+                onChange={(e) => { 
+                  const next = e.target.value;
+                  startTransition(() => {
+                    setFilterMode(next); 
+                    setSetRange([1, 1]); 
+                  });
+                }} 
+                className="bg-zinc-950 border border-zinc-800 text-zinc-300 rounded-lg px-3 py-1.5 text-[10px] outline-none focus:ring-1 focus:ring-indigo-500 h-[42px] min-w-[120px]"
+              >
                 <option value="ALL">モード: 全て</option>
                 <option value="ランク戦">モード: ランク</option>
                 <option value="レート戦">モード: レート</option>
@@ -736,7 +751,11 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                 <DeckSelect 
                   availableDecks={nextAvailableMyThemes} 
                   selectedDecks={filterMyDecks} 
-                  onChange={(v) => { setFilterMyDecks(v); }} 
+                  onChange={(v) => { 
+                    startTransition(() => {
+                      setFilterMyDecks(v); 
+                    });
+                  }} 
                   placeholder="自分のテーマを選択..." 
                 />
               </div>
@@ -746,7 +765,11 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                 <DeckSelect 
                   availableDecks={nextAvailableOpponentThemes} 
                   selectedDecks={filterOpponentDecks} 
-                  onChange={(v) => { setFilterOpponentDecks(v); }} 
+                  onChange={(v) => { 
+                    startTransition(() => {
+                      setFilterOpponentDecks(v); 
+                    });
+                  }} 
                   placeholder="相手のテーマを選択..." 
                 />
               </div>
@@ -756,7 +779,11 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                 <DeckSelect 
                   availableDecks={nextAvailableTags} 
                   selectedDecks={filterTags} 
-                  onChange={(v) => { setFilterTags(v); }} 
+                  onChange={(v) => { 
+                    startTransition(() => {
+                      setFilterTags(v); 
+                    });
+                  }} 
                   placeholder="タグを選択..." 
                 />
               </div>
@@ -794,7 +821,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
       </div>
 
       {activeTab === 'overview' && (
-        <div className="animate-in fade-in duration-500 space-y-6">
+        <div className={`animate-in fade-in duration-500 space-y-6 transition-opacity ${isPending ? 'opacity-30 pointer-events-none' : ''}`}>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             <StatCard title="Count" value={stats.total} icon={<Swords className="w-5 h-5 text-indigo-500" />} />
             <StatCard title="Win%" value={`${stats.winRate}%`} color="text-emerald-400" />
