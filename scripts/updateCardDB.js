@@ -1,10 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 
-const BASE_URL = 'https://db.ygoprodeck.com/api/v7/cardinfo.php';
-const JA_URL = 'https://db.ygoprodeck.com/api/v7/cardinfo.php?language=ja';
+const SOURCE_FILE = path.join(process.cwd(), 'public', 'cards.json');
 const OUTPUT_FILE = path.join(process.cwd(), 'public', 'card_db.json');
 const MANUAL_FILE = path.join(process.cwd(), 'public', 'manual_cards.json');
+const INFERRED_LOG = path.join(process.cwd(), 'public', 'inferred_archetypes.txt');
 
 // 全角を半角に変換するなどの正規化処理
 function normalizeText(text) {
@@ -13,146 +13,317 @@ function normalizeText(text) {
     .replace(/[！-～]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0)) // 全角英数記号 -> 半角
     .replace(/－/g, '-') // 全角ハイフン -> 半角
     .replace(/　/g, ' ') // 全角スペース -> 半角
-    // ギリシャ文字の誤読対策 (OCRが読みやすいアルファベット等に寄せる)
     .replace(/α/g, 'a')
     .replace(/β/g, 'b')
-    .replace(/γ/g, 'y') // ガンマは y や v に誤読されやすいため
+    .replace(/γ/g, 'y')
     .replace(/δ/g, 'd')
     .replace(/ε/g, 'e')
     .replace(/\s+/g, '') // 全てのスペースを除去（検索用）
     .trim();
 }
 
+// ルビタグを除去する処理
+function cleanRubyTags(text) {
+  if (!text) return '';
+  return text
+    .replace(/<rt>.*?<\/rt>/g, '') // フリガナ部分を削除
+    .replace(/<rp>.*?<\/rp>/g, '') // 括弧部分を削除
+    .replace(/<\/?ruby>/g, '')    // rubyタグを削除
+    .trim();
+}
+
 const ARCHETYPE_MAP = {
-  'K9': 'Ｋ９（ケーナイン）',
+  'Altergeist': 'オルターガイスト',
+  'Aroma': 'アロマ',
+  'Artifact': 'アーティファクト',
+  'Atlantis': 'アトランティス',
+  'Barian\'s': 'バリアン',
+  'Battlewasp': 'Ｂ・Ｆ（ビー・フォース）',
+  'Beetrooper': 'ビートルーパー',
+  'Black Luster Soldier': 'カオス・ソルジャー',
   'Blackwing': 'ＢＦ（ブラックフェザー）',
   'Blue-Eyes': 'ブルーアイズ',
-  'Red-Eyes': 'レッドアイズ',
-  'Dark Magician': 'ブラック・マジシャン',
-  'Adamancipator': 'アダマシア',
-  'Destiny HERO': 'Ｄ－ＨＥＲＯ',
-  'Elemental HERO': 'Ｅ・ＨＥＲＯ',
-  'Evil HERO': 'Ｅ－ＨＥＲＯ',
-  'Masked HERO': 'Ｍ・ＨＥＲＯ',
-  'Evil★Twin': 'イビルツイン',
-  'Live☆Twin': 'ライブツイン',
-  'Sky Striker': '閃刀姫',
-  'Tearlaments': 'ティアラメンツ',
-  'Kashtira': 'クシャトリラ',
-  'Floowandereeze': 'ふわんだりぃず',
-  'Labrynth': 'ラビュリンス',
-  'Snake-Eye': 'スネークアイ',
-  'Purrely': 'ピュアリィ',
-  'Mikanko': '御巫',
-  'Rescue-ACE': 'Ｒ－ＡＣＥ',
-  'Tenpai Dragon': '天盃龍',
-  'Millennium': '千年',
-  'Voiceless Voice': '粛声',
-  'Kewl Tune': 'キラーチューン',
-  'Fiendsmith': 'デモンスミス',
-  'Mitsurugi': '巳剣',
-  'Maliss': 'M∀LICE',
-  'Radiant Typhoon': '絢嵐',
-  'Vanquish Soul': 'ＶＳ（ヴァンキッシュ・ソウル）',
-  'Temple of the Kings': '王家の神殿',
-  'Apophis': 'アポピス',
-  'Serket': 'セルケト',
-  'Primite': '原石',
-  'Dracotail': 'ドラゴンテイル',
-  'Solfachord': 'ドレミコード',
-  'GranSolfachord': 'ドレミコード',
-  'Yummy': 'ヤミー',
-  'R.B.': 'Ｒ.Ｂ.（リボルボット）',
-  'Ryzeal': 'ライゼオル',
-  'Magnet': 'マグネット・ウォリアー',
   'Branded': '烙印',
-  'Despia': 'デスピア',
+  'Burning Abyss': '彼岸',
   'Bystial': 'ビーステッド',
+  'Chaos': 'カオス',
+  'Chronomaly': '先史遺産',
+  'Cipher': 'サイファー',
+  'Constellar': 'セイクリッド',
+  'Crusadia': 'パラディオン',
+  'Crystron': 'クリストロン',
+  'Cyber Dragon': 'サイバー・ドラゴン',
+  'Darklord': '堕天使',
+  'Dark Magician': 'ブラック・マジシャン',
+  'D/D': 'ＤＤ',
+  'Despia': 'デスピア',
+  'Destiny HERO': 'Ｄ－ＨＥＲＯ',
+  'Dinomorphia': 'ダイノルフィア',
+  'Dinowrestler': 'ダイノレスラー',
   'Dogmatika': 'ドラグマ',
-  'Albaz Dragon': 'アルバスの落胤',
-  'Icejade': '氷水',
-  'Swordsoul': '相剣',
-  'Tri-Brigade': '鉄獣戦線',
-  'Chimera': 'キマイラ',
-  'Springans': 'スプリガンズ',
-  'Spright': 'スプライト',
-  'Therion': 'セリオンズ',
-  'Sinful Spoils': '罪宝',
-  'Diabellstar': 'ディアベルスター',
-  'Snake-Eye': 'スネークアイ',
-  'Azamina': 'アザミナ',
-  'White Forest': '白き森',
-  'Artmage': 'アルトメギア',
-  'DoomZ': 'ドゥームズ',
-  'Elfnote': 'エルフェンノーツ',
-  'Power Patron': '獄神（パワー・パトロン）',
-  'Lunalight': 'ムーンライト',
+  'Dracoslayer': '竜剣士',
+  'Dragonmaid': 'ドラゴンメイド',
+  'Drytron': 'ドライトロン',
+  'Dual': 'デュアル',
+  'Dinamist': 'ダイナミスト',
+  'Earthbound': '地縛',
+  'Eldlich': 'エルドリッチ',
+  'Elemental HERO': 'Ｅ・ＨＥＲＯ',
+  'Endymion': 'エンディミオン',
+  'Evil Eye': '呪眼',
+  'Evil HERO': 'Ｅ－ＨＥＲＯ',
+  'Evil★Twin': 'イビルツイン',
+  'Exodia': 'エクゾディア',
+  'Exosister': 'エクソシスター',
+  'F.A.': 'Ｆ.Ａ.',
+  'Fabled': '魔轟神',
+  'Fire Fist': '炎星',
+  'Fire King': '炎王',
+  'Floowandereeze': 'ふわんだりぃず',
+  'Fortune Lady': 'フォーチュンレディ',
+  'Fossil': '化石',
+  'Fur Hire': '空牙団',
+  'Galaxy': 'ギャラクシー',
+  'Galaxy-Eyes': 'ギャラクシーアイズ',
   'Gem-Knight': 'ジェムナイト',
-  'Gem-': 'ジェムナイト'
+  'Generaider': 'ジェネレイド',
+  'Ghostrick': 'ゴーストリック',
+  'Gimmick Puppet': 'ギミック・パペット',
+  'Gladiator Beast': '剣闘獣',
+  'Gouki': '剛鬼',
+  'Graydle': 'グレイドル',
+  'Harpie': 'ハーピィ',
+  'Hole': '落とし穴',
+  'Horus': 'ホルス',
+  'Ice Barrier': '氷結界',
+  'Icejade': '氷水',
+  'Ignister': '＠イグニスター',
+  'Infinitrack': '無限起動',
+  'Infernoid': 'インフェルノイド',
+  'Infernoble Knight': '焔聖騎士',
+  'Invoked': '召喚獣',
+  'Inzektor': 'インゼクター',
+  'Junk': 'ジャンク',
+  'Kaiju': '壊獣',
+  'Kashtira': 'クシャトリラ',
+  'Knightmare': 'トロイメア',
+  'Kozmo': 'Ｋｏｚｍｏ',
+  'Kuriboh': 'クリボー',
+  'Labrynth': 'ラビュリンス',
+  'Lightsworn': 'ライトロード',
+  'Live☆Twin': 'ライブツイン',
+  'Lunalight': 'ムーンライト',
+  'Machina': 'マシンナーズ',
+  'Madolche': 'マドルチェ',
+  'Magical Musket': '魔弾',
+  'Majespecter': 'マジェスペクター',
+  'Mannadium': 'マナドゥム',
+  'Marincess': '海晶乙女',
+  'Masked HERO': 'Ｍ・ＨＥＲＯ',
+  'Mathmech': '斬機',
+  'Mayakashi': '魔妖',
+  'Mecha Phantom Beast': '幻獣機',
+  'Melffy': 'メルフィー',
+  'Metalfoes': 'メタルフォーゼ',
+  'Metaphys': 'メタファイズ',
+  'Mikanko': '御巫',
+  'Mirror Force': '聖なるバリア',
+  'Monarch': '帝',
+  'Morphtronic': 'Ｄ（ディフォーマー）',
+  'Myutant': 'ミュートリア',
+  'Mythical Beast': '魔導獣',
+  'Nekroz': '影霊衣',
+  'Neo-Spacian': 'ネオスペーシアン',
+  'Noble Knight': '聖騎士',
+  'Number': 'Ｎｏ.（ナンバーズ）',
+  'Odd-Eyes': 'オッドアイズ',
+  'Orcust': 'オルフェゴール',
+  'P.U.N.K.': 'Ｐ.Ｕ.Ｎ.Ｋ.',
+  'Paleozoic': 'バージェストマ',
+  'Pendulum': 'ペンデュラム',
+  'Performapal': 'ＥＭ（エンタメイト）',
+  'Performage': 'Ｅｍ（エンタメイジ）',
+  'Phantasm Spiral': '幻煌龍',
+  'Plunder Patroll': '海造賊',
+  'Prank-Kids': 'プランキッズ',
+  'Predaplant': '捕食植物',
+  'Prophecy': '魔導',
+  'Psy-Frame': 'ＰＳＹフレーム',
+  'Purrely': 'ピュアリィ',
+  'Qli': 'クリフォート',
+  'Raidraptor': 'ＲＲ',
+  'Rescue-ACE': 'Ｒ－ＡＣＥ',
+  'Rikka': '六花',
+  'Ritual Beast': '霊獣',
+  'Red-Eyes': 'レッドアイズ',
+  'Rescue-ACE': 'Ｒ－ＡＣＥ',
+  'Rikka': '六花',
+  'Ritual Beast': '霊獣',
+  'Salamangreat': 'サラマングレイト',
+  'Scareclaw': 'スケアクロー',
+  'Scrap': 'スクラップ',
+  'S-Force': 'Ｓ－Ｆｏｒｃｅ',
+  'Shaddoll': 'シャドール',
+  'Shark': 'シャーク',
+  'Shinobird': '霊魂鳥',
+  'Shiranui': '不知火',
+  'Simorgh': 'シムルグ',
+  'Six Samurai': '六武衆',
+  'Sky Striker': '閃刀姫',
+  'Snake-Eye': 'スネークアイ',
+  'Spright': 'スプライト',
+  'Subterror': 'サブテラー',
+  'Sunavalon': 'サンアバロン',
+  'Superheavy Samurai': '超重武者',
+  'Supreme King': '覇王',
+  'Swordsoul': '相剣',
+  'Sylvan': '森羅',
+  'Tearlaments': 'ティアラメンツ',
+  'Tellarknight': 'テラナイト',
+  'Tenpai Dragon': '天盃龍',
+  'Tenyi': '天威',
+  'The Phantom Knights': '幻影騎士団',
+  'The Weather': '天気',
+  'Therion': 'セリオンズ',
+  'Thunder Dragon': 'サンダー・ドラゴン',
+  'Time Thief': 'クロノダイバー',
+  'Timelord': '時械神',
+  'Tistina': 'ティスティナ',
+  'Toon': 'トゥーン',
+  'Train': '列車',
+  'Traptrix': '蟲惑魔',
+  'Trickstar': 'トリックスター',
+  'Tri-Brigade': '鉄獣戦線',
+  'True Draco': '真竜',
+  'U.A.': 'Ｕ.Ａ.',
+  'Unchained': '破械',
+  'Vaalmonica': 'ヴァルモニカ',
+  'Valkyrie': 'ワルキューレ',
+  'Vampire': 'ヴァンパイア',
+  'Vanquish Soul': 'ＶＳ（ヴァンキッシュ・ソウル）',
+  'Vaylantz': 'ヴァリアンツ',
+  'Vendread': 'ヴェンデット',
+  'Vernusylph': '春化精',
+  'Virtual World': '電脳堺',
+  'Voiceless Voice': '粛声',
+  'Volcanic': 'ヴォルカニック',
+  'White Forest': '白き森',
+  'Witchcrafter': 'ウィッチクラフト',
+  'World Chalice': '星杯',
+  'World Legacy': '星遺物',
+  'Worm': 'ワーム',
+  'Xyz': 'エクシーズ',
+  'Yang Zing': '竜星',
+  'Yosenju': '妖仙獣',
+  'Yubel': 'ユベル',
+  'Zefra': 'セフラ',
+  'Zoodiac': '十二獣',
+  'Zubaba': 'ズババ',
+};
+
+const INFERENCE_RULES = {
+  'ゴーティス': 'ゴーティス',
+  'ＶＳ': 'ＶＳ（ヴァンキッシュ・ソウル）',
+  'メメント': 'メメント',
+  'センチュリオン': 'センチュリオン',
+  'スネークアイ': 'スネークアイ',
+  '粛声': '粛声',
+  '御巫': '御巫',
+  'ピュアリィ': 'ピュアリィ',
+  '罪宝': '罪宝',
+  '白き森': '白き森',
+  'アザミナ': 'アザミナ',
+  'ライゼオル': 'ライゼオル',
+  'マナドゥム': 'マナドゥム',
+  'クシャトリラ': 'クシャトリラ',
+  'ティアラメンツ': 'ティアラメンツ',
+  'ラビュリンス': 'ラビュリンス',
+  'ドレミコード': 'ドレミコード',
+  '相剣': '相剣',
+  'ドラグマ': 'ドラグマ',
+  '鉄獣戦線': '鉄獣戦線',
+  '烙印': '烙印',
+  '深淵の獣': 'ビーステッド',
+  'ビーステッド': 'ビーステッド',
+  'デスピア': 'デスピア',
+  'スプリガンズ': 'スプリガンズ',
+  'セリオンズ': 'セリオンズ',
+  'スプライト': 'スプライト',
+  '氷水': '氷水'
 };
 
 async function updateDB() {
-  console.log('🔄 Updating database with hybrid merge (All + Japanese)...');
+  console.log('🔄 Regenerating database from local cards.json (112MB)...');
 
   try {
-    // Phase 1: Fetch All Cards (Foundation)
-    console.log('Fetching all cards (English context)...');
-    const baseResponse = await fetch(BASE_URL);
-    if (!baseResponse.ok) throw new Error(`Base API error: ${baseResponse.status}`);
-    const baseData = await baseResponse.json();
-
-    // IDをキーにしたマップを作成
-    const cardMap = new Map();
-    baseData.data.forEach(card => {
-      cardMap.set(card.id, {
-        id: card.id,
-        name: card.name, // 初期値は英語名
-        archetype: card.archetype || ''
-      });
-    });
-    console.log(`- Loaded ${cardMap.size} base cards.`);
-
-    // Phase 2: Fetch Japanese Names
-    console.log('Fetching Japanese names...');
-    let jaData = null;
-    const jaResponse = await fetch(JA_URL);
-    if (!jaResponse.ok) {
-      console.warn('⚠️ Japanese API failed, using English names as fallback.');
-    } else {
-      jaData = await jaResponse.json();
-      jaData.data.forEach(card => {
-        if (cardMap.has(card.id)) {
-          const existing = cardMap.get(card.id);
-          existing.name = card.name; // 日本語名で上書き
-          // テーマ名も日本語があればここで置換（APIが対応していれば）
-        }
-      });
-      console.log(`- Patched Japanese names for ${jaData.data.length} cards.`);
+    if (!fs.existsSync(SOURCE_FILE)) {
+      throw new Error(`Source file not found: ${SOURCE_FILE}`);
     }
 
-    // Final Mapping & Normalization
-    const finalCards = Array.from(cardMap.values()).map(card => ({
-      ...card,
-      normalizedName: normalizeText(card.name),
-      archetype: ARCHETYPE_MAP[card.archetype] || card.archetype
-    }));
+    const rawData = fs.readFileSync(SOURCE_FILE, 'utf8');
+    const allCards = JSON.parse(rawData);
+    console.log(`- Loaded ${allCards.length} cards from local source.`);
 
-    // Phase 3: Manual Overrides
-    const manualIds = new Set();
+    const inferredLog = [];
+    
+    // データ変換処理
+    const finalCards = allCards.map(card => {
+      // IDの選定 (MD passwordを優先)
+      const id = card.password || card.konami_id || card.id;
+      
+      // 日本語名のクレンジング (ルビタグの除去)
+      const jaNameBuffer = card.name && card.name.ja ? card.name.ja : (card.name && typeof card.name === 'string' ? card.name : "Unknown");
+      const jaName = cleanRubyTags(jaNameBuffer);
+      
+      // テーマ情報 (series 配列を活用)
+      let rawArchetype = "";
+      if (card.series && Array.isArray(card.series) && card.series.length > 0) {
+        rawArchetype = card.series[0];
+      }
+
+      let archetype = ARCHETYPE_MAP[rawArchetype] || rawArchetype;
+      
+      // 推論ロジック: テーマが空の場合のみ実行
+      if (!archetype) {
+        for (const [keyword, target] of Object.entries(INFERENCE_RULES)) {
+          if (jaName.includes(keyword)) {
+            archetype = target;
+            inferredLog.push(`${id}: ${jaName} -> ${target}`);
+            break;
+          }
+        }
+      }
+
+      return {
+        id: id,
+        name: jaName,
+        archetype: archetype,
+        normalizedName: normalizeText(jaName)
+      };
+    });
+
+    // 手動オーバーライドの適用
     if (fs.existsSync(MANUAL_FILE)) {
-      console.log('Merging manual card data...');
+      console.log('Applying manual card overrides...');
       const manualData = JSON.parse(fs.readFileSync(MANUAL_FILE, 'utf8'));
       manualData.forEach(mCard => {
-        manualIds.add(Number(mCard.id));
-        // マニアルデータは常に最優先
         const idx = finalCards.findIndex(c => Number(c.id) === Number(mCard.id));
         const processedMCard = {
           ...mCard,
-          normalizedName: normalizeText(mCard.name),
+          name: cleanRubyTags(mCard.name),
+          normalizedName: normalizeText(cleanRubyTags(mCard.name)),
           archetype: ARCHETYPE_MAP[mCard.archetype] || mCard.archetype
         };
+
         if (idx !== -1) {
-          finalCards[idx] = processedMCard;
+          // 既存のデータをベースに、マニュアルデータで項目ごとに上書き
+          // ただしマニュアル側のアーキタイプが空なら、自動判定した結果を維持する
+          const existing = finalCards[idx];
+          finalCards[idx] = {
+            ...existing,
+            ...processedMCard,
+            archetype: processedMCard.archetype || existing.archetype
+          };
         } else {
           finalCards.push(processedMCard);
         }
@@ -160,15 +331,9 @@ async function updateDB() {
       console.log(`- Merged ${manualData.length} manual entry/entries.`);
     }
 
-    // Detect untranslated cards (excluding ones in manual_cards.json)
-    const jaIds = jaData ? new Set(jaData.data.map(c => Number(c.id))) : new Set();
-    const untranslatedList = Array.from(cardMap.values())
-      .filter(card => !jaIds.has(Number(card.id)) && !manualIds.has(Number(card.id)))
-      .map(card => `${card.id}: ${card.name}`)
-      .sort((a, b) => a.localeCompare(b))
-      .join('\n');
-    fs.writeFileSync(path.join(process.cwd(), 'public', 'untranslated_cards.txt'), untranslatedList);
-    console.log(`- Generated untranslated_cards.txt with ${untranslatedList ? untranslatedList.split('\n').length : 0} entries.`);
+    // ログとデータベースの保存
+    fs.writeFileSync(INFERRED_LOG, inferredLog.sort().join('\n'));
+    console.log(`- Generated inferred_archetypes.txt with ${inferredLog.length} entries.`);
 
     fs.writeFileSync(OUTPUT_FILE, JSON.stringify(finalCards, null, 2));
     console.log(`✅ Successfully generated card_db.json with ${finalCards.length} cards!`);

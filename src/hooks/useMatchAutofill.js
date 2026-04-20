@@ -22,6 +22,11 @@ export function useMatchAutofill({
   detectedCardsRef // Ref for result-time analysis
 }) {
   const autoFillRunRef = useRef(false);
+  const blacklistedMyThemesRef = useRef(new Set());
+  const blacklistedOppThemesRef = useRef(new Set());
+  const lastMyDecksRef = useRef([]);
+  const lastOppDecksRef = useRef([]);
+  const lastStartTimeRef = useRef(null);
 
   const hasHistory = (targetTheme, activeThemes) => {
     if (!targetTheme || activeThemes.length === 0) return false;
@@ -32,6 +37,32 @@ export function useMatchAutofill({
 
   // --- Real-time continuous autofill ---
   useEffect(() => {
+    // 試合が変わったか判定してブラックリストをリセット
+    const currentStartTime = matchStartTimeRef.current;
+    if (currentStartTime !== lastStartTimeRef.current) {
+      blacklistedMyThemesRef.current.clear();
+      blacklistedOppThemesRef.current.clear();
+      lastMyDecksRef.current = [];
+      lastOppDecksRef.current = [];
+      lastStartTimeRef.current = currentStartTime;
+    }
+
+    // ユーザーによる「手動削除」を検知してブラックリストに追加
+    lastMyDecksRef.current.forEach(t => {
+      if (myDecks && !myDecks.includes(t)) {
+        blacklistedMyThemesRef.current.add(t);
+      }
+    });
+    lastOppDecksRef.current.forEach(t => {
+      if (oppDecks && !oppDecks.includes(t)) {
+        blacklistedOppThemesRef.current.add(t);
+      }
+    });
+
+    // 最新の状態を保存
+    lastMyDecksRef.current = myDecks || [];
+    lastOppDecksRef.current = oppDecks || [];
+
     if (detectedCards.length === 0) return;
 
     const elapsedSeconds = matchStartTimeRef.current ? (Date.now() - matchStartTimeRef.current) / 1000 : 0;
@@ -62,7 +93,10 @@ export function useMatchAutofill({
 
         if (score >= threshold && themeUniqueCards.BLUE[theme].size >= requiredSize) {
           const normTheme = normalizeTheme(themeMap[theme] || theme);
-          setMyDecks(prev => prev.includes(normTheme) ? prev : [...prev, normTheme]);
+          // ブラックリストに入っていない場合のみ追加
+          if (!blacklistedMyThemesRef.current.has(normTheme)) {
+            setMyDecks(prev => prev.includes(normTheme) ? prev : [...prev, normTheme]);
+          }
         }
       });
     }
@@ -75,7 +109,10 @@ export function useMatchAutofill({
 
         if (score >= threshold && themeUniqueCards.RED[theme].size >= requiredSize) {
           const normTheme = normalizeTheme(themeMap[theme] || theme);
-          setOppDecks(prev => prev.includes(normTheme) ? prev : [...prev, normTheme]);
+          // ブラックリストに入っていない場合のみ追加
+          if (!blacklistedOppThemesRef.current.has(normTheme)) {
+            setOppDecks(prev => prev.includes(normTheme) ? prev : [...prev, normTheme]);
+          }
         }
       });
     }
@@ -123,10 +160,17 @@ export function useMatchAutofill({
           if (sortedThemes.length > 0) {
             const [topTheme, topWeight] = sortedThemes[0];
             const isMainValid = topWeight >= 0.5 && themeUniqueNames[topTheme].size >= 2;
-            if (isMainValid) {
+            
+            // ブラックリストを考慮してフィルタリング
+            const isMySide = cards.some(c => c.side === 'BLUE');
+            const blacklist = isMySide ? blacklistedMyThemesRef.current : blacklistedOppThemesRef.current;
+
+            if (isMainValid && !blacklist.has(topTheme)) {
               results.push(topTheme);
               for (let i = 1; i < sortedThemes.length; i++) {
                 const [theme, weight] = sortedThemes[i];
+                if (blacklist.has(theme)) continue; // ブラックリスト除外
+
                 // 実績のあるサブテーマなら条件を 20% -> 5% に大幅緩和 & 1枚でOK
                 const isHistoried = hasHistory(theme, [topTheme]);
                 const shareThreshold = isHistoried ? 0.05 : 0.20;
