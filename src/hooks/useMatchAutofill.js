@@ -8,6 +8,7 @@ export function useMatchAutofill({
   isOpponentDeckLocked,
   isTagsLocked,
   availableTags,
+  availableDecks,
   themeMap,
   themePairings,
   myDecks,
@@ -33,6 +34,16 @@ export function useMatchAutofill({
     const pairings = themePairings.get(normalizeTheme(targetTheme));
     if (!pairings) return false;
     return activeThemes.some(at => pairings.has(normalizeTheme(at)));
+  };
+
+  const allowedThemesSet = useMemo(() => {
+    if (!availableDecks || availableDecks.length === 0) return null;
+    return new Set(availableDecks.filter(Boolean).map(t => normalizeTheme(t)));
+  }, [availableDecks]);
+
+  const isAllowed = (theme) => {
+    if (!allowedThemesSet) return true; // リストが空（または未ロード）の場合は制限しない
+    return allowedThemesSet.has(normalizeTheme(theme));
   };
 
   // --- Real-time continuous autofill ---
@@ -92,9 +103,11 @@ export function useMatchAutofill({
         const requiredSize = isHistoried ? 1 : 2; // 実績があれば1種類でOK
 
         if (score >= threshold && themeUniqueCards.BLUE[theme].size >= requiredSize) {
-          const normTheme = normalizeTheme(themeMap[theme] || theme);
-          // ブラックリストに入っていない場合のみ追加
-          if (!blacklistedMyThemesRef.current.has(normTheme)) {
+          const rawTheme = themeMap[theme] || theme;
+          const normTheme = normalizeTheme(rawTheme);
+
+          // ホワイトリストチェック・ブラックリストチェック
+          if (isAllowed(rawTheme) && !blacklistedMyThemesRef.current.has(normTheme)) {
             setMyDecks(prev => prev.includes(normTheme) ? prev : [...prev, normTheme]);
           }
         }
@@ -108,9 +121,11 @@ export function useMatchAutofill({
         const requiredSize = isHistoried ? 1 : 2; // 実績があれば1種類でOK
 
         if (score >= threshold && themeUniqueCards.RED[theme].size >= requiredSize) {
-          const normTheme = normalizeTheme(themeMap[theme] || theme);
-          // ブラックリストに入っていない場合のみ追加
-          if (!blacklistedOppThemesRef.current.has(normTheme)) {
+          const rawTheme = themeMap[theme] || theme;
+          const normTheme = normalizeTheme(rawTheme);
+
+          // ホワイトリストチェック・ブラックリストチェック
+          if (isAllowed(rawTheme) && !blacklistedOppThemesRef.current.has(normTheme)) {
             setOppDecks(prev => prev.includes(normTheme) ? prev : [...prev, normTheme]);
           }
         }
@@ -161,15 +176,16 @@ export function useMatchAutofill({
             const [topTheme, topWeight] = sortedThemes[0];
             const isMainValid = topWeight >= 0.5 && themeUniqueNames[topTheme].size >= 2;
             
-            // ブラックリストを考慮してフィルタリング
+            // ホワイトリスト・ブラックリストを考慮してフィルタリング
             const isMySide = cards.some(c => c.side === 'BLUE');
             const blacklist = isMySide ? blacklistedMyThemesRef.current : blacklistedOppThemesRef.current;
 
-            if (isMainValid && !blacklist.has(topTheme)) {
+            if (isMainValid && isAllowed(topTheme) && !blacklist.has(topTheme)) {
               results.push(topTheme);
               for (let i = 1; i < sortedThemes.length; i++) {
                 const [theme, weight] = sortedThemes[i];
                 if (blacklist.has(theme)) continue; // ブラックリスト除外
+                if (!isAllowed(theme)) continue;    // ホワイトリスト除外
 
                 // 実績のあるサブテーマなら条件を 20% -> 5% に大幅緩和 & 1枚でOK
                 const isHistoried = hasHistory(theme, [topTheme]);
@@ -228,5 +244,5 @@ export function useMatchAutofill({
     } else {
       autoFillRunRef.current = false;
     }
-  }, [result, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, availableTags, themeMap, setMyDecks, setOppDecks, setSelectedTags, addLog, detectedCardsRef, themePairings]);
+  }, [result, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, availableTags, themeMap, setMyDecks, setOppDecks, setSelectedTags, addLog, detectedCardsRef, themePairings, allowedThemesSet]);
 }
