@@ -192,7 +192,8 @@ function doPost(e) {
       let rowIndex = -1;
       
       for (let i = 1; i < data.length; i++) {
-        const sheetId = String(data[i][0] || "").trim();
+        const d = data[i][0];
+        const sheetId = (d instanceof Date) ? Utilities.formatDate(d, "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss") : String(d || "").trim();
         if (sheetId === searchId) {
           rowIndex = i + 1;
           break;
@@ -204,8 +205,12 @@ function doPost(e) {
         return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Record deleted" })).setMimeType(ContentService.MimeType.JSON);
       }
       
-      // デバッグ用: シートの最初の数行のIDをエラーに含める
-      const sampleIds = data.slice(1, 4).map(r => r[0]).join(", ");
+      // デバッグ用: シートの最初の数行のIDをエラーに含める（フォーマット済みで表示）
+      const sampleIds = data.slice(1, 11).map(r => {
+        const d = r[0];
+        return (d instanceof Date) ? Utilities.formatDate(d, "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss") : String(d || "");
+      }).join(", ");
+      
       return ContentService.createTextOutput(JSON.stringify({ 
         success: false, 
         error: "Record not found. Searched ID: [" + searchId + "]. Sample IDs in sheet: [" + sampleIds + "]"
