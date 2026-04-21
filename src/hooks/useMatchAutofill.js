@@ -9,7 +9,6 @@ export function useMatchAutofill({
   isTagsLocked,
   availableTags,
   availableDecks,
-  themeMap,
   themePairings,
   myDecks,
   oppDecks,
@@ -103,11 +102,10 @@ export function useMatchAutofill({
         const requiredSize = isHistoried ? 1 : 2; // 実績があれば1種類でOK
 
         if (score >= threshold && themeUniqueCards.BLUE[theme].size >= requiredSize) {
-          const rawTheme = themeMap[theme] || theme;
-          const normTheme = normalizeTheme(rawTheme);
+          const normTheme = normalizeTheme(theme);
 
           // ホワイトリストチェック・ブラックリストチェック
-          if (isAllowed(rawTheme) && !blacklistedMyThemesRef.current.has(normTheme)) {
+          if (isAllowed(theme) && !blacklistedMyThemesRef.current.has(normTheme)) {
             setMyDecks(prev => prev.includes(normTheme) ? prev : [...prev, normTheme]);
           }
         }
@@ -121,11 +119,10 @@ export function useMatchAutofill({
         const requiredSize = isHistoried ? 1 : 2; // 実績があれば1種類でOK
 
         if (score >= threshold && themeUniqueCards.RED[theme].size >= requiredSize) {
-          const rawTheme = themeMap[theme] || theme;
-          const normTheme = normalizeTheme(rawTheme);
+          const normTheme = normalizeTheme(theme);
 
           // ホワイトリストチェック・ブラックリストチェック
-          if (isAllowed(rawTheme) && !blacklistedOppThemesRef.current.has(normTheme)) {
+          if (isAllowed(theme) && !blacklistedOppThemesRef.current.has(normTheme)) {
             setOppDecks(prev => prev.includes(normTheme) ? prev : [...prev, normTheme]);
           }
         }
@@ -144,14 +141,13 @@ export function useMatchAutofill({
         }
       });
     }
-  }, [detectedCards, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, availableTags, themeMap, setMyDecks, setOppDecks, setSelectedTags, matchStartTimeRef, myDecks, oppDecks, themePairings]);
+  }, [detectedCards, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, availableTags, setMyDecks, setOppDecks, setSelectedTags, matchStartTimeRef, myDecks, oppDecks, themePairings]);
 
   // --- Match-End Detail Autofill ---
   useEffect(() => {
     if (result === 'VICTORY' || result === 'LOSE') {
       if (!autoFillRunRef.current) {
         autoFillRunRef.current = true;
-        const translateTheme = (t) => themeMap[t] || t;
         
         const getValidThemes = (cards) => {
           if (cards.length === 0) return [];
@@ -160,8 +156,7 @@ export function useMatchAutofill({
           let totalSideWeight = 0;
 
           cards.forEach(c => {
-            const rawTheme = translateTheme(c.archetype);
-            const theme = normalizeTheme(rawTheme);
+            const theme = normalizeTheme(c.archetype);
             const weight = c.totalWeight || 0;
             themeWeights[theme] = (themeWeights[theme] || 0) + weight;
             if (!themeUniqueNames[theme]) themeUniqueNames[theme] = new Set();
@@ -244,5 +239,5 @@ export function useMatchAutofill({
     } else {
       autoFillRunRef.current = false;
     }
-  }, [result, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, availableTags, themeMap, setMyDecks, setOppDecks, setSelectedTags, addLog, detectedCardsRef, themePairings, allowedThemesSet]);
+  }, [result, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, availableTags, setMyDecks, setOppDecks, setSelectedTags, addLog, detectedCardsRef, themePairings, allowedThemesSet]);
 }

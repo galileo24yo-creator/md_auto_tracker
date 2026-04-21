@@ -15,7 +15,6 @@ export function useOcrEngine({
   recordingRef,
   stateRef,
   slotsRef,
-  themeMapRef,
   statusTemplatesRef,
   addLog,
   playNotificationSound,

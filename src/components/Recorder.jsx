@@ -74,19 +74,12 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
   const matchStartTimeRef = useRef(null);
   const detectedCardsRef = useRef([]);
   const statusTemplatesRef = useRef({});
-  const themeMapRef = useRef({});
 
   // Sync state to ref for match-end analysis
   useEffect(() => { detectedCardsRef.current = detectedCards; }, [detectedCards]);
 
-  // Load Templates & Theme Map
+  // Load Templates
   useEffect(() => {
-    // Note: statusTemplates logic is in parent usually or moved to hook, 
-    // but we can load them here or in hook. Let's load them in the hook or pass them.
-    // To keep it simple, we load them in the hook if needed, but here we can just fetch.
-    fetch('/theme_map.json').then(res => res.json()).then(data => themeMapRef.current = data);
-    
-    // Status template loading logic (originally in Recorder.jsx)
     const loadStatusTemplates = async () => {
       const { extractSequenceFeatures } = await import('../lib/visionEngine');
       const templates = {};
@@ -107,7 +100,6 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
   }, []);
 
   const resetSlots = useCallback(() => {
-    // gotoState が React ステートと解析エンジン用 Ref を同時に更新します
     setTurn(''); setIsTurnLocked(false);
     setResult(''); setIsResultLocked(false);
     setDiff(''); setRatingChange(''); setIsDiffLocked(false);
@@ -165,7 +157,6 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
     recordingRef: { current: isRecording },
     stateRef,
     slotsRef,
-    themeMapRef,
     statusTemplatesRef,
     addLog,
     playNotificationSound,
@@ -202,7 +193,6 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
     isTagsLocked,
     availableTags,
     availableDecks,
-    themeMap: themeMapRef.current,
     themePairings: themePairings,
     myDecks,
     oppDecks,
