@@ -27,9 +27,9 @@ function normalizeText(text) {
 function cleanRubyTags(text) {
   if (!text) return '';
   return text
-    .replace(/<rt>.*?<\/rt>/g, '') 
-    .replace(/<rp>.*?<\/rp>/g, '') 
-    .replace(/<\/?ruby>/g, '')    
+    .replace(/<rt>.*?<\/rt>/g, '')
+    .replace(/<rp>.*?<\/rp>/g, '')
+    .replace(/<\/?ruby>/g, '')
     .trim();
 }
 
@@ -119,7 +119,7 @@ const ARCHETYPE_MAP = {
   'Magical Musket': '魔弾',
   'Majespecter': 'マジェスペクター',
   'Mannadium': 'マナドゥム',
-  'Marincess': '海晶乙女',
+  'Marincess': 'マリンセス',
   'Masked HERO': 'Ｍ・ＨＥＲＯ',
   'Mathmech': '斬機',
   'Mayakashi': '魔妖',
@@ -233,7 +233,7 @@ async function updateDB() {
     const baseResponse = await fetch(BASE_URL);
     if (!baseResponse.ok) throw new Error(`Base API error: ${baseResponse.status}`);
     const baseData = await baseResponse.json();
-    
+
     const cardMap = new Map();
     baseData.data.forEach(card => {
       cardMap.set(card.id, {
@@ -261,7 +261,7 @@ async function updateDB() {
     }
 
     const inferredLog = [];
-    
+
     // Final Mapping & Normalization
     let finalCards = Array.from(cardMap.values()).map(card => {
       let archetype = ARCHETYPE_MAP[card.archetype] || card.archetype;

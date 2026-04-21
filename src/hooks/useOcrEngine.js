@@ -31,6 +31,7 @@ export function useOcrEngine({
   setDetectedCards,
   setCurrentCard,
   resetSlots,
+  gotoState,
   onRecorded,
   postData,
   isProcessing,
@@ -203,7 +204,7 @@ export function useOcrEngine({
                 resetSlots();
               }
               setTurn(foundTurnValue); setIsTurnLocked(true); setTurnScore((res_f.match ? res_f.confidence : res_s.confidence) / 100);
-              stateRef.current = STATES.IN_MATCH; // Update Ref
+              gotoState(STATES.IN_MATCH); // Use gotoState, not direct ref assign
               // Note: currentState in parent will be updated via state update if we expose it
               matchStartTimeRef.current = Date.now();
               addLog(`対戦中... [${foundTurnValue === '先' ? '先攻' : '後攻'}] を検知しました`, 'success');
@@ -332,7 +333,7 @@ export function useOcrEngine({
               const detectedResult = sequenceResult || (isVictory ? 'VICTORY' : 'LOSE');
               setResult(detectedResult); setIsResultLocked(true);
               const nextState = (curMode === 'ランク' || slotsRef.current.isDiffLocked) ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
-              stateRef.current = nextState;
+              gotoState(nextState); // Use gotoState
               playNotificationSound('single');
             }
           }
@@ -348,7 +349,7 @@ export function useOcrEngine({
           if (buffer.length === 3 && buffer.every(v => v === d)) {
             const f = curMode === 'DC' ? d.replace(/\./g, '') : (parseFloat(d) / 100).toFixed(2);
             setDiff(f); setRatingChange(f); setIsDiffLocked(true);
-            stateRef.current = STATES.NEXT_MATCH_STANDBY;
+            gotoState(STATES.NEXT_MATCH_STANDBY); // Use gotoState
             playNotificationSound('single');
           }
         }

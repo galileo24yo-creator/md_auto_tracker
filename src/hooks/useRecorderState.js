@@ -32,6 +32,11 @@ export function useRecorderState() {
   const stateRef = useRef(currentState);
   useEffect(() => { stateRef.current = currentState; }, [currentState]);
 
+  const gotoState = (ns) => {
+    stateRef.current = ns;
+    setCurrentState(ns);
+  };
+
   const slotsRef = useRef({ 
     turn, result, diff, mode, isTurnLocked, isResultLocked, isDiffLocked, 
     myDecks, oppDecks, isMyDeckLocked, isOpponentDeckLocked 
@@ -62,6 +67,7 @@ export function useRecorderState() {
     isResultLocked, setIsResultLocked,
     isDiffLocked, setIsDiffLocked,
     currentState, setCurrentState,
+    gotoState,
     detectedCards, setDetectedCards,
     currentCard, setCurrentCard,
     stateRef,

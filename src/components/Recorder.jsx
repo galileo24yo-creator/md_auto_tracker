@@ -38,6 +38,7 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
     isResultLocked, setIsResultLocked,
     isDiffLocked, setIsDiffLocked,
     currentState, setCurrentState,
+    gotoState,
     detectedCards, setDetectedCards,
     currentCard, setCurrentCard,
     stateRef,
@@ -106,10 +107,7 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
   }, []);
 
   const resetSlots = useCallback(() => {
-    // 解析エンジンを先行してリセット (stateRef.current を強制書き換え)
-    // captureAndAnalyze ループがこの変化を検知して内部バッファを自律リセットします
-    stateRef.current = STATES.DETECTING_TURN;
-    
+    // gotoState が React ステートと解析エンジン用 Ref を同時に更新します
     setTurn(''); setIsTurnLocked(false);
     setResult(''); setIsResultLocked(false);
     setDiff(''); setRatingChange(''); setIsDiffLocked(false);
@@ -117,12 +115,12 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
     if (!isMyDeckLocked) setMyDecks([]);
     if (!isOpponentDeckLocked) setOppDecks([]);
     if (!isTagsLocked) setSelectedTags([]);
-    setCurrentState(STATES.DETECTING_TURN);
+    gotoState(STATES.DETECTING_TURN);
     matchStartTimeRef.current = null;
     setDetectedCards([]);
     setCurrentCard({ name: '', archetype: '', confidence: 0, votes: 0 });
     addLog("スロットリセット → 次の試合待機中", 'info');
-  }, [isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, addLog, setTurn, setIsTurnLocked, setResult, setIsResultLocked, setDiff, setRatingChange, setIsDiffLocked, setTurnScore, setResultScore, setMyDecks, setOppDecks, setSelectedTags, setCurrentState, setDetectedCards, setCurrentCard, stateRef]);
+  }, [isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, addLog, setTurn, setIsTurnLocked, setResult, setIsResultLocked, setDiff, setRatingChange, setIsDiffLocked, setTurnScore, setResultScore, setMyDecks, setOppDecks, setSelectedTags, gotoState, setDetectedCards, setCurrentCard]);
 
   const saveMatch = useCallback(async () => {
     if (isProcessing) return;
@@ -182,6 +180,7 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
     setResultScore,
     setDetectedCards,
     setCurrentCard,
+    gotoState,
     resetSlots,
     postData,
     isProcessing,
