@@ -106,6 +106,9 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
   }, []);
 
   const resetSlots = useCallback(() => {
+    // 解析エンジンを先行してリセット (stateRef.current を強制書き換え)
+    if (resetEngine) resetEngine();
+    
     setTurn(''); setIsTurnLocked(false);
     setResult(''); setIsResultLocked(false);
     setDiff(''); setRatingChange(''); setIsDiffLocked(false);
@@ -118,7 +121,7 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
     setDetectedCards([]);
     setCurrentCard({ name: '', archetype: '', confidence: 0, votes: 0 });
     addLog("スロットリセット → 次の試合待機中", 'info');
-  }, [isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, addLog, setTurn, setIsTurnLocked, setResult, setIsResultLocked, setDiff, setRatingChange, setIsDiffLocked, setTurnScore, setResultScore, setMyDecks, setOppDecks, setSelectedTags, setCurrentState, setDetectedCards, setCurrentCard]);
+  }, [resetEngine, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, addLog, setTurn, setIsTurnLocked, setResult, setIsResultLocked, setDiff, setRatingChange, setIsDiffLocked, setTurnScore, setResultScore, setMyDecks, setOppDecks, setSelectedTags, setCurrentState, setDetectedCards, setCurrentCard]);
 
   const saveMatch = useCallback(async () => {
     if (isProcessing) return;
@@ -159,7 +162,8 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
     isFrozenRef,
     isBusyRef,
     rvfcIdRef,
-    ocrWorkerRef
+    ocrWorkerRef,
+    resetEngine
   } = useOcrEngine({
     recordingRef: { current: isRecording },
     stateRef,

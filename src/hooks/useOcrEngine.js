@@ -103,6 +103,18 @@ export function useOcrEngine({
     }
   };
 
+  const resetEngine = useCallback(() => {
+    stateRef.current = STATES.DETECTING_TURN;
+    stablePointsBufferRef.current = [];
+    detectionAttemptsRef.current = 0;
+    cardVotesRef.current = {};
+    sessionHitsRef.current = 0;
+    lastDetectedSideRef.current = 'NONE';
+    lastSessionCardRef.current = '';
+    warningCooldownRef.current = 0;
+    isCardOcrBusyRef.current = false;
+  }, [stateRef]);
+
   const triggerAutoSaveForNextMatch = async (curSlots) => {
     if (isProcessing || (!curSlots.turn && !curSlots.result)) return;
     const now = Date.now();
@@ -188,6 +200,7 @@ export function useOcrEngine({
                 if (cur.turn || cur.result) {
                   triggerAutoSaveForNextMatch(cur).catch(err => console.error("Auto-save error:", err));
                 }
+                resetEngine(); // Use the new engine reset
                 resetSlots();
               }
               setTurn(foundTurnValue); setIsTurnLocked(true); setTurnScore((res_f.match ? res_f.confidence : res_s.confidence) / 100);
@@ -369,6 +382,7 @@ export function useOcrEngine({
     isBusyRef,
     rvfcIdRef,
     ocrWorkerRef,
-    ocrCanvasRef
+    ocrCanvasRef,
+    resetEngine
   };
 }
