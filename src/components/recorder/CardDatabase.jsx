@@ -37,7 +37,14 @@ const CardDatabase = ({ detectedCards, handleCardClick, handleTagClick }) => {
                     className={`bg-zinc-950/40 border border-zinc-800/50 p-4 rounded-2xl flex flex-col gap-1 transition-all duration-200 group/item relative cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 active:scale-[0.98] ${isOpen ? 'ring-1 ring-indigo-500 border-indigo-500/50' : ''}`}
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <span className="text-zinc-200 text-xs font-black truncate uppercase tracking-tight">{c.name}</span>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="text-zinc-200 text-xs font-black truncate uppercase tracking-tight">{c.name}</span>
+                        {c.playedOn && (
+                          <span className={`px-1 rounded-sm text-[8px] font-black uppercase ${c.playedOn === 'MY_TURN' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-rose-500/20 text-rose-400'}`}>
+                            {c.playedOn === 'MY_TURN' ? 'My-T' : 'Opp-T'}
+                          </span>
+                        )}
+                      </div>
                       <span className="text-[10px] font-black text-indigo-400/40 tabular-nums shrink-0">x{c.hits || 1}</span>
                     </div>
                     {c.archetype && <span className="text-zinc-500 text-[9px] font-bold uppercase tracking-widest">{c.archetype}</span>}
@@ -98,8 +105,15 @@ const CardDatabase = ({ detectedCards, handleCardClick, handleTagClick }) => {
                     className={`bg-zinc-950/40 border border-zinc-800/50 p-4 rounded-2xl flex flex-col gap-1 text-right transition-all duration-200 group/item relative cursor-pointer hover:border-rose-500/50 hover:bg-rose-500/5 active:scale-[0.98] ${isOpen ? 'ring-1 ring-rose-500 border-rose-500/50' : ''}`}
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <span className="text-zinc-200 text-xs font-black truncate uppercase tracking-tight">{c.name}</span>
                       <span className="text-[10px] font-black text-rose-400/40 tabular-nums shrink-0">x{c.hits || 1}</span>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        {c.playedOn && (
+                          <span className={`px-1 rounded-sm text-[8px] font-black uppercase ${c.playedOn === 'MY_TURN' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-rose-500/20 text-rose-400'}`}>
+                            {c.playedOn === 'MY_TURN' ? 'My-T' : 'Opp-T'}
+                          </span>
+                        )}
+                        <span className="text-zinc-200 text-xs font-black truncate uppercase tracking-tight">{c.name}</span>
+                      </div>
                     </div>
                     {c.archetype && <span className="text-zinc-500 text-[9px] font-bold uppercase tracking-widest">{c.archetype}</span>}
                     {/* Progress Bar */}

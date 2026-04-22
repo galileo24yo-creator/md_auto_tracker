@@ -81,7 +81,7 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
   // Load Templates
   useEffect(() => {
     const loadStatusTemplates = async () => {
-      const { extractSequenceFeatures } = await import('../lib/visionEngine');
+      const { extractSequenceFeatures, calculateWordProfile } = await import('../lib/visionEngine');
       const templates = {};
       const urls = { victory: '/templates/victory.png', lose: '/templates/lose.png' };
       for (const [key, url] of Object.entries(urls)) {
@@ -90,8 +90,14 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
           await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
           const canvas = document.createElement('canvas'); canvas.width = img.width; canvas.height = img.height;
           const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0);
-          const { features } = extractSequenceFeatures(ctx.getImageData(0, 0, img.width, img.height), 0, -9.0);
-          templates[key] = features;
+          const raw = ctx.getImageData(0, 0, img.width, img.height);
+          
+          // 従来のコンポーネント抽出 (念のため残す)
+          const { features } = extractSequenceFeatures(raw, 0, -9.0);
+          // 新しい波形プロファイル抽出
+          const { profile } = calculateWordProfile(raw, 0, 64);
+          
+          templates[key] = { features, profile };
         } catch (e) {}
       }
       statusTemplatesRef.current = templates;
@@ -133,7 +139,11 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
       detectedCardsForLog: detectedCards
         .filter(c => totalWeights[`${c.side}-${c.name}`] >= 0.8)
         .sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0)) // Chronological
-        .map(c => `${c.side === 'BLUE' ? '自' : '敵'}：${c.name}`)
+        .map(c => {
+          const sidePrefix = c.side === 'BLUE' ? '自' : '敵';
+          const turnSuffix = c.playedOn === 'MY_TURN' ? ' (自T)' : c.playedOn === 'OPP_TURN' ? ' (敵T)' : '';
+          return `${sidePrefix}：${c.name}${turnSuffix}`;
+        })
         .filter((val, i, arr) => i === 0 || val !== arr[i - 1]) // Squash consecutive duplicates
         .join(', ')
     };

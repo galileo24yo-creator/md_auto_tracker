@@ -10,6 +10,7 @@ const AnalysisMonitor = ({
   return (
     <div className="bg-zinc-950/40 p-3 rounded-2xl border border-zinc-800/50 flex flex-col items-center relative min-h-[220px]">
       <canvas ref={canvasRef} className="max-w-full h-auto rounded-xl border border-zinc-900 shadow-2xl" />
+
       <button 
         onClick={() => setShowRoiOverlay(!showRoiOverlay)} 
         className="absolute top-5 right-5 p-2 bg-zinc-950/80 rounded-xl border border-zinc-800 text-zinc-500 hover:text-white transition-all z-10"

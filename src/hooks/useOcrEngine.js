@@ -2,7 +2,9 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { createWorker } from 'tesseract.js';
 import { 
   ROIS, getROIData, STATES, detectCardColor, getGameAreaBox, 
-  toGrayscale, calculateSSD, normalizeContent, extractSequenceFeatures, matchSequence, multiThresholdDetectRating
+  toGrayscale, calculateSSD, normalizeContent, extractSequenceFeatures, matchSequence, multiThresholdDetectRating,
+  detectTurnOwner, calculateWordProfile, compareProfiles, calculateProfileFromBin,
+  drawBinarizedToCanvas, detectResultColor, drawComponentsToCanvas, extractComponentFeatures
 } from '../lib/visionEngine';
 import { fuzzyIncludes } from '../lib/utils';
 import { normalizeCardName } from '../lib/recorderUtils';
@@ -294,9 +296,22 @@ export function useOcrEngine({
                               };
                               return updated;
                             } else {
+                              // 手番情報の取得 (石の色判定)
+                              const turnRoi = ROIS.TURN_INDICATOR;
+                              const turnData = getROIData(ctx, v, turnRoi, 100, 100);
+                              const turnOwner = detectTurnOwner(turnData);
+
                               const isSoftCut = matchScore >= 0.25;
-                              addLog(`${isSoftCut ? '[減衰加算]' : 'カード検知'}: ${name} (${side === 'BLUE' ? '味方' : '相手'})`, side === 'BLUE' ? 'info' : 'warning');
-                              return [...prev, { name, side, archetype: bestMatch.archetype, hits: 1, totalWeight: effectiveWeight, timestamp: Date.now() }];
+                              addLog(`${isSoftCut ? '[減衰加算]' : 'カード検知'}: ${name} (${side === 'BLUE' ? '味方' : '相手'}) [${turnOwner === 'MY_TURN' ? '自T' : turnOwner === 'OPP_TURN' ? '敵T' : '?'}]`, side === 'BLUE' ? 'info' : 'warning');
+                              return [...prev, { 
+                                name, 
+                                side, 
+                                archetype: bestMatch.archetype, 
+                                hits: 1, 
+                                totalWeight: effectiveWeight, 
+                                timestamp: Date.now(),
+                                playedOn: turnOwner
+                              }];
                             }
                           });
                           setCurrentCard({ name, archetype: bestMatch.archetype, side, confidence, votes: sessionHitsRef.current });
@@ -322,25 +337,79 @@ export function useOcrEngine({
             const val = roiBin[i] === 1 ? 0 : 255;
             const idx = i * 4; ocrImgData.data[idx] = val; ocrImgData.data[idx + 1] = val; ocrImgData.data[idx + 2] = val; ocrImgData.data[idx + 3] = 255;
           }
-          ocrCtx.putImageData(ocrImgData, 0, 0);
-          if (eng) {
+          ocrCtx.putImageData(ocrImgData, 0, 0); // 復元
+          const rawData = ocrCtx.getImageData(0, 0, width, height);
+          
+          // 色判定用に、二値化前のカラーデータを保持しておく (引数を修正)
+          const colorData = getROIData(ctx, v, roi, width, height);
+
+          // 従来のコンポーネント抽出を実行して分離状態を確認
+          const { comps, bin: featBin } = extractSequenceFeatures(rawData, 0, 0);
+
+          // 1. Waveform Profile Matching (Fast)
+          // 7文字分離に成功した featBin を判定に使用する
+          const { profile: liveProfile, count: whitePixels } = calculateProfileFromBin(featBin, width, height, 64);
+          const vRes = compareProfiles(liveProfile, statusTemplatesRef.current.victory?.profile);
+          const lRes = compareProfiles(liveProfile, statusTemplatesRef.current.lose?.profile);
+          const resColor = detectResultColor(colorData); 
+
+          // 1文字ずつの精密マッチング (Template Matching)
+          const seqMatchV = matchSequence(comps.map((c, i) => extractComponentFeatures(featBin, width, height, c)), statusTemplatesRef.current.victory?.features || []);
+          const seqMatchL = matchSequence(comps.map((c, i) => extractComponentFeatures(featBin, width, height, c)), statusTemplatesRef.current.lose?.features || []);
+          
+          let detectedResult = null;
+          let method = '';
+
+          // 判定A: 1文字ずつの精密マッチングが成功
+          if (seqMatchV.match) {
+            detectedResult = 'VICTORY';
+            method = 'TemplateMatch';
+          } else if (seqMatchL.match) {
+            detectedResult = 'LOSE';
+            method = 'TemplateMatch';
+          }
+          // 判定B: 波形が55%以上、かつ色が一致 or 圧倒的な確信度差があれば確定
+          else {
+            const vGap = vRes.confidence - lRes.confidence;
+            const lGap = lRes.confidence - vRes.confidence;
+
+            if (vRes.confidence > 55 && (resColor === 'GOLD' || vGap > 25)) {
+              detectedResult = 'VICTORY';
+              method = 'Waveform+Color';
+            } else if (lRes.confidence > 55 && (resColor === 'BLUE' || lGap > 25)) {
+              detectedResult = 'LOSE';
+              method = 'Waveform+Color';
+            }
+          }
+
+          // 2. Sequence/OCR Backup (Slow) - If waveform+color failed but looks like a result
+          const potentialMatch = vRes.confidence > 40 || lRes.confidence > 40 || resColor !== 'NEUTRAL';
+          if (!detectedResult && potentialMatch && eng) {
+            console.log("-> Waveform uncertain. Attempting OCR backup...");
             const { data: { text, confidence } } = await eng.recognize(ocrCanvas);
             const cleanText = text.toUpperCase().replace(/\s+/g, '').slice(0, 15);
             setResultScore(confidence / 100);
-            const rawData = ocrCtx.getImageData(0, 0, width, height);
+            
             const { features } = extractSequenceFeatures(rawData, 0, 0);
-            const tVictory = matchSequence(features, statusTemplatesRef.current.victory || []);
-            const tLose = matchSequence(features, statusTemplatesRef.current.lose || []);
-            let sequenceResult = tVictory.match ? 'VICTORY' : (tLose.match ? 'LOSE' : null);
-            const isVictory = fuzzyIncludes(cleanText, 'VICTORY', 1);
-            const isLose = confidence > 35 && fuzzyIncludes(cleanText, 'LOSE', 1);
-            if (sequenceResult || isVictory || isLose) {
-              const detectedResult = sequenceResult || (isVictory ? 'VICTORY' : 'LOSE');
-              setResult(detectedResult); setIsResultLocked(true);
-              const nextState = (curMode === 'ランク' || slotsRef.current.isDiffLocked) ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
-              gotoState(nextState); // Use gotoState
-              playNotificationSound('single');
+            const tVictory = matchSequence(features, statusTemplatesRef.current.victory?.features || []);
+            const tLose = matchSequence(features, statusTemplatesRef.current.lose?.features || []);
+            
+            if (tVictory.match || fuzzyIncludes(cleanText, 'VICTORY', 1)) {
+              detectedResult = 'VICTORY';
+              method = 'OCR';
+            } else if (tLose.match || (confidence > 35 && fuzzyIncludes(cleanText, 'LOSE', 1))) {
+              detectedResult = 'LOSE';
+              method = 'OCR';
             }
+          }
+
+          if (detectedResult) {
+            addLog(`[${method}判定] 勝敗を検知: ${detectedResult}`, 'success');
+            console.log(`[Result Found] ${detectedResult} via ${method}`);
+            setResult(detectedResult); setIsResultLocked(true);
+            const nextState = (curMode === 'ランク' || slotsRef.current.isDiffLocked) ? STATES.NEXT_MATCH_STANDBY : STATES.DETECTING_RATING;
+            gotoState(nextState);
+            playNotificationSound('single');
           }
         }
       }

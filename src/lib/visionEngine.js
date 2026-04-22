@@ -12,7 +12,8 @@ export const ROIS = {
   CARD_RUBY: { x: 0.015, y: 0.130, w: 0.170, h: 0.015 }, // ルビの縦幅を半分にして下寄せ
   CARD_NAME: { x: 0.015, y: 0.148, w: 0.170, h: 0.032 }, // ルビを避けるため y を下げ (+0.003)、h を調整
   CARD_VISUAL: { x: 0.015, y: 0.200, w: 0.170, h: 0.150 }, // 比較用：名前エリアを避け、イラストエリアで判定
-  CARD_COLOR_INDICATOR: { x: 0.160, y: 0.330, w: 0.015, h: 0.080 } // 30px分(-0.03)上へ
+  CARD_COLOR_INDICATOR: { x: 0.160, y: 0.330, w: 0.015, h: 0.080 }, // 30px分(-0.03)上へ
+  TURN_INDICATOR: { x: 0.73, y: 0.39, w: 0.085, h: 0.125 } // わずかに拡大してマージンを確保
 };
 
 export const DIGIT_TEMPLATES = {
@@ -555,23 +556,211 @@ export const extractSequenceFeatures = (imageData, threshold = 0, angle = 0) => 
   let effThreshold = threshold;
   if (threshold <= 0) {
     const otsu = calculateOtsuThreshold(processedImageData.data);
-    // Add offset (+25) for more precise character separation
-    effThreshold = Math.max(60, Math.min(240, otsu + 25));
-    // if (angle !== 0) console.log(`Extraction Otsu: ${otsu} -> Final: ${effThreshold}`);
+    // しきい値を上げ、文字を細くして分離を促す (+45)
+    effThreshold = Math.max(80, Math.min(245, otsu + 45));
   }
 
-  const bin = binarizeROI(processedImageData, effThreshold);
+  let bin = binarizeROI(processedImageData, effThreshold);
+  
+  // 自動反転判定: 縁（四隅）が白ければ、背景が白と判断して反転させる
+  const cornerSum = bin[0] + bin[finalW-1] + bin[finalW*(finalH-1)] + bin[finalW*finalH-1];
+  if (cornerSum >= 3) {
+    for (let i = 0; i < bin.length; i++) bin[i] = bin[i] === 1 ? 0 : 1;
+  }
+
   const rawComps = findComponents(bin, finalW, finalH);
-  // Balanced merge distance for 120px target height (back to sweet spot)
-  const mergedComps = mergeNearbyComponents(rawComps, 1.0); 
+  // マージ基準を厳格化 (-2.0): 重なりがない限りマージしない
+  const mergedComps = mergeNearbyComponents(rawComps, -2.0); 
   
   return {
     features: mergedComps.map(c => extractComponentFeatures(bin, finalW, finalH, c)),
     comps: mergedComps,
-    bin: bin, // For debug visualization
+    bin: bin, 
     width: finalW,
     height: finalH
   };
+};
+
+/**
+ * Extracts a 1D column-wise density profile from a binarized ROI.
+ * This is highly robust to touching characters (merges).
+ * Returns a normalized array of fixed length (default 64).
+ */
+export const calculateWordProfile = (imageData, threshold = 0, targetLen = 64) => {
+  const w = imageData.width, h = imageData.height;
+  
+  // Dynamic threshold if not provided
+  let effThreshold = threshold;
+  if (threshold <= 0) {
+    effThreshold = calculateOtsuThreshold(imageData.data) + 15;
+  }
+  
+  let bin = binarizeROI(imageData, effThreshold);
+  
+  // 自動反転判定: 縁（四隅）が白ければ、背景が白と判断して反転させる
+  const cornerSum = bin[0] + bin[w-1] + bin[w*(h-1)] + bin[w*h-1];
+  if (cornerSum >= 3) {
+    for (let i = 0; i < bin.length; i++) bin[i] = bin[i] === 1 ? 0 : 1;
+  }
+  
+  // Calculate raw column sums
+  const rawColSums = new Float32Array(w);
+  let minX = w, maxX = 0;
+  for (let x = 0; x < w; x++) {
+    let sum = 0;
+    for (let y = 0; y < h; y++) {
+      if (bin[y * w + x]) sum++;
+    }
+    rawColSums[x] = sum;
+    if (sum > 0) {
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+    }
+  }
+
+  // Handle empty image
+  if (minX > maxX) return { profile: new Float32Array(targetLen).fill(0), bin, threshold: effThreshold };
+
+  // Trim to content
+  const contentW = maxX - minX + 1;
+  const profile = new Float32Array(targetLen);
+  for (let i = 0; i < targetLen; i++) {
+    const srcIdx = minX + (i / targetLen) * contentW;
+    const idx1 = Math.floor(srcIdx);
+    const idx2 = Math.min(maxX, idx1 + 1);
+    const weight = srcIdx - idx1;
+    profile[i] = (rawColSums[idx1] * (1 - weight) + rawColSums[idx2] * weight) / h;
+  }
+
+  // 値を 0.0 - 1.0 に正規化 (高さに依存しない形にする)
+  let maxVal = 0;
+  for (let i = 0; i < targetLen; i++) if (profile[i] > maxVal) maxVal = profile[i];
+  if (maxVal > 0) {
+    for (let i = 0; i < targetLen; i++) profile[i] /= maxVal;
+  }
+
+  return { profile, bin, threshold: effThreshold };
+};
+
+/**
+ * Version of profile calculation that takes an already binarized array (0/1).
+ */
+export const calculateProfileFromBin = (bin, w, h, targetLen = 64) => {
+  if (!bin || bin.length !== w * h) return { profile: new Float32Array(targetLen).fill(0), count: 0 };
+
+  // 元のデータを変えないようにコピーして処理
+  const workingBin = new Uint8Array(bin);
+  const cornerSum = workingBin[0] + workingBin[w-1] + workingBin[w*(h-1)] + workingBin[w*h-1];
+  if (cornerSum >= 3) {
+    for (let i = 0; i < workingBin.length; i++) workingBin[i] = workingBin[i] === 1 ? 0 : 1;
+  }
+
+  const rawColSums = new Float32Array(w);
+  let minX = w, maxX = 0;
+  let totalPixels = 0;
+
+  for (let x = 0; x < w; x++) {
+    let sum = 0;
+    for (let y = 0; y < h; y++) {
+      if (workingBin[y * w + x]) sum++;
+    }
+    rawColSums[x] = sum;
+    if (sum > 0) {
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      totalPixels += sum;
+    }
+  }
+
+  if (minX > maxX) return { profile: new Float32Array(targetLen).fill(0), count: 0 };
+
+  const contentW = maxX - minX + 1;
+  const profile = new Float32Array(targetLen);
+  for (let i = 0; i < targetLen; i++) {
+    const srcIdx = minX + (i / targetLen) * contentW;
+    const idx1 = Math.floor(srcIdx);
+    const idx2 = Math.min(maxX, idx1 + 1);
+    const weight = srcIdx - idx1;
+    profile[i] = (rawColSums[idx1] * (1 - weight) + rawColSums[idx2] * weight) / h;
+  }
+
+  // 値を 0.0 - 1.0 に正規化
+  let maxVal = 0;
+  for (let i = 0; i < targetLen; i++) if (profile[i] > maxVal) maxVal = profile[i];
+  if (maxVal > 0) {
+    for (let i = 0; i < targetLen; i++) profile[i] /= maxVal;
+  }
+
+  return { profile, count: totalPixels, bounds: { x: minX, w: contentW } };
+};
+
+/**
+ * Draws separated components side-by-side for debugging.
+ */
+export const drawComponentsToCanvas = (bin, comps, ctx, w, h) => {
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  
+  if (!comps || comps.length === 0) return;
+
+  let currentX = 15;
+  const padding = 15; // 間隔を広げる
+  const targetH = ctx.canvas.height - 30;
+
+  comps.forEach((comp, idx) => {
+    const scale = targetH / comp.h;
+    const drawW = comp.w * scale;
+    
+    // 背景ボックス
+    ctx.fillStyle = '#18181b';
+    ctx.fillRect(currentX, 10, drawW, targetH);
+
+    // 文字のピクセルを描画
+    ctx.fillStyle = 'white';
+    for (let ly = 0; ly < comp.h; ly++) {
+      for (let lx = 0; lx < comp.w; lx++) {
+        if (bin[(comp.y + ly) * w + (comp.x + lx)]) {
+          ctx.fillRect(
+            currentX + lx * scale, 
+            10 + ly * scale, 
+            scale + 0.2, 
+            scale + 0.2
+          );
+        }
+      }
+    }
+    
+    // 枠を描画
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(currentX, 10, drawW, targetH);
+
+    // インデックスを表示
+    ctx.fillStyle = '#818cf8';
+    ctx.font = 'bold 10px Inter, sans-serif';
+    ctx.fillText(`${idx + 1}`, currentX, 8);
+    
+    currentX += drawW + padding;
+  });
+};
+
+/**
+ * Compares two 1D word profiles using Mean Absolute Error (MAE).
+ * Returns { score, confidence }
+ */
+export const compareProfiles = (p1, p2) => {
+  if (!p1 || !p2 || p1.length !== p2.length) return { score: 1.0, confidence: 0 };
+  
+  let diff = 0;
+  for (let i = 0; i < p1.length; i++) {
+    diff += Math.abs(p1[i] - p2[i]);
+  }
+  
+  const score = diff / p1.length;
+  // Convert score to 0-100 confidence (Assuming score < 0.3 is decent)
+  const confidence = Math.max(0, 100 - (score * 250)); 
+  
+  return { score, confidence };
 };
 
 /**
@@ -721,6 +910,71 @@ export const detectCardColor = (roiImageData) => {
   }
 
   return { side: 'NONE', log: `未検出 (満たず - R:${redPoints}, B:${bluePoints}, 閾値:${Math.floor(minThreshold)})` };
+};
+
+/**
+ * Detects the dominant color theme of the result screen (Gold for Victory, Blue for Lose).
+ */
+export const detectResultColor = (roiImageData) => {
+  const data = roiImageData.data;
+  let goldPoints = 0;
+  let bluePoints = 0;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const lum = r * 0.299 + g * 0.587 + b * 0.114;
+    if (lum < 50 || lum > 250) continue;
+
+    // Gold/Yellow: Red and Green are high, Blue is lower
+    if (r > 100 && g > 80 && r > b + 25) {
+      goldPoints++;
+    }
+    // Blue/Silver: Blue is clearly dominant over Red and Green
+    else if (b > 130 && b > r + 30 && b > g + 15) {
+      bluePoints++;
+    }
+  }
+
+  // 差がはっきりしている場合のみ色を確定させる
+  if (goldPoints > bluePoints * 1.5 && goldPoints > 40) return 'GOLD';
+  if (bluePoints > goldPoints * 1.5 && bluePoints > 40) return 'BLUE';
+  return 'NEUTRAL';
+};
+
+/**
+ * Detection State machine constants
+ */
+export const detectTurnOwner = (roiImageData) => {
+  const data = roiImageData.data;
+  const w = roiImageData.width;
+  const h = roiImageData.height;
+  let bluePoints = 0;
+  let redPoints = 0;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    
+    // 暗すぎる部分や極端に明るい白飛びは無視
+    const lum = r * 0.299 + g * 0.587 + b * 0.114;
+    if (lum < 30 || lum > 250) continue;
+    
+    // 青の判定: 青が赤より10以上、かつ緑より少しでも強い (シアン寄りも許容)
+    if (b > r + 10 && b > g - 5 && b > 50) {
+      bluePoints++;
+    }
+    // 赤の判定: 赤が青より20以上、かつ緑より10以上強い
+    else if (r > b + 20 && r > g + 10 && r > 50) {
+      redPoints++;
+    }
+  }
+
+  // 判定しきい値: ROI全体のピクセル数の4%以上あればその色とみなす
+  const minPixels = (w * h) * 0.04;
+
+  if (bluePoints > redPoints && bluePoints > minPixels) return 'MY_TURN';
+  if (redPoints > bluePoints && redPoints > minPixels) return 'OPP_TURN';
+
+  return 'UNKNOWN';
 };
 
 /**
