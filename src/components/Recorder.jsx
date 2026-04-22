@@ -118,12 +118,24 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
     if (isProcessing) return;
     const now = Date.now();
     if (now - lastSaveTimeRef.current < 2000) return;
+    const totalWeights = detectedCards.reduce((acc, c) => {
+      const key = `${c.side}-${c.name}`;
+      acc[key] = (acc[key] || 0) + (c.totalWeight || 0);
+      return acc;
+    }, {});
+
     const finalData = {
       mode, turn, result,
       myDeck: myDecks.join(', '),
       opponentDeck: oppDecks.join(', '),
       diff,
-      memo: selectedTags.join(', ')
+      memo: selectedTags.join(', '),
+      detectedCardsForLog: detectedCards
+        .filter(c => totalWeights[`${c.side}-${c.name}`] >= 0.8)
+        .sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0)) // Chronological
+        .map(c => `${c.side === 'BLUE' ? '自' : '敵'}：${c.name}`)
+        .filter((val, i, arr) => i === 0 || val !== arr[i - 1]) // Squash consecutive duplicates
+        .join(', ')
     };
     if (!finalData.turn && !finalData.result) return;
     setIsProcessing(true);
@@ -277,7 +289,7 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
 
   const handleCardClick = useCallback((card) => {
     if (!card.archetype) return;
-    const theme = normalizeTheme(themeMapRef.current[card.archetype] || card.archetype);
+    const theme = normalizeTheme(card.archetype);
     if (card.side === 'BLUE' && !isMyDeckLocked) {
       setMyDecks(prev => prev.includes(theme) ? prev : [...prev, theme]);
       addLog(`テーマ追加: ${theme} (味方)`, 'success');
@@ -287,7 +299,21 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
       addLog(`テーマ追加: ${theme} (相手)`, 'success');
       playNotificationSound('restore');
     }
-  }, [isMyDeckLocked, isOpponentDeckLocked, addLog, setMyDecks, setOppDecks]);
+  }, [isMyDeckLocked, isOpponentDeckLocked, addLog, setMyDecks, setOppDecks, playNotificationSound]);
+
+  const handleTagClick = useCallback((card) => {
+    if (!card.name) return;
+    const prefix = card.side === 'BLUE' ? '[+] 自：' : '[-] 敵：';
+    const tagName = `${prefix}${card.name}`;
+    
+    // Check if we have a perfect match in availableTags to ensure styling
+    const existingTag = (availableTags || []).find(t => t && t.includes(card.name) && t.includes(card.side === 'BLUE' ? '自' : '敵'));
+    const finalTag = existingTag || tagName;
+
+    setSelectedTags(prev => prev.includes(finalTag) ? prev : [...prev, finalTag]);
+    addLog(`タグ追加: ${finalTag}`, 'success');
+    playNotificationSound('restore');
+  }, [availableTags, setSelectedTags, addLog, playNotificationSound]);
 
   return (
     <div className="space-y-6">
@@ -416,6 +442,7 @@ export default function Recorder({ themePairings, availableDecks, availableTags,
       <CardDatabase 
         detectedCards={detectedCards}
         handleCardClick={handleCardClick}
+        handleTagClick={handleTagClick}
       />
     </div>
   );

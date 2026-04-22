@@ -281,11 +281,17 @@ export function useOcrEngine({
                           const effectiveWeight = baseWeight * scoreMultiplier * decayMultiplier;
 
                           setDetectedCards(prev => {
-                            const existingIdx = prev.findIndex(c => c.name === name && c.side === side);
-                            if (existingIdx >= 0) {
+                            const lastCard = prev.length > 0 ? prev[prev.length - 1] : null;
+                            const isSameAsLast = lastCard && lastCard.name === name && lastCard.side === side;
+
+                            if (isSameAsLast) {
                               const updated = [...prev];
-                              const c = updated[existingIdx];
-                              updated[existingIdx] = { ...c, hits: (c.hits || 1) + 1, totalWeight: (c.totalWeight || 0.5) + effectiveWeight };
+                              const c = updated[updated.length - 1];
+                              updated[updated.length - 1] = { 
+                                ...c, 
+                                hits: (c.hits || 1) + 1, 
+                                totalWeight: (c.totalWeight || 0.5) + effectiveWeight 
+                              };
                               return updated;
                             } else {
                               const isSoftCut = matchScore >= 0.25;

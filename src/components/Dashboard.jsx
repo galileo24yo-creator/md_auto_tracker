@@ -475,7 +475,8 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
       myDeck: selectedMatch.myDeck ? String(selectedMatch.myDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean) : [],
       oppDeck: selectedMatch.opponentDeck ? String(selectedMatch.opponentDeck).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean) : [],
       diff: selectedMatch.diff || selectedMatch.rating || "",
-      memo: selectedMatch.memo ? String(selectedMatch.memo).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean) : []
+      memo: selectedMatch.memo ? String(selectedMatch.memo).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean) : [],
+      detectedCards: selectedMatch.detectedCards ? String(selectedMatch.detectedCards).split(/[,、，]+/).map(t => String(t).trim()).filter(Boolean) : []
     }); setIsEditing(true);
   };
 
@@ -491,7 +492,8 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
         myDeck: Array.isArray(editData.myDeck) ? editData.myDeck.join(', ') : "",
         opponentDeck: Array.isArray(editData.oppDeck) ? editData.oppDeck.join(', ') : "",
         diff: editData.diff || "",
-        memo: Array.isArray(editData.memo) ? editData.memo.join(', ') : ""
+        memo: Array.isArray(editData.memo) ? editData.memo.join(', ') : "",
+        detectedCardsForLog: Array.isArray(editData.detectedCards) ? editData.detectedCards.join(', ') : ""
       };
       const res = await postData(payload);
       if (res?.success) {
@@ -564,7 +566,7 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
     setRange
   }), [filterMode, filterMyDecks, filterOpponentDecks, filterTags, filterDateType, startDate, endDate, chunkSize, setRange]);
 
-  const { filteredRecords, stats, trendData, tagTrendData, myDeckStats, rankings } = useMatchAnalytics(records, analyticsFilters);
+  const { filteredRecords, stats, trendData, tagTrendData, myDeckStats, rankings, cardInsights } = useMatchAnalytics(records, analyticsFilters);
 
   // 【階層2レコードの定義】
   // 期間・モードで絞り込まれた scopeFilteredRecords から、セット番号(chunkSize, setRange)で切り出したもの
@@ -911,8 +913,64 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
       )}
 
       {activeTab === 'insights' && (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl space-y-8">
           <SmartInsights records={filteredRecords} availableTags={displayReasons || reasons} />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Partners: 自カード勝率 */}
+            <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-[2rem] shadow-xl overflow-hidden group">
+              <h3 className="text-zinc-400 text-[10px] font-black uppercase mb-6 flex items-center gap-2 tracking-[0.2em] group-hover:text-emerald-400 transition-colors">
+                <Trophy className="w-4 h-4" /> Top Partners (My Cards)
+              </h3>
+              <div className="space-y-5">
+                {cardInsights.partners.slice(0, 5).map((d, i) => (
+                  <div key={i} className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-black text-zinc-100 uppercase tracking-tight truncate max-w-[160px]">{d.name}</span>
+                      <div className="text-right">
+                        <span className={`text-md font-black ${d.winRate >= 60 ? 'text-emerald-400' : 'text-zinc-100'}`}>{d.winRate}%</span>
+                        <span className="text-[8px] text-zinc-500 font-bold ml-1 uppercase">WR ({d.total} matches)</span>
+                      </div>
+                    </div>
+                    <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden border border-zinc-800/50">
+                      <div 
+                        className={`h-full rounded-full bg-gradient-to-r ${d.winRate >= 50 ? 'from-emerald-600 to-emerald-400' : 'from-zinc-700 to-zinc-500'}`}
+                        style={{ width: `${d.winRate}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+                {cardInsights.partners.length === 0 && <div className="h-20 flex items-center justify-center text-zinc-700 italic text-xs">Insufficient data for partners</div>}
+              </div>
+            </div>
+
+            {/* Nemeses: 敵カード勝率（低勝率＝天敵） */}
+            <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-[2rem] shadow-xl overflow-hidden group">
+              <h3 className="text-zinc-400 text-[10px] font-black uppercase mb-6 flex items-center gap-2 tracking-[0.2em] group-hover:text-rose-400 transition-colors">
+                <XCircle className="w-4 h-4" /> Top Nemeses (Opponent)
+              </h3>
+              <div className="space-y-5">
+                {cardInsights.nemeses.slice(0, 5).map((d, i) => (
+                  <div key={i} className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-black text-zinc-100 uppercase tracking-tight truncate max-w-[160px]">{d.name}</span>
+                      <div className="text-right">
+                        <span className={`text-md font-black ${d.winRate <= 40 ? 'text-rose-400' : 'text-zinc-100'}`}>{d.winRate}%</span>
+                        <span className="text-[8px] text-zinc-500 font-bold ml-1 uppercase">WR ({d.total} matches)</span>
+                      </div>
+                    </div>
+                    <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden border border-zinc-800/50">
+                      <div 
+                        className={`h-full rounded-full bg-gradient-to-r ${d.winRate <= 40 ? 'from-rose-600 to-rose-400' : 'from-zinc-700 to-zinc-500'}`}
+                        style={{ width: `${d.winRate}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+                {cardInsights.nemeses.length === 0 && <div className="h-20 flex items-center justify-center text-zinc-700 italic text-xs">Insufficient data for nemeses</div>}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -1086,6 +1144,15 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                   <DeckSelect availableDecks={decks} selectedDecks={editData.myDeck} onChange={v => setEditData({...editData, myDeck: v})} placeholder="My Deck" />
                   <DeckSelect availableDecks={decks} selectedDecks={editData.oppDeck} onChange={v => setEditData({...editData, oppDeck: v})} placeholder="Opponent Deck" />
                   <DeckSelect availableDecks={displayReasons || reasons} selectedDecks={editData.memo} onChange={v => setEditData({...editData, memo: v})} placeholder="Match Deciding Factor (Tags)" />
+                  <div className="space-y-2">
+                    <label className="text-[9px] text-zinc-600 uppercase font-black ml-2">Detected Cards (Auto-logged)</label>
+                    <DeckSelect 
+                      availableDecks={[]} // Empty suggestions for now, or could use current ones
+                      selectedDecks={editData.detectedCards} 
+                      onChange={v => setEditData({...editData, detectedCards: v})} 
+                      placeholder="Add detected cards manually..." 
+                    />
+                  </div>
                   <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 text-center shadow-inner group transition-all hover:border-indigo-500/50"><label className="text-[9px] text-zinc-600 uppercase font-black block mb-2">Points</label><input type="text" value={editData.diff} onChange={e => setEditData({...editData, diff: e.target.value})} className="bg-transparent text-4xl font-black text-indigo-400 outline-none text-center w-full" /></div>
                 </div>
               ) : (
@@ -1113,6 +1180,24 @@ export default function Dashboard({ records, onRefresh, decks, reasons, displayR
                           </span>
                         );
                       })}
+                    </div>
+                  )}
+                  {selectedMatch.detectedCards && (
+                    <div className="pt-4 border-t border-zinc-800/50">
+                      <div className="text-[8px] text-zinc-600 font-black uppercase text-center mb-4 tracking-[0.2em]">All Detected Cards</div>
+                      <div className="flex flex-wrap gap-1.5 justify-center">
+                        {String(selectedMatch.detectedCards).split(/[,、，]+/).map((rawTag, idx) => {
+                          const tag = rawTag.trim();
+                          if (!tag) return null;
+                          const isSelf = tag.includes('自');
+                          const colorClass = isSelf ? 'bg-indigo-500/5 border-indigo-500/20 text-indigo-400/70' : 'bg-rose-500/5 border-rose-500/20 text-rose-400/70';
+                          return (
+                            <span key={idx} className={`px-2 py-0.5 rounded-lg border ${colorClass} text-[9px] font-bold uppercase`}>
+                              {tag}
+                            </span>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
                 </div>

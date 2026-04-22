@@ -21,6 +21,7 @@ const MatchSettings = ({
   setIsTagsLocked,
   setIsInputActive
 }) => {
+
   return (
     <div className="glass-card p-8 border-white/5 shadow-2xl space-y-6 relative z-20" onFocusCapture={() => setIsInputActive(true)} onBlurCapture={() => setIsInputActive(false)}>
       <div className="max-w-2xl mx-auto space-y-6">

@@ -129,18 +129,8 @@ export function useMatchAutofill({
       });
     }
 
-    if (!isTagsLocked && availableTags) {
-      highConfidenceCards.forEach(card => {
-        const baseTag = CARD_TO_TAG_BASE[card.name];
-        if (baseTag) {
-          const prefix = card.side === 'BLUE' ? '[+] 自：' : '[-] 敵：';
-          const targetTag = availableTags.find(t => t && t.startsWith(prefix) && t.includes(baseTag));
-          if (targetTag) {
-            setSelectedTags(prev => prev.includes(targetTag) ? prev : [...prev, targetTag]);
-          }
-        }
-      });
-    }
+    // NOTE: Automated high-confidence card tags are now handled manually via the click menu 
+    // and automatically logged into the separate "Detected Cards" column during save.
   }, [detectedCards, isMyDeckLocked, isOpponentDeckLocked, isTagsLocked, availableTags, setMyDecks, setOppDecks, setSelectedTags, matchStartTimeRef, myDecks, oppDecks, themePairings]);
 
   // --- Match-End Detail Autofill ---
@@ -210,27 +200,8 @@ export function useMatchAutofill({
           msgParts.push(`相手テーマ: ${oppThemes.join(', ')}`);
         }
 
-        if (!isTagsLocked && availableTags && availableTags.length > 0) {
-          const myNames = new Set(currentDetected.filter(c => c.side === 'BLUE').map(c => c.name));
-          const oppNames = new Set(currentDetected.filter(c => c.side === 'RED').map(c => c.name));
-          
-          const matchedTags = availableTags.filter(tag => {
-            const isBlue = tag.includes('自：');
-            const targetNames = isBlue ? myNames : oppNames;
-            return Array.from(targetNames).some(cardName => {
-              const baseTag = CARD_TO_TAG_BASE[cardName];
-              const parts = tag.includes('：') ? tag.split('：') : tag.split(':');
-              const tagContent = parts[1] || '';
-              const normTagContent = normalizeCardName(tagContent);
-              return normTagContent === normalizeCardName(cardName) || (baseTag && normTagContent === normalizeCardName(baseTag));
-            });
-          });
-          
-          if (matchedTags.length > 0) {
-            setSelectedTags(prev => [...new Set([...prev, ...matchedTags])]);
-            msgParts.push(`タグ追加: ${matchedTags.length}件`);
-          }
-        }
+        // NOTE: Automated match-end card tags are now handled manually 
+        // to keep the Factor list clean.
 
         if (msgParts.length > 0) {
           addLog(`自動入力完了: ${msgParts.join(' / ')}`, 'success');

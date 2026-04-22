@@ -447,7 +447,7 @@ export default function VisualBoard({ records, lastUpdated }) {
     };
   }, [query]);
 
-  const { stats, trendData, tagTrendData, myDeckStats, rankings } = useMatchAnalytics(records, filters);
+  const { stats, trendData, tagTrendData, myDeckStats, rankings, cardInsights } = useMatchAnalytics(records, filters);
 
   // ウィジェット単体表示モードの判定
   if (widgetType === 'rating') return <div className="p-4 w-[600px] bg-transparent"><RatingWidget data={trendData} /></div>;

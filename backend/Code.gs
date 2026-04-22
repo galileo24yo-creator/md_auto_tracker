@@ -13,8 +13,8 @@ function setupSheets() {
   let dataSheet = ss.getSheetByName(SHEET_DATA_NAME);
   if (!dataSheet) {
     dataSheet = ss.insertSheet(SHEET_DATA_NAME);
-    dataSheet.appendRow(["日時", "モード", "先攻/後攻", "勝敗", "自分のデッキ", "相手のデッキ", "変動", "要因"]);
-    dataSheet.getRange("A1:H1").setFontWeight("bold").setBackground("#d9ead3");
+    dataSheet.appendRow(["日時", "モード", "先攻/後攻", "勝敗", "自分のデッキ", "相手のデッキ", "変動", "要因", "検出カード"]);
+    dataSheet.getRange("A1:I1").setFontWeight("bold").setBackground("#d9ead3");
   }
 
   // 設定用シートの作成
@@ -125,7 +125,7 @@ function doGet(e) {
     if (lastRow > 1) {
       const getRows = Math.min(lastRow - 1, 5000);
       // getValues を使用して生の文字（∀等）を取得し、日付は別途フォーマットする
-      const values = dataSheet.getRange(lastRow - getRows + 1, 1, getRows, 8).getValues();
+      const values = dataSheet.getRange(lastRow - getRows + 1, 1, getRows, 9).getValues();
       records = values.map(row => {
         const d = row[0];
         const dateStr = (d instanceof Date) ? Utilities.formatDate(d, "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss") : String(d);
@@ -137,7 +137,8 @@ function doGet(e) {
           myDeck: row[4],
           opponentDeck: row[5],
           diff: row[6],
-          memo: row[7]
+          memo: row[7],
+          detectedCards: row[8]
         };
       });
     }
@@ -246,9 +247,10 @@ function doPost(e) {
           payload.myDeck || "",
           payload.opponentDeck || "",
           payload.diff || "",
-          payload.memo || ""
+          payload.memo || "",
+          payload.detectedCardsForLog || ""
         ];
-        dataSheet.getRange(rowIndex, 1, 1, 8).setValues([rowData]);
+        dataSheet.getRange(rowIndex, 1, 1, 9).setValues([rowData]);
         
         return ContentService.createTextOutput(JSON.stringify({
           success: true,
@@ -273,7 +275,8 @@ function doPost(e) {
       payload.myDeck || "",
       payload.opponentDeck || "",
       payload.diff || "",
-      payload.memo || ""
+      payload.memo || "",
+      payload.detectedCardsForLog || ""
     ]);
 
     return ContentService.createTextOutput(JSON.stringify({

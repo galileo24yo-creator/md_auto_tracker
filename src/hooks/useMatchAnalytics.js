@@ -290,6 +290,52 @@ export function useMatchAnalytics(records, filters) {
     })).sort((a,b) => b.total - a.total).slice(0, 6);
   }, [filteredRecords]);
 
+  // 6. カード別統計 (Card Insights)
+  const cardInsights = useMemo(() => {
+    const pDict = {}; // Partners (自)
+    const nDict = {}; // Nemeses (敵)
+
+    filteredRecords.forEach(r => {
+      const cardsStr = r.detectedCards || r['Detected Cards'] || "";
+      if (!cardsStr) return;
+
+      const isWin = r._isWin;
+      const seenCards = new Set(); // 1試合内で同じカードは複数回カウントしない
+
+      String(cardsStr).split(/[,、，]+/).forEach(raw => {
+        const tag = raw.trim();
+        if (!tag) return;
+        
+        const side = tag.startsWith('自') ? 'self' : (tag.startsWith('敵') ? 'opp' : null);
+        const name = tag.split(/[：:]/)[1]?.trim();
+        if (!side || !name) return;
+
+        const key = `${side}-${name}`;
+        if (seenCards.has(key)) return;
+        seenCards.add(key);
+
+        const dict = side === 'self' ? pDict : nDict;
+        if (!dict[name]) dict[name] = { t: 0, w: 0 };
+        dict[name].t++;
+        if (isWin) dict[name].w++;
+      });
+    });
+
+    const minAppearances = 3; // 統計のしきい値
+
+    const partners = Object.entries(pDict)
+      .map(([name, data]) => ({ name, total: data.t, winRate: parseFloat(((data.w / data.t) * 100).toFixed(1)) }))
+      .filter(x => x.total >= minAppearances)
+      .sort((a, b) => b.winRate - a.winRate || b.total - a.total);
+
+    const nemeses = Object.entries(nDict)
+      .map(([name, data]) => ({ name, total: data.t, winRate: parseFloat(((data.w / data.t) * 100).toFixed(1)) }))
+      .filter(x => x.total >= minAppearances)
+      .sort((a, b) => a.winRate - b.winRate || b.total - a.total);
+
+    return { partners, nemeses };
+  }, [filteredRecords]);
+
   const rankings = useMemo(() => {
     return getRankings(filteredRecords).sort((a, b) => b.total - a.total);
   }, [filteredRecords]);
@@ -300,6 +346,7 @@ export function useMatchAnalytics(records, filters) {
     trendData,
     tagTrendData,
     myDeckStats,
-    rankings
+    rankings,
+    cardInsights
   };
 }
